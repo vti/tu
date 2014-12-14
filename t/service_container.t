@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::ServiceContainer;
+use Tu::ServiceContainer;
 
 subtest 'throws on getting unknown service' => sub {
     my $c = _build_container();
@@ -45,7 +45,7 @@ subtest 'registers service via sub' => sub {
     is($c->service('foo'), 'foo');
 };
 
-sub _build_container { Turnaround::ServiceContainer->new(@_) }
+sub _build_container { Tu::ServiceContainer->new(@_) }
 
 done_testing;
 

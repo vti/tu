@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More;
 
-use Turnaround::Validator::Compare;
+use Tu::Validator::Compare;
 
 subtest 'returns true when all same' => sub {
     my $rule = _build_rule();
@@ -18,7 +18,7 @@ subtest 'returns false when not same' => sub {
 };
 
 sub _build_rule {
-    return Turnaround::Validator::Compare->new(@_);
+    return Tu::Validator::Compare->new(@_);
 }
 
 done_testing;

@@ -3,7 +3,7 @@ package Plugin;
 use strict;
 use warnings;
 
-use base 'Turnaround::Plugin';
+use base 'Tu::Plugin';
 
 sub run {
     my $self = shift;

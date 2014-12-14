@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::HelperFactory;
+use Tu::HelperFactory;
 
 use lib 't/helper_t';
 
@@ -77,7 +77,7 @@ subtest 'does not autoload private methods' => sub {
 };
 
 sub _build_factory {
-    Turnaround::HelperFactory->new(@_);
+    Tu::HelperFactory->new(@_);
 }
 
 done_testing;

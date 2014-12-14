@@ -5,9 +5,9 @@ use Test::More;
 use Test::Fatal;
 use Test::MonkeyMock;
 
-use Turnaround::ServiceContainer;
-use Turnaround::Action;
-use Turnaround::Displayer;
+use Tu::ServiceContainer;
+use Tu::Action;
+use Tu::Displayer;
 
 subtest 'builds correct redirect response' => sub {
     my $action = _build_action();
@@ -151,7 +151,7 @@ subtest 'caches req' => sub {
 };
 
 subtest 'throws when no env' => sub {
-    my $action = Turnaround::Action->new;
+    my $action = Tu::Action->new;
 
     ok exception { $action->req };
 };
@@ -173,7 +173,7 @@ subtest 'sets displayer vars' => sub {
 };
 
 sub _mock_displayer {
-    my $displayer = Turnaround::Displayer->new(renderer => 1);
+    my $displayer = Tu::Displayer->new(renderer => 1);
     $displayer = Test::MonkeyMock->new($displayer);
     $displayer->mock(render => sub { $_[1] });
     return $displayer;
@@ -195,7 +195,7 @@ sub _build_action {
     my $dispatched_request =
       delete $params{dispatched_request} || _mock_dispatched_request();
 
-    my $services = Turnaround::ServiceContainer->new;
+    my $services = Tu::ServiceContainer->new;
     $services->register(displayer => $displayer);
 
     my $env = {
@@ -204,7 +204,7 @@ sub _build_action {
         'turnaround.dispatched_request' => $dispatched_request
     };
 
-    return Turnaround::Action->new(env => $env, %params);
+    return Tu::Action->new(env => $env, %params);
 }
 
 done_testing;

@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More;
 
-use Turnaround::HelperFactory::Persistent;
+use Tu::HelperFactory::Persistent;
 
 use lib 't/helper_t';
 
@@ -20,6 +20,6 @@ subtest 'should return same instance' => sub {
     is "$foo", "$bar";
 };
 
-sub _build_factory { Turnaround::HelperFactory::Persistent->new(@_) }
+sub _build_factory { Tu::HelperFactory::Persistent->new(@_) }
 
 done_testing;

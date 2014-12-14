@@ -6,8 +6,8 @@ use Test::More;
 
 use Encode ();
 
-use Turnaround::Response;
-use Turnaround::ActionResponseResolver;
+use Tu::Response;
+use Tu::ActionResponseResolver;
 
 subtest 'return_undef_on_undef' => sub {
     my $resolver = _build_resolver();
@@ -44,7 +44,7 @@ subtest 'return_finalized_object' => sub {
     my $resolver = _build_resolver();
 
     is_deeply(
-        $resolver->resolve(Turnaround::Response->new(200)),
+        $resolver->resolve(Tu::Response->new(200)),
         [200, ['Content-Type' => 'text/html'], []]
     );
 };
@@ -59,7 +59,7 @@ sub _build_resolver {
     my $self = shift;
     my (%params) = @_;
 
-    return Turnaround::ActionResponseResolver->new(@_);
+    return Tu::ActionResponseResolver->new(@_);
 }
 
 done_testing;

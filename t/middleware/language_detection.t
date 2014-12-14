@@ -7,7 +7,7 @@ use Test::Fatal;
 
 BEGIN { test_requires 'I18N::AcceptLanguage' }
 
-use Turnaround::Middleware::LanguageDetection;
+use Tu::Middleware::LanguageDetection;
 
 subtest 'throws when no language' => sub {
     like exception { _build_middleware(default_language => undef) },
@@ -169,7 +169,7 @@ subtest 'save_to_session' => sub {
 };
 
 sub _build_middleware {
-    return Turnaround::Middleware::LanguageDetection->new(
+    return Tu::Middleware::LanguageDetection->new(
         app => sub { [200, [], ['OK']] },
         default_language => 'en',
         languages        => ['ru'],

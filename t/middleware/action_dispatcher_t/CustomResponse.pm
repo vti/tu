@@ -3,7 +3,7 @@ package CustomResponse;
 use strict;
 use warnings;
 
-use base 'Turnaround::Action';
+use base 'Tu::Action';
 
 sub run {
     my $self = shift;

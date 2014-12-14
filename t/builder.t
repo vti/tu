@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::Builder;
+use Tu::Builder;
 
 subtest 'adds middleware' => sub {
     my $builder = _build_builder();
@@ -75,7 +75,7 @@ subtest 'wraps' => sub {
 };
 
 sub _build_builder {
-    return Turnaround::Builder->new(@_);
+    return Tu::Builder->new(@_);
 }
 
 done_testing;
@@ -85,7 +85,7 @@ package TestMiddleware;
 use strict;
 use warnings;
 
-use base 'Turnaround::Middleware';
+use base 'Tu::Middleware';
 
 sub call {
     my $self = shift;

@@ -4,9 +4,9 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::ACL;
-use Turnaround::DispatchedRequest;
-use Turnaround::Middleware::ACL;
+use Tu::ACL;
+use Tu::DispatchedRequest;
+use Tu::Middleware::ACL;
 
 subtest 'throw when no acl' => sub {
     like exception { _build_middleware(acl => undef) }, qr/acl required/;
@@ -80,12 +80,12 @@ subtest 'accept blessed user object' => sub {
 };
 
 sub _build_middleware {
-    my $acl = Turnaround::ACL->new;
+    my $acl = Tu::ACL->new;
 
     $acl->add_role('user');
     $acl->allow('user', 'foo');
 
-    return Turnaround::Middleware::ACL->new(
+    return Tu::Middleware::ACL->new(
         app => sub { [200, [], ['OK']] },
         acl => $acl,
         @_
@@ -100,7 +100,7 @@ sub _build_env {
     my $env = {};
 
     $env->{'turnaround.dispatched_request'} =
-      Turnaround::DispatchedRequest->new(action => $action);
+      Tu::DispatchedRequest->new(action => $action);
 
     foreach my $key (keys %params) {
         $env->{"turnaround.$key"} = $params{$key};

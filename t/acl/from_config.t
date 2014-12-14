@@ -3,8 +3,8 @@ use warnings;
 
 use Test::More;
 
-use Turnaround::ACL;
-use Turnaround::ACL::FromConfig;
+use Tu::ACL;
+use Tu::ACL::FromConfig;
 
 subtest 'build acl from config' => sub {
     my $acl = _build_acl()->load('t/acl/from_config_t/acl.yml');
@@ -22,14 +22,14 @@ subtest 'do nothing when empty' => sub {
 };
 
 subtest 'accept acl from outside' => sub {
-    my $acl = _build_acl(acl => Turnaround::ACL->new)
+    my $acl = _build_acl(acl => Tu::ACL->new)
       ->load('t/acl/from_config_t/acl.yml');
 
     ok $acl->is_allowed('anonymous', 'login');
 };
 
 sub _build_acl {
-    return Turnaround::ACL::FromConfig->new(@_);
+    return Tu::ACL::FromConfig->new(@_);
 }
 
 done_testing;

@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More;
 
-use Turnaround::Validator::Regexp;
+use Tu::Validator::Regexp;
 
 subtest 'returns true when matches' => sub {
     my $rule = _build_rule();
@@ -18,7 +18,7 @@ subtest 'returns false when not matches' => sub {
 };
 
 sub _build_rule {
-    return Turnaround::Validator::Regexp->new(@_);
+    return Tu::Validator::Regexp->new(@_);
 }
 
 done_testing;

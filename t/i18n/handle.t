@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::MonkeyMock;
 
-use Turnaround::I18N::Handle;
+use Tu::I18N::Handle;
 
 subtest 'returns language' => sub {
     my $handle = _build_handle(language => 'foo');
@@ -28,7 +28,7 @@ sub _build_handle {
     my $handle = Test::MonkeyMock->new;
     $handle->mock(maketext => sub {'translated'});
 
-    return Turnaround::I18N::Handle->new(
+    return Tu::I18N::Handle->new(
         handle => $handle,
         @_
     );

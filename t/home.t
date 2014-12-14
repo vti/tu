@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::Home;
+use Tu::Home;
 
 subtest 'builds home from path' => sub {
     my $home = _build_home(path => '/foo/bar');
@@ -13,7 +13,7 @@ subtest 'builds home from path' => sub {
 };
 
 subtest 'detect from loaded app_class' => sub {
-    my $home = _build_home(app_class => 'Turnaround::Home');
+    my $home = _build_home(app_class => 'Tu::Home');
 
     like $home, qr{/lib$};
 };
@@ -41,6 +41,6 @@ subtest 'implements catfile' => sub {
       File::Spec->catfile('/foo/bar/hello/there');
 };
 
-sub _build_home { Turnaround::Home->new(@_) }
+sub _build_home { Tu::Home->new(@_) }
 
 done_testing;

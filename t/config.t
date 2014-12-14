@@ -5,7 +5,7 @@ use utf8;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::Config;
+use Tu::Config;
 
 subtest 'return empty hash when empty config' => sub {
     my $config = _build_config();
@@ -88,7 +88,7 @@ subtest 'loads config with specified encoding' => sub {
 };
 
 sub _build_config {
-    return Turnaround::Config->new(@_);
+    return Tu::Config->new(@_);
 }
 
 done_testing;

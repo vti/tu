@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::MonkeyMock;
 
-use Turnaround::Helper::Displayer;
+use Tu::Helper::Displayer;
 
 subtest 'calls displayer' => sub {
     my $displayer = _mock_displayer();
@@ -44,7 +44,7 @@ sub _build_helper {
     my $services = Test::MonkeyMock->new;
     $services->mock(service => sub { $displayer });
 
-    Turnaround::Helper::Displayer->new(
+    Tu::Helper::Displayer->new(
         env => $params{env} || {},
         services => $services
     );

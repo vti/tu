@@ -4,8 +4,8 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::Dispatcher::Routes;
-use Turnaround::Routes;
+use Tu::Dispatcher::Routes;
+use Tu::Routes;
 
 subtest 'throws on unknown action' => sub {
     my $d = _build_dispatcher();
@@ -54,12 +54,12 @@ subtest 'returns undef when not matched' => sub {
 };
 
 sub _build_dispatcher {
-    my $routes = Turnaround::Routes->new;
+    my $routes = Tu::Routes->new;
     $routes->add_route('/', name => 'root');
     $routes->add_route('/:action');
     $routes->add_route('/unknown/action');
 
-    Turnaround::Dispatcher::Routes->new(routes => $routes);
+    Tu::Dispatcher::Routes->new(routes => $routes);
 }
 
 done_testing;

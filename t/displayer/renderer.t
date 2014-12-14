@@ -4,12 +4,12 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::Renderer;
+use Tu::Renderer;
 
 subtest 'throws on unimplemented methods' => sub {
-    like exception { Turnaround::Renderer->new->render_string },
+    like exception { Tu::Renderer->new->render_string },
       qr/Unimplemented/;
-    like exception { Turnaround::Renderer->new->render_file },
+    like exception { Tu::Renderer->new->render_file },
       qr/Unimplemented/;
 };
 
@@ -88,7 +88,7 @@ sub new {
 }
 
 package TestRenderer;
-use base 'Turnaround::Renderer';
+use base 'Tu::Renderer';
 
 sub _build_engine {
     shift;

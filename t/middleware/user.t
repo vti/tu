@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::Middleware::User;
+use Tu::Middleware::User;
 
 subtest 'set_anonymous_when_no_session' => sub {
     my $mw = _build_middleware();
@@ -67,7 +67,7 @@ subtest 'not register displayer var when user not found' => sub {
 };
 
 sub _build_middleware {
-    return Turnaround::Middleware::User->new(
+    return Tu::Middleware::User->new(
         app => sub { [200, [], ['OK']] },
         user_loader => sub {
             my $session = shift;

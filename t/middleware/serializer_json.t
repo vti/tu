@@ -7,8 +7,8 @@ use Test::Requires;
 
 BEGIN { test_requires 'JSON' }
 
-use Turnaround::Request;
-use Turnaround::Middleware::SerializerJSON;
+use Tu::Request;
+use Tu::Middleware::SerializerJSON;
 
 subtest 'decode_JSON' => sub {
     my $mw = _build_middleware();
@@ -25,7 +25,7 @@ subtest 'decode_JSON' => sub {
 
     $mw->call($env);
 
-    my $req = Turnaround::Request->new($env);
+    my $req = Tu::Request->new($env);
 
     is_deeply($env->{'turnaround.serializer.json'}, {foo => 'bar'});
 };
@@ -95,7 +95,7 @@ subtest 'not_encode_JSON_when_content_type' => sub {
 };
 
 sub _build_middleware {
-    return Turnaround::Middleware::SerializerJSON->new(
+    return Tu::Middleware::SerializerJSON->new(
         app => sub { [200, [], [{foo => 'bar'}]] },
         @_
     );

@@ -10,7 +10,7 @@ BEGIN { test_requires 'Email::MIME' }
 
 use File::Temp;
 use MIME::Base64;
-use Turnaround::Mailer;
+use Tu::Mailer;
 
 subtest 'throws when no transport' => sub {
     like exception { _build_mailer(transport => undef) },
@@ -116,11 +116,11 @@ subtest 'builds message with overriden headers' => sub {
 };
 
 subtest 'builds message with subject prefix' => sub {
-    my $mailer = _build_mailer(subject_prefix => '[Turnaround]');
+    my $mailer = _build_mailer(subject_prefix => '[Tu]');
 
     my $message = $mailer->build_message(headers => [Subject => 'Hello!']);
 
-    like($message, qr/Subject:\s*\[Turnaround\]\s*Hello!/xms);
+    like($message, qr/Subject:\s*\[Tu\]\s*Hello!/xms);
 };
 
 subtest 'does not build message with signature but without body' => sub {
@@ -162,7 +162,7 @@ subtest 'send mail' => sub {
 };
 
 sub _build_mailer {
-    return Turnaround::Mailer->new(
+    return Tu::Mailer->new(
         test      => 1,
         headers   => [From => 'root <root@localhost>'],
         transport => {name => 'test'},

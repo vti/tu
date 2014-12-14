@@ -7,7 +7,7 @@ use Test::Fatal;
 
 use Encode ();
 
-use Turnaround::Response;
+use Tu::Response;
 
 subtest 'encode_body' => sub {
     my $res = _build_response(200);
@@ -37,6 +37,6 @@ subtest 'not set default content type when present' => sub {
     is_deeply($res->finalize, [200, ['Content-Type' => 'text/plain'], []]);
 };
 
-sub _build_response { Turnaround::Response->new(@_) }
+sub _build_response { Tu::Response->new(@_) }
 
 done_testing;

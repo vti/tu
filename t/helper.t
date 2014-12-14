@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::MonkeyMock;
 
-use Turnaround::Helper;
+use Tu::Helper;
 
 subtest 'returns empty hash ref' => sub {
     my $env = {};
@@ -55,6 +55,6 @@ subtest 'returns empty arrray ref on multi' => sub {
     is_deeply $helper->param_multi('unknown'), [];
 };
 
-sub _build_helper { Turnaround::Helper->new(@_) }
+sub _build_helper { Tu::Helper->new(@_) }
 
 done_testing;

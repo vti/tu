@@ -6,7 +6,7 @@ use Test::Fatal;
 
 use lib 't/loader_t';
 
-use Turnaround::Loader;
+use Tu::Loader;
 
 subtest 'throws when no class passed' => sub {
     my $loader = _build_loader();
@@ -99,7 +99,7 @@ subtest 'returns false when class not loaded' => sub {
 };
 
 sub _build_loader {
-    Turnaround::Loader->new(namespaces => [qw/Foo::/], @_);
+    Tu::Loader->new(namespaces => [qw/Foo::/], @_);
 }
 
 done_testing;

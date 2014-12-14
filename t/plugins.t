@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More;
 
-use Turnaround::Plugins;
+use Tu::Plugins;
 
 use lib 't/plugins_t';
 
@@ -18,6 +18,6 @@ subtest 'run_plugins' => sub {
     is $env->{foo}, 'bar';
 };
 
-sub _build_plugins { Turnaround::Plugins->new(@_) }
+sub _build_plugins { Tu::Plugins->new(@_) }
 
 done_testing;

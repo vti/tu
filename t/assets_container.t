@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::AssetsContainer;
+use Tu::AssetsContainer;
 
 subtest 'requires js' => sub {
     my $assets = _build_assets();
@@ -64,7 +64,7 @@ subtest 'throws when unknown type' => sub {
 };
 
 sub _build_assets {
-    return Turnaround::AssetsContainer->new(@_);
+    return Tu::AssetsContainer->new(@_);
 }
 
 done_testing;

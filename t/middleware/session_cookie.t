@@ -7,7 +7,7 @@ use Test::MonkeyMock;
 
 BEGIN { test_requires 'Plack::Middleware::Session::Cookie' };
 
-use Turnaround::Middleware::Session::Cookie;
+use Tu::Middleware::Session::Cookie;
 
 subtest 'pass session config' => sub {
     my $services = Test::MonkeyMock->new;
@@ -17,6 +17,6 @@ subtest 'pass session config' => sub {
     is $mw->secret, '123';
 };
 
-sub _build_middleware { Turnaround::Middleware::Session::Cookie->new(@_) }
+sub _build_middleware { Tu::Middleware::Session::Cookie->new(@_) }
 
 done_testing;

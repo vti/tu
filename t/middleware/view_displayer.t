@@ -7,9 +7,9 @@ use Test::MonkeyMock;
 use Test::Fatal;
 
 use Encode ();
-use Turnaround::Displayer;
-use Turnaround::Renderer::Caml;
-use Turnaround::Middleware::ViewDisplayer;
+use Tu::Displayer;
+use Tu::Renderer::Caml;
+use Tu::Middleware::ViewDisplayer;
 
 subtest 'throws when no displayer' => sub {
     my $services = Test::MonkeyMock->new;
@@ -191,8 +191,8 @@ sub _build_env {
 }
 
 sub _build_displayer {
-    Turnaround::Displayer->new(
-        renderer => Turnaround::Renderer::Caml->new(
+    Tu::Displayer->new(
+        renderer => Tu::Renderer::Caml->new(
             templates_path => 't/middleware/view_displayer_t/'
         )
     );
@@ -201,7 +201,7 @@ sub _build_displayer {
 sub _build_middleware {
     my $displayer = _build_displayer();
 
-    return Turnaround::Middleware::ViewDisplayer->new(
+    return Tu::Middleware::ViewDisplayer->new(
         app => sub { [200, [], ['OK']] },
         displayer => $displayer,
         @_

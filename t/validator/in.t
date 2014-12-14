@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More;
 
-use Turnaround::Validator::In;
+use Tu::Validator::In;
 
 subtest 'returns true when in' => sub {
     my $rule = _build_rule();
@@ -18,7 +18,7 @@ subtest 'returns false when not in' => sub {
 };
 
 sub _build_rule {
-    return Turnaround::Validator::In->new(@_);
+    return Tu::Validator::In->new(@_);
 }
 
 done_testing;

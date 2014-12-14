@@ -7,9 +7,9 @@ use Test::More;
 use Test::Fatal;
 use Test::MonkeyMock;
 
-use Turnaround::DispatchedRequest;
-use Turnaround::ActionFactory;
-use Turnaround::Middleware::ActionDispatcher;
+use Tu::DispatchedRequest;
+use Tu::ActionFactory;
+use Tu::Middleware::ActionDispatcher;
 
 subtest 'throws when no action_factory' => sub {
     my $services = Test::MonkeyMock->new;
@@ -73,8 +73,8 @@ subtest 'runs action with text response' => sub {
 sub _build_middleware {
     my (%params) = @_;
 
-    return Turnaround::Middleware::ActionDispatcher->new(
-        action_factory => Turnaround::ActionFactory->new(),
+    return Tu::Middleware::ActionDispatcher->new(
+        action_factory => Tu::ActionFactory->new(),
         app            => sub { [200, [], ['OK']] },
         @_
     );
@@ -85,7 +85,7 @@ sub _build_env {
 
     my $env =
       {'turnaround.dispatched_request' =>
-          Turnaround::DispatchedRequest->new(action => delete $params{action})};
+          Tu::DispatchedRequest->new(action => delete $params{action})};
 
     foreach my $key (keys %params) {
         if ($key =~ m/^turnaround/) {

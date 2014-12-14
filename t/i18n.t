@@ -10,7 +10,7 @@ use Test::Fatal;
 
 BEGIN { test_requires 'I18N::AcceptLanguage' }
 
-use Turnaround::I18N;
+use Tu::I18N;
 
 use I18NTest::MyApp;
 
@@ -96,7 +96,7 @@ subtest 'throws on unknown handle' => sub {
 };
 
 sub _build_i18n {
-    Turnaround::I18N->new(
+    Tu::I18N->new(
         app_class  => 'I18NTest::MyApp',
         locale_dir => 't/i18n_t/I18NTest/MyApp/I18N/',
         @_

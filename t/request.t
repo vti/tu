@@ -5,7 +5,7 @@ use utf8;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::Request;
+use Tu::Request;
 
 subtest 'should_handle_utf_in_query_parameters' => sub {
     my $req = _build_request({QUERY_STRING => '%E2%99%A5=%E2%99%A5'},
@@ -61,7 +61,7 @@ subtest 'should_handle_utf_in_multi_post_parameters' => sub {
 };
 
 sub _build_request {
-    return Turnaround::Request->new(@_);
+    return Tu::Request->new(@_);
 }
 
 done_testing;

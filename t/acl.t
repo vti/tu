@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::ACL;
+use Tu::ACL;
 
 subtest 'denied_by_default' => sub {
     my $acl = _build_acl();
@@ -124,7 +124,7 @@ subtest 'deny_everyone' => sub {
 };
 
 sub _build_acl {
-    return Turnaround::ACL->new(@_);
+    return Tu::ACL->new(@_);
 }
 
 done_testing;

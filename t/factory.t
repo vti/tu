@@ -6,7 +6,7 @@ use lib 't/factory_t';
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::Factory;
+use Tu::Factory;
 
 subtest 'build_an_object' => sub {
     my $factory = _build_factory();
@@ -36,7 +36,7 @@ subtest 'rethrow_during_creation_errors' => sub {
 };
 
 sub _build_factory {
-    return Turnaround::Factory->new(@_);
+    return Tu::Factory->new(@_);
 }
 
 done_testing;

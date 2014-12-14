@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::Validator;
+use Tu::Validator;
 
 subtest 'throws when validated not a hash ref' => sub {
     my $validator = _build_validator();
@@ -381,13 +381,13 @@ subtest 'returns all params preprocessed' => sub {
 };
 
 sub _build_validator {
-    return Turnaround::Validator->new(@_);
+    return Tu::Validator->new(@_);
 }
 
 done_testing;
 
 package Test::Custom;
-use base 'Turnaround::Validator::Regexp';
+use base 'Tu::Validator::Regexp';
 
 sub is_valid {
     my $class = shift;

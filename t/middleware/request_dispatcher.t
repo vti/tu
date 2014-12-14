@@ -6,22 +6,22 @@ use Test::More;
 use Test::Fatal;
 use Test::MonkeyMock;
 
-use Turnaround::Routes;
-use Turnaround::Dispatcher::Routes;
-use Turnaround::Middleware::RequestDispatcher;
+use Tu::Routes;
+use Tu::Dispatcher::Routes;
+use Tu::Middleware::RequestDispatcher;
 
 subtest 'throws 404 when nothing dispatched' => sub {
     my $mw = _build_middleware();
     my $env = {PATH_INFO => '/', REQUEST_METHOD => 'GET'};
 
-    isa_ok(exception { $mw->call($env) }, 'Turnaround::Exception::HTTP');
+    isa_ok(exception { $mw->call($env) }, 'Tu::Exception::HTTP');
 };
 
 subtest 'throws 404 when path info is empty' => sub {
     my $mw = _build_middleware();
     my $env = {PATH_INFO => '', REQUEST_METHOD => 'GET'};
 
-    isa_ok(exception { $mw->call($env) }, 'Turnaround::Exception::HTTP');
+    isa_ok(exception { $mw->call($env) }, 'Tu::Exception::HTTP');
 };
 
 subtest 'dispatches when path found' => sub {
@@ -37,7 +37,7 @@ subtest 'does nothing when method is wrong' => sub {
     my $mw = _build_middleware();
     my $env = {REQUEST_METHOD => 'GET', PATH_INFO => '/only_post'};
 
-    isa_ok(exception { $mw->call($env) }, 'Turnaround::Exception::HTTP');
+    isa_ok(exception { $mw->call($env) }, 'Tu::Exception::HTTP');
 };
 
 subtest 'dispatches when path and method are found' => sub {
@@ -77,7 +77,7 @@ subtest 'dispatches without encoding' => sub {
 
 subtest 'loads dispatcher from service container' => sub {
     my $dispatcher =
-      Turnaround::Dispatcher::Routes->new(routes => _build_routes());
+      Tu::Dispatcher::Routes->new(routes => _build_routes());
     my $services = Test::MonkeyMock->new;
     $services->mock(service => sub { $dispatcher });
 
@@ -103,7 +103,7 @@ subtest 'throws when no dispatcher' => sub {
 };
 
 sub _build_routes {
-    my $routes = Turnaround::Routes->new;
+    my $routes = Tu::Routes->new;
     $routes->add_route('/foo', defaults => {action => 'foo'});
     $routes->add_route(
         '/only_post',
@@ -116,9 +116,9 @@ sub _build_routes {
 
 sub _build_middleware {
     my $routes = _build_routes();
-    return Turnaround::Middleware::RequestDispatcher->new(
+    return Tu::Middleware::RequestDispatcher->new(
         app => sub { [200, [], ['OK']] },
-        dispatcher => Turnaround::Dispatcher::Routes->new(routes => $routes),
+        dispatcher => Tu::Dispatcher::Routes->new(routes => $routes),
         @_
     );
 }

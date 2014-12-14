@@ -4,7 +4,7 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Turnaround::Middleware::MultilingualParser;
+use Tu::Middleware::MultilingualParser;
 
 subtest 'throws when no default_language' => sub {
     like exception { _build_middleware(default_language => undef) },
@@ -83,7 +83,7 @@ sub _build_middleware {
     my @headers =
       $params{headers} ? @{$params{headers}} : ('Content-Type' => 'text/html');
 
-    return Turnaround::Middleware::MultilingualParser->new(
+    return Tu::Middleware::MultilingualParser->new(
         default_language => 'en',
         languages        => [qw/en ru/],
         app              => sub { [200, [@headers], [delete $params{body}]] },
