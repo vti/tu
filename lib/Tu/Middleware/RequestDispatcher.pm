@@ -7,7 +7,7 @@ use base 'Tu::Middleware';
 
 use Carp qw(croak);
 use Encode ();
-use Tu::Exception::HTTP;
+use Tu::X::HTTP;
 
 sub new {
     my $self = shift->SUPER::new(@_);
@@ -46,7 +46,7 @@ sub _dispatch {
     my $dispatcher = $self->{dispatcher};
 
     my $dispatched_request = $dispatcher->dispatch($path, method => lc $method);
-    Tu::Exception::HTTP->throw('Not found', code => 404)
+    Tu::X::HTTP->throw('Not found', code => 404)
       unless $dispatched_request;
 
     $env->{'turnaround.dispatched_request'} = $dispatched_request;

@@ -1,4 +1,4 @@
-package Tu::Exception::Base;
+package Tu::X::Base;
 
 use strict;
 use warnings;

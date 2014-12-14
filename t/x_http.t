@@ -4,20 +4,20 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
-use Tu::Exception::HTTP;
+use Tu::X::HTTP;
 
 subtest 'throws correct isa' => sub {
     isa_ok(
         exception {
-            Tu::Exception::HTTP->throw('error', code => '500');
+            Tu::X::HTTP->throw('error', code => '500');
         },
-        'Tu::Exception::HTTP'
+        'Tu::X::HTTP'
     );
 };
 
 subtest 'returns code' => sub {
     my $e = exception {
-        Tu::Exception::HTTP->throw('foo', code => '400');
+        Tu::X::HTTP->throw('foo', code => '400');
     };
 
     is $e->code, 400;
@@ -25,7 +25,7 @@ subtest 'returns code' => sub {
 
 subtest 'returns default code' => sub {
     my $e = exception {
-        Tu::Exception::HTTP->throw('foo');
+        Tu::X::HTTP->throw('foo');
     };
 
     is $e->code, 500;
@@ -33,7 +33,7 @@ subtest 'returns default code' => sub {
 
 subtest 'supports stringification via as_string' => sub {
     my $e = exception {
-        Tu::Exception::HTTP->throw('foo');
+        Tu::X::HTTP->throw('foo');
     };
 
     like $e->as_string, qr/foo/;

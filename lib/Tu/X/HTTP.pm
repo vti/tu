@@ -1,9 +1,9 @@
-package Tu::Exception::HTTP;
+package Tu::X::HTTP;
 
 use strict;
 use warnings;
 
-use base 'Tu::Exception::Base';
+use base 'Tu::X::Base';
 
 sub new {
     my $self = shift->SUPER::new(@_);

@@ -9,7 +9,7 @@ use JSON         ();
 use Scalar::Util ();
 use Plack::Util  ();
 use Tu::Request;
-use Tu::Exception::HTTP;
+use Tu::X::HTTP;
 
 sub call {
     my $self = shift;

@@ -14,14 +14,14 @@ subtest 'throws 404 when nothing dispatched' => sub {
     my $mw = _build_middleware();
     my $env = {PATH_INFO => '/', REQUEST_METHOD => 'GET'};
 
-    isa_ok(exception { $mw->call($env) }, 'Tu::Exception::HTTP');
+    isa_ok(exception { $mw->call($env) }, 'Tu::X::HTTP');
 };
 
 subtest 'throws 404 when path info is empty' => sub {
     my $mw = _build_middleware();
     my $env = {PATH_INFO => '', REQUEST_METHOD => 'GET'};
 
-    isa_ok(exception { $mw->call($env) }, 'Tu::Exception::HTTP');
+    isa_ok(exception { $mw->call($env) }, 'Tu::X::HTTP');
 };
 
 subtest 'dispatches when path found' => sub {
@@ -37,7 +37,7 @@ subtest 'does nothing when method is wrong' => sub {
     my $mw = _build_middleware();
     my $env = {REQUEST_METHOD => 'GET', PATH_INFO => '/only_post'};
 
-    isa_ok(exception { $mw->call($env) }, 'Tu::Exception::HTTP');
+    isa_ok(exception { $mw->call($env) }, 'Tu::X::HTTP');
 };
 
 subtest 'dispatches when path and method are found' => sub {

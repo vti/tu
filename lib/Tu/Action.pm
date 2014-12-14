@@ -3,7 +3,7 @@ package Tu::Action;
 use strict;
 use warnings;
 
-use Tu::Exception::HTTP;
+use Tu::X::HTTP;
 use Tu::Request;
 
 sub new {
@@ -107,7 +107,7 @@ sub throw_error {
     my $self = shift;
     my ($message, $code) = @_;
 
-    Tu::Exception::HTTP->throw($message, code => $code || 500);
+    Tu::X::HTTP->throw($message, code => $code || 500);
 }
 
 sub redirect {

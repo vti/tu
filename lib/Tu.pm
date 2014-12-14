@@ -7,7 +7,7 @@ our $VERSION = '0.1';
 
 use Tu::Builder;
 use Tu::Home;
-use Tu::Exception::HTTP;
+use Tu::X::HTTP;
 use Tu::Plugins;
 use Tu::ServiceContainer;
 
@@ -81,7 +81,7 @@ sub register_plugin {
 }
 
 sub default_app {
-    sub { Tu::Exception::HTTP->throw('Not Found', code => 404) }
+    sub { Tu::X::HTTP->throw('Not Found', code => 404) }
 }
 
 sub to_app {

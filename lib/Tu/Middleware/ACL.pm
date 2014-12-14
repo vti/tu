@@ -8,7 +8,7 @@ use base 'Tu::Middleware';
 use Carp qw(croak);
 use Scalar::Util qw(blessed);
 
-use Tu::Exception::HTTP;
+use Tu::X::HTTP;
 
 sub new {
     my $self = shift->SUPER::new(@_);
@@ -65,7 +65,7 @@ sub _deny {
         return [302, ['Location' => $redirect_to], ['']];
     }
 
-    Tu::Exception::HTTP->throw('Forbidden', code => 403);
+    Tu::X::HTTP->throw('Forbidden', code => 403);
 }
 
 1;
