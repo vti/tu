@@ -78,7 +78,7 @@ sub insert_before_middleware {
 sub register_plugin {
     my $self = shift;
 
-    return $self->{plugins}->register_plugin(@_);
+    return $self->{plugins}->register(@_);
 }
 
 sub default_app {
@@ -88,17 +88,7 @@ sub default_app {
 sub to_app {
     my $self = shift;
 
-    $self->{psgi_app} ||= do {
-        my $app = $self->{builder}->wrap($self->default_app);
-
-        sub {
-            my $env = shift;
-
-            $self->{plugins}->run_plugins($env);
-
-            $app->($env);
-          }
-    };
+    $self->{psgi_app} ||= do { $self->{builder}->wrap($self->default_app) };
 
     return $self->{psgi_app};
 }

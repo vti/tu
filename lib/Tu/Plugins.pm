@@ -31,7 +31,7 @@ sub new {
     return $self;
 }
 
-sub register_plugin {
+sub register {
     my $self = shift;
     my ($plugin, @args) = @_;
 
@@ -50,14 +50,6 @@ sub register_plugin {
     push @{$self->{plugins}}, $instance;
 
     return $self;
-}
-
-sub run_plugins {
-    my $self = shift;
-
-    foreach my $plugin (@{$self->{plugins}}) {
-        $plugin->run(@_);
-    }
 }
 
 1;

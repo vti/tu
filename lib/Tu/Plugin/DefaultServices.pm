@@ -5,8 +5,6 @@ use warnings;
 
 use base 'Tu::Plugin';
 
-use Tu::Scope;
-use Tu::HelperFactory::Persistent;
 use Tu::Request;
 use Tu::Config;
 use Tu::Routes::FromConfig;
@@ -68,7 +66,13 @@ sub startup {
         subrequest => 1
     );
 
-    $self->builder->add_middleware('HTTPExceptions', services => $services);
+    $self->builder->add_middleware('HTTPExceptions');
+
+    $self->builder->add_middleware(
+        'Defaults',
+        app_class => $self->{app_class},
+        services  => $services
+    );
 
     my $public_dir = $home->catfile('public');
 
@@ -85,26 +89,6 @@ sub startup {
     $self->builder->add_middleware('RequestDispatcher', services => $services);
     $self->builder->add_middleware('ActionDispatcher',  services => $services);
     $self->builder->add_middleware('ViewDisplayer',     services => $services);
-
-    return $self;
-}
-
-sub run {
-    my $self = shift;
-    my ($env) = @_;
-
-    my $scope = Tu::Scope->new($env);
-
-    my $vars = $scope->set('displayer.vars' => {});
-
-    $vars->{mode} = $ENV{PLACK_ENV} || 'production';
-
-    $vars->{helpers} =
-      Tu::HelperFactory::Persistent->new(
-        namespaces => $self->{app_class} . '::Helper::',
-        services   => $self->{services},
-        env        => $env
-      );
 
     return $self;
 }
