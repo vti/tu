@@ -15,6 +15,7 @@ sub new {
     bless $self, $class;
 
     $self->{env} = $params{env};
+    $self->{services} = $params{services};
 
     return $self;
 }
@@ -23,7 +24,7 @@ sub service {
     my $self = shift;
     my ($name) = @_;
 
-    return $self->scope->services->service($name);
+    return $self->{services}->service($name);
 }
 
 sub env {

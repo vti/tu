@@ -206,12 +206,11 @@ sub _build_action {
 
     my $env = {
         'tu.displayer.vars'     => {},
-        'tu.services'           => $services,
         'tu.dispatched_request' => $dispatched_request,
         %{delete $params{env} || {}},
     };
 
-    return Tu::Action->new(env => $env, %params);
+    return Tu::Action->new(env => $env, services => $services, %params);
 }
 
 done_testing;
