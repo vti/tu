@@ -3,71 +3,89 @@ use warnings;
 
 use Test::More;
 use Test::Fatal;
+use Test::MonkeyMock;
 
 use Tu::Displayer;
-use Tu::Renderer::Caml;
 
 subtest 'throws when no renderer' => sub {
     like exception { _build_displayer(renderer => undef) },
       qr/renderer required/;
 };
 
-subtest 'renders template' => sub {
-    my $d = _build_displayer();
+subtest 'correctly renders string' => sub {
+    my $r = _mock_renderer(content_string => 'hi there');
+    my $d = _build_displayer(renderer => $r);
 
-    is($d->render(\'{{hello}}', vars => {hello => 'there'}) => 'there');
+    is $d->render(\'template', vars => {foo => 'bar'}), 'hi there';
+
+    my ($string, $vars) = $r->mocked_call_args('render_string');
+    is $string, 'template';
+    is_deeply $vars, {foo => 'bar'};
 };
 
-subtest 'renders template without vars' => sub {
-    my $d = _build_displayer();
+subtest 'correctly renders file' => sub {
+    my $r = _mock_renderer(content_file => 'hi there');
+    my $d = _build_displayer(renderer => $r);
 
-    is($d->render(\'{{hello}}') => '');
-};
+    is $d->render('template', vars => {foo => 'bar'}), 'hi there';
 
-subtest 'renders file' => sub {
-    my $d = _build_displayer();
-
-    is($d->render('template.caml', vars => {hello => 'there'}) => 'there');
+    my ($file, $vars) = $r->mocked_call_args('render_file');
+    is $file, 'template';
+    is_deeply $vars, {foo => 'bar'};
 };
 
 subtest 'forces global layout' => sub {
-    my $d = _build_displayer(layout => 'layout.caml');
+    my $r = _mock_renderer(content_file => 'hi there');
+    my $d = _build_displayer(renderer => $r, layout => 'custom_layout');
 
-    is($d->render('template.caml', vars => {hello => 'there'}) =>
-          "Before\nthere\nAfter");
+    $d->render('template', vars => {foo => 'bar'});
+
+    my ($file, $vars) = $r->mocked_call_args('render_file');
+
+    is $file, 'template';
+    is_deeply $vars, {foo => 'bar'};
+
+    ($file, $vars) = $r->mocked_call_args('render_file', 1);
+
+    is $file, 'custom_layout';
+    is_deeply $vars, {content => 'hi there', foo => 'bar'};
 };
 
 subtest 'skips global layout when local undef' => sub {
-    my $d = _build_displayer(layout => 'layout.caml');
+    my $r = _mock_renderer(content_file => 'hi there');
+    my $d = _build_displayer(renderer => $r, layout => 'custom_layout');
 
-    is(
-        $d->render(
-            'template.caml',
-            layout => undef,
-            vars   => {hello => 'there'}
-        ) => "there"
-    );
+    $d->render('template', vars => {foo => 'bar'}, layout => undef);
+
+    is $r->mocked_called('render_file'), 1;
 };
 
 subtest 'uses local layout' => sub {
-    my $d = _build_displayer(layout => 'layout.caml');
+    my $r = _mock_renderer(content_file => 'hi there');
+    my $d = _build_displayer(renderer => $r, layout => 'custom_layout');
 
-    is(
-        $d->render(
-            'template.caml',
-            layout => 'layout.caml',
-            vars   => {hello => 'there'}
-        ) => "Before\nthere\nAfter"
-    );
+    $d->render('template', vars => {foo => 'bar'}, layout => 'local_layout');
+
+    my ($file, $vars) = $r->mocked_call_args('render_file', 1);
+
+    is $file, 'local_layout';
+    is_deeply $vars, {content => 'hi there', foo => 'bar'};
 };
 
+sub _mock_renderer {
+    my (%params) = @_;
+
+    my $renderer = Test::MonkeyMock->new;
+    $renderer->mock(render_file => sub { $params{content_file} });
+    $renderer->mock(render_string => sub { $params{content_string} });
+}
+
 sub _build_displayer {
-    Tu::Displayer->new(
-        renderer => Tu::Renderer::Caml->new(
-            templates_path => 't/displayer_t/'
-        ),
-        @_
-    );
+    my (%params) = @_;
+
+    my $renderer = $params{renderer} || _mock_renderer();
+
+    Tu::Displayer->new(renderer => $renderer, @_);
 }
 
 done_testing;

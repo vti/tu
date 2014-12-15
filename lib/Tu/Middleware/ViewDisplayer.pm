@@ -43,14 +43,14 @@ sub _display {
     my $template = $self->_get_template($env);
     return unless defined $template;
 
-    my $scope = Tu::Scope->new($env)->displayer;
+    my $displayer_scope = Tu::Scope->new($env)->displayer;
 
     my %args;
-    $args{vars}   = $scope->vars;
-    $args{layout} = $scope->layout if $scope->exists('layout');
+    $args{vars}   = $displayer_scope->vars;
+    $args{layout} = $displayer_scope->layout
+      if $displayer_scope->exists('layout');
 
-    my $displayer = $self->{displayer};
-    my $body = $displayer->render($template, %args);
+    my $body = $self->{displayer}->render($template, %args);
 
     my $content_type = Plack::MIME->mime_type('.html');
 

@@ -7,8 +7,6 @@ use Test::MonkeyMock;
 use Test::Fatal;
 
 use Encode ();
-use Tu::Displayer;
-use Tu::Renderer::Caml;
 use Tu::Middleware::ViewDisplayer;
 
 subtest 'throws when no displayer' => sub {
@@ -21,7 +19,7 @@ subtest 'throws when no displayer' => sub {
 };
 
 subtest 'gets displayer from services' => sub {
-    my $displayer = _build_displayer();
+    my $displayer = _mock_displayer();
     my $services  = Test::MonkeyMock->new;
     $services->mock(service => sub { $displayer });
 
@@ -29,20 +27,12 @@ subtest 'gets displayer from services' => sub {
       exception { _build_middleware(displayer => undef, services => $services) };
 };
 
-subtest 'throws on unknown template' => sub {
-    my $mw = _build_middleware();
-
-    my $env = _build_env(template => 'unknown');
-
-    like(exception { $mw->call($env) }, qr/can't find/i);
-};
-
 subtest 'renders template' => sub {
-    my $mw = _build_middleware();
+    my $mw = _build_middleware(content => 'there');
 
     my $env = _build_env(
-        template => 'template.caml',
-        vars     => {hello => 'there'}
+        'tu.displayer.template' => 'template.caml',
+        'tu.displayer.vars'     => {hello => 'there'}
     );
 
     my $res = $mw->call($env);
@@ -56,12 +46,9 @@ subtest 'renders template' => sub {
 };
 
 subtest 'render template with utf8' => sub {
-    my $mw = _build_middleware();
+    my $mw = _build_middleware(content => 'привет');
 
-    my $env = _build_env(
-        template => 'template-utf8.caml',
-        vars     => {hello => 'привет'}
-    );
+    my $env = _build_env('tu.displayer.template' => 'template-utf8.caml',);
 
     my $res = $mw->call($env);
 
@@ -77,12 +64,9 @@ subtest 'render template with utf8' => sub {
 };
 
 subtest 'does no encode when encoding undefined' => sub {
-    my $mw = _build_middleware(encoding => undef);
+    my $mw = _build_middleware(encoding => undef, content => 'привет');
 
-    my $env = _build_env(
-        template => 'template-utf8.caml',
-        vars     => {hello => 'привет'}
-    );
+    my $env = _build_env('tu.displayer.template' => 'template-utf8.caml',);
 
     my $res = $mw->call($env);
 
@@ -97,64 +81,51 @@ subtest 'does no encode when encoding undefined' => sub {
       ];
 };
 
-subtest 'render template with layout' => sub {
-    my $mw = _build_middleware();
+subtest 'calls displayer with correct params' => sub {
+    my $displayer = _mock_displayer();
+    my $mw = _build_middleware(displayer => $displayer);
 
     my $env = _build_env(
-        template => 'template.caml',
-        vars     => {hello => 'there'},
-        layout   => 'layout.caml'
+        'tu.displayer.template' => 'custom_template',
+        'tu.displayer.layout'   => 'custom_layout',
+        'tu.displayer.vars'     => {foo => 'bar'}
     );
 
-    my $res = $mw->call($env);
+    $mw->call($env);
 
-    is_deeply $res,
-      [
-        200,
-        [
-            'Content-Length' => 18,
-            'Content-Type'   => 'text/html; charset=utf-8'
-        ],
-        ["Before\nthere\nAfter"]
-      ];
+    my ($template, %args) = $displayer->mocked_call_args('render');
+
+    is $template, 'custom_template';
+    is_deeply \%args,
+      {
+        layout => 'custom_layout',
+        vars   => {foo => 'bar'}
+      };
 };
 
 subtest 'gets template name from dispatched request' => sub {
     my $dr = Test::MonkeyMock->new;
-    $dr->mock(action => sub {'template'});
+    $dr->mock(action => sub { 'from_action' });
 
-    my $mw = _build_middleware();
+    my $displayer = _mock_displayer();
+    my $mw = _build_middleware(displayer => $displayer);
 
-    my $env = _build_env(
-        'tu.dispatched_request' => $dr,
-        vars     => {hello => 'there'},
-        layout   => 'layout.caml'
-    );
+    my $env = _build_env('tu.dispatched_request' => $dr,);
 
-    my $res = $mw->call($env);
+    $mw->call($env);
 
-    is_deeply $res,
-      [
-        200,
-        [
-            'Content-Length' => 18,
-            'Content-Type'   => 'text/html; charset=utf-8'
-        ],
-        ["Before\nthere\nAfter"]
-      ];
+    my ($template) = $displayer->mocked_call_args('render');
+
+    is $template, 'from_action';
 };
 
 subtest 'does nothing when dispatched_request has no action' => sub {
     my $dr = Test::MonkeyMock->new;
-    $dr->mock(action => sub {''});
+    $dr->mock(action => sub { '' });
 
     my $mw = _build_middleware();
 
-    my $env = _build_env(
-        'tu.dispatched_request' => $dr,
-        vars     => {hello => 'there'},
-        layout   => 'layout.caml'
-    );
+    my $env = _build_env('tu.dispatched_request' => $dr,);
 
     my $res = $mw->call($env);
 
@@ -164,31 +135,20 @@ subtest 'does nothing when dispatched_request has no action' => sub {
 sub _build_env {
     my (%params) = @_;
 
-    my $env = {
-        'tu.displayer.vars' => {}
-    };
-
-    foreach my $param (keys %params) {
-        if ($param =~ m/^tu/) {
-            $env->{$param} = $params{$param};
-        } else {
-            $env->{"tu.displayer.$param"} = $params{$param};
-        }
-    }
-
-    return $env;
+    return {'tu.displayer.vars' => {}, %params};
 }
 
-sub _build_displayer {
-    Tu::Displayer->new(
-        renderer => Tu::Renderer::Caml->new(
-            templates_path => 't/middleware/view_displayer_t/'
-        )
-    );
+sub _mock_displayer {
+    my (%params) = @_;
+
+    my $displayer = Test::MonkeyMock->new;
+    $displayer->mock(render => sub { $params{content} });
 }
 
 sub _build_middleware {
-    my $displayer = _build_displayer();
+    my (%params) = @_;
+
+    my $displayer = $params{displayer} || _mock_displayer(%params);
 
     return Tu::Middleware::ViewDisplayer->new(
         app => sub { [200, [], ['OK']] },
