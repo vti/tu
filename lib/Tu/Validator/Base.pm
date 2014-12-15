@@ -10,31 +10,19 @@ sub new {
     my $self = {};
     bless $self, $class;
 
-    $self->{message} = $params{message};
     $self->{fields}  = $params{fields};
     $self->{args}    = $params{args};
 
     return $self;
 }
 
-sub set_message {
-    my $self = shift;
-    my ($value) = @_;
-
-    $self->{message} = $value;
-
-    return $self;
-}
-
-sub get_message {
+sub name {
     my $self = shift;
 
-    return $self->{message} if $self->{message};
+    my $name = ref $self;
+    $name =~ s/^.*?::Validator:://;
 
-    my $message = ref $self;
-    $message =~ s/^.*?::Validator:://;
-
-    return uc $message;
+    return uc $name;
 }
 
 sub validate {

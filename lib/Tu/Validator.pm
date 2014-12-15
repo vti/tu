@@ -135,7 +135,7 @@ sub _validate_rules {
 
         next if $rule->validate($params);
 
-        $result->{errors}->{$rule_name} = $rule->get_message;
+        $result->{errors}->{$rule_name} = $rule->name;
     }
 }
 
