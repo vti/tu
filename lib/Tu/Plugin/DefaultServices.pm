@@ -95,7 +95,7 @@ sub run {
 
     my $scope = Tu::Scope->new($env);
 
-    my $vars = $scope->register('displayer.vars' => {});
+    my $vars = $scope->set('displayer.vars' => {});
 
     $vars->{mode} = $ENV{PLACK_ENV} || 'production';
 

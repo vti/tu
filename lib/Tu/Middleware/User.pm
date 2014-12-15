@@ -56,7 +56,7 @@ sub _user {
 
     $user ||= Tu::Anonymous->new;
 
-    $scope->register(user => $user);
+    $scope->set(user => $user);
 }
 
 package Tu::Anonymous;

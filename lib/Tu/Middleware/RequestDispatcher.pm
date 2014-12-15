@@ -50,7 +50,7 @@ sub _dispatch {
     Tu::X::HTTP->throw('Not found', code => 404)
       unless $dispatched_request;
 
-    Tu::Scope->new($env)->register(dispatched_request => $dispatched_request);
+    Tu::Scope->new($env)->set(dispatched_request => $dispatched_request);
 
     return $self;
 }

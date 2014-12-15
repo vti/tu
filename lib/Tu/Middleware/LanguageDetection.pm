@@ -46,8 +46,8 @@ sub _detect_language {
     $lang ||= $self->{default_language};
 
     my $scope = Tu::Scope->new($env);
-    $scope->register('i18n.language'      => $lang);
-    $scope->register('i18n.language_name' => I18N::LangTags::List::name($lang));
+    $scope->set('i18n.language'      => $lang);
+    $scope->set('i18n.language_name' => I18N::LangTags::List::name($lang));
 
     if ($self->{use_session}) {
         $env->{'psgix.session'}->{'tu.i18n.language'} = $lang;

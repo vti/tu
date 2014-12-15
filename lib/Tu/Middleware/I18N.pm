@@ -35,7 +35,7 @@ sub _detect_language {
     my $language = $scope->i18n->language;
 
     my $maketext_cb = $self->{i18n}->handle($language);
-    $scope->register('i18n.maketext' => $maketext_cb);
+    $scope->set('i18n.maketext' => $maketext_cb);
 
     $scope->displayer->vars->{loc} =
       sub { $env->{'tu.i18n.maketext'}->loc(@_) };

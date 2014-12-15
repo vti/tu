@@ -13,7 +13,7 @@ subtest 'throws when no env' => sub {
 subtest 'returns true if key exists' => sub {
     my $scope = _build_scope();
 
-    $scope->register('dispatched_request' => 'bar');
+    $scope->set('dispatched_request' => 'bar');
 
     ok $scope->exists('dispatched_request');
 };
@@ -24,26 +24,26 @@ subtest 'returns false when key does not exist' => sub {
     ok !$scope->exists('dispatched_request');
 };
 
-subtest 'registers value' => sub {
+subtest 'sets value' => sub {
     my $scope = _build_scope();
 
-    $scope->register('dispatched_request' => 'bar');
+    $scope->set('dispatched_request' => 'bar');
 
     is $scope->dispatched_request, 'bar';
 };
 
-subtest 'returns registered value' => sub {
+subtest 'returns set value' => sub {
     my $scope = _build_scope();
 
-    is $scope->register('dispatched_request' => 'bar'), 'bar';
+    is $scope->set('dispatched_request' => 'bar'), 'bar';
 };
 
-subtest 'registers multi values' => sub {
+subtest 'sets multi values' => sub {
     my $scope = _build_scope();
 
-    $scope->register('displayer.vars' => {foo => 'bar'});
-    $scope->register('displayer.layout'   => 'layout.tpl');
-    $scope->register('displayer.template' => 'template');
+    $scope->set('displayer.vars' => {foo => 'bar'});
+    $scope->set('displayer.layout'   => 'layout.tpl');
+    $scope->set('displayer.template' => 'template');
 
     is_deeply $scope->displayer->vars, {foo => 'bar'};
     is $scope->displayer->layout, 'layout.tpl';
@@ -54,15 +54,6 @@ subtest 'works with existing env' => sub {
     my $scope = _build_scope(env => {'tu.displayer.vars' => {foo => 'bar'}});
 
     is_deeply $scope->displayer->vars, {foo => 'bar'};
-};
-
-subtest 'throw when registering registered key' => sub {
-    my $scope = _build_scope();
-
-    $scope->register('displayer.vars');
-
-    like exception { $scope->register('displayer.vars') },
-      qr/key 'displayer\.vars' already registered/;
 };
 
 subtest 'throw on unknown key' => sub {

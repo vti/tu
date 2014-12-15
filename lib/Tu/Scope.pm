@@ -17,12 +17,9 @@ sub new {
     return $self;
 }
 
-sub register {
+sub set {
     my $self = shift;
     my ($key, $value) = @_;
-
-    croak "key '$key' already registered"
-      if $self->_key_exists($key);
 
     return $self->{env}->{"tu.$key"} = $value;
 }
