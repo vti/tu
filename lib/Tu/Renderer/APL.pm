@@ -3,7 +3,7 @@ package Tu::Renderer::APL;
 use strict;
 use warnings;
 
-use base 'Tu::Renderer';
+use parent 'Tu::Renderer';
 
 use Text::APL;
 use File::Spec;

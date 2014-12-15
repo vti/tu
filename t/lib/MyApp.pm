@@ -3,7 +3,7 @@ package MyApp;
 use strict;
 use warnings;
 
-use base 'Tu';
+use parent 'Tu';
 
 use Tu::Home;
 use Tu::Routes;

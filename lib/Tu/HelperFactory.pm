@@ -3,7 +3,7 @@ package Tu::HelperFactory;
 use strict;
 use warnings;
 
-use base 'Tu::Factory';
+use parent 'Tu::Factory';
 
 require Carp;
 use Scalar::Util ();

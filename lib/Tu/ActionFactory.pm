@@ -3,7 +3,7 @@ package Tu::ActionFactory;
 use strict;
 use warnings;
 
-use base 'Tu::Factory';
+use parent 'Tu::Factory';
 
 sub new {
     my $self = shift->SUPER::new(@_);

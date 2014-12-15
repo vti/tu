@@ -3,7 +3,7 @@ package Tu::DispatchedRequest::Routes;
 use strict;
 use warnings;
 
-use base 'Tu::DispatchedRequest';
+use parent 'Tu::DispatchedRequest';
 
 sub new {
     my $self = shift->SUPER::new(@_);

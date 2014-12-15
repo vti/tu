@@ -3,7 +3,7 @@ package Tu::HelperFactory::Persistent;
 use strict;
 use warnings;
 
-use base 'Tu::HelperFactory';
+use parent 'Tu::HelperFactory';
 
 sub new {
     my $self = shift->SUPER::new(@_);

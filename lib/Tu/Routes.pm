@@ -3,6 +3,6 @@ package Tu::Routes;
 use strict;
 use warnings;
 
-use base 'Routes::Tiny';
+use parent 'Routes::Tiny';
 
 1;

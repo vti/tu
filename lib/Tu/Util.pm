@@ -3,7 +3,7 @@ package Tu::Util;
 use strict;
 use warnings;
 
-use base 'Exporter';
+use parent 'Exporter';
 
 our @EXPORT = qw(slurp);
 

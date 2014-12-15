@@ -3,7 +3,7 @@ package Tu::Middleware::Defaults;
 use strict;
 use warnings;
 
-use base 'Tu::Middleware';
+use parent 'Tu::Middleware';
 
 use Tu::Scope;
 use Tu::HelperFactory::Persistent;

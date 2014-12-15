@@ -3,7 +3,7 @@ package Tu::Validator::In;
 use strict;
 use warnings;
 
-use base 'Tu::Validator::Base';
+use parent 'Tu::Validator::Base';
 
 use List::Util qw(first);
 

@@ -3,7 +3,7 @@ package NoResponse;
 use strict;
 use warnings;
 
-use base 'Tu::Action';
+use parent 'Tu::Action';
 
 sub run {
     my $self = shift;

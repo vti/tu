@@ -3,7 +3,7 @@ package Tu::Plugin::ObjectDB;
 use strict;
 use warnings;
 
-use base 'Tu::Plugin';
+use parent 'Tu::Plugin';
 
 use Tu::Loader;
 

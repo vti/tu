@@ -3,7 +3,7 @@ package Tu::Middleware::User;
 use strict;
 use warnings;
 
-use base 'Tu::Middleware';
+use parent 'Tu::Middleware';
 
 use Carp qw(croak);
 use Scalar::Util qw(blessed);

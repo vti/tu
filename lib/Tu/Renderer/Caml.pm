@@ -3,7 +3,7 @@ package Tu::Renderer::Caml;
 use strict;
 use warnings;
 
-use base 'Tu::Renderer';
+use parent 'Tu::Renderer';
 
 use Text::Caml;
 

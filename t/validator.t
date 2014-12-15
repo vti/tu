@@ -387,7 +387,7 @@ sub _build_validator {
 done_testing;
 
 package Test::Custom;
-use base 'Tu::Validator::Regexp';
+use parent 'Tu::Validator::Regexp';
 
 sub is_valid {
     my $class = shift;

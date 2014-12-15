@@ -88,7 +88,7 @@ sub new {
 }
 
 package TestRenderer;
-use base 'Tu::Renderer';
+use parent 'Tu::Renderer';
 
 sub _build_engine {
     shift;

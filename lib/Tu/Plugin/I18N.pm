@@ -6,7 +6,7 @@ use warnings;
 use Carp qw(croak);
 use Tu::I18N;
 
-use base 'Tu::Plugin';
+use parent 'Tu::Plugin';
 
 sub new {
     my $self = shift->SUPER::new(@_);

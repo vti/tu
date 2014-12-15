@@ -3,7 +3,7 @@ package Tu::Middleware::Session::Cookie;
 use strict;
 use warnings;
 
-use base 'Plack::Middleware::Session::Cookie';
+use parent 'Plack::Middleware::Session::Cookie';
 
 sub new {
     my $class = shift;

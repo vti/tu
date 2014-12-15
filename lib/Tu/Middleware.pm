@@ -3,7 +3,7 @@ package Tu::Middleware;
 use strict;
 use warnings;
 
-use base 'Plack::Middleware';
+use parent 'Plack::Middleware';
 
 sub new {
     my $self = shift->SUPER::new(@_);

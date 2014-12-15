@@ -3,7 +3,7 @@ package Tu::Dispatcher::Routes;
 use strict;
 use warnings;
 
-use base 'Tu::Dispatcher';
+use parent 'Tu::Dispatcher';
 
 use Carp qw(croak);
 use Tu::DispatchedRequest::Routes;

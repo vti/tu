@@ -3,7 +3,7 @@ package Tu::Middleware::SerializerJSON;
 use strict;
 use warnings;
 
-use base 'Tu::Middleware';
+use parent 'Tu::Middleware';
 
 use JSON         ();
 use Scalar::Util ();

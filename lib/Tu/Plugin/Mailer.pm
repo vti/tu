@@ -3,7 +3,7 @@ package Tu::Plugin::Mailer;
 use strict;
 use warnings;
 
-use base 'Tu::Plugin';
+use parent 'Tu::Plugin';
 
 use Carp qw(croak);
 use Tu::Mailer;

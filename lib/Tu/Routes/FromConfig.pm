@@ -3,7 +3,7 @@ package Tu::Routes::FromConfig;
 use strict;
 use warnings;
 
-use base 'Tu::FromConfig';
+use parent 'Tu::FromConfig';
 
 use Tu::Routes;
 

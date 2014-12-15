@@ -104,7 +104,7 @@ sub _init_lexicon_gettext {
 
     eval <<"EOC" || croak $@;
         package $self->{app_class}::I18N;
-        use base 'Locale::Maketext';
+        use parent 'Locale::Maketext';
         use Locale::Maketext::Lexicon {
             '*'      => [Gettext => "$self->{locale_dir}/*.po"],
             _auto    => 1,

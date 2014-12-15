@@ -3,7 +3,7 @@ package Tu::Helper::Assets;
 use strict;
 use warnings;
 
-use base 'Tu::Helper';
+use parent 'Tu::Helper';
 
 use Tu::AssetsContainer;
 

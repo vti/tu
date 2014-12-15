@@ -3,7 +3,7 @@ package Tu::X::HTTP;
 use strict;
 use warnings;
 
-use base 'Tu::X::Base';
+use parent 'Tu::X::Base';
 
 sub new {
     my $self = shift->SUPER::new(@_);

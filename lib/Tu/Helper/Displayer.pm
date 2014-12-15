@@ -3,7 +3,7 @@ package Tu::Helper::Displayer;
 use strict;
 use warnings;
 
-use base 'Tu::Helper';
+use parent 'Tu::Helper';
 
 sub render {
     my $self = shift;

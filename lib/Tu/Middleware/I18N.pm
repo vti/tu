@@ -3,7 +3,7 @@ package Tu::Middleware::I18N;
 use strict;
 use warnings;
 
-use base 'Tu::Middleware::LanguageDetection';
+use parent 'Tu::Middleware::LanguageDetection';
 
 use Carp qw(croak);
 use Tu::Scope;

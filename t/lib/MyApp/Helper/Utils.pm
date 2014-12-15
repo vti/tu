@@ -3,7 +3,7 @@ package MyApp::Helper::Utils;
 use strict;
 use warnings;
 
-use base 'Tu::Helper';
+use parent 'Tu::Helper';
 
 sub path_info {
     my $self = shift;

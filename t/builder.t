@@ -85,7 +85,7 @@ package TestMiddleware;
 use strict;
 use warnings;
 
-use base 'Tu::Middleware';
+use parent 'Tu::Middleware';
 
 sub call {
     my $self = shift;

@@ -3,7 +3,7 @@ package Tu::Response;
 use strict;
 use warnings;
 
-use base 'Plack::Response';
+use parent 'Plack::Response';
 
 use Encode      ();
 use Plack::Util ();
