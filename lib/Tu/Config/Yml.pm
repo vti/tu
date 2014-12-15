@@ -3,7 +3,6 @@ package Tu::Config::Yml;
 use strict;
 use warnings;
 
-use Carp qw(croak);
 use YAML::Tiny;
 
 sub new {
@@ -19,7 +18,8 @@ sub parse {
     my $self = shift;
     my ($config) = @_;
 
-    $config = YAML::Tiny->read_string($config) or croak $YAML::Tiny::errstr;
+    $config = YAML::Tiny->read_string($config);
+
     return $config->[0] || {};
 }
 
