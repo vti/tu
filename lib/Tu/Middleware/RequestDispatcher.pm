@@ -7,6 +7,7 @@ use base 'Tu::Middleware';
 
 use Carp qw(croak);
 use Encode ();
+use Tu::Scope;
 use Tu::X::HTTP;
 
 sub new {
@@ -49,7 +50,7 @@ sub _dispatch {
     Tu::X::HTTP->throw('Not found', code => 404)
       unless $dispatched_request;
 
-    $env->{'tu.dispatched_request'} = $dispatched_request;
+    Tu::Scope->new($env)->register(dispatched_request => $dispatched_request);
 
     return $self;
 }

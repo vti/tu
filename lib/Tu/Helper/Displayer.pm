@@ -9,9 +9,7 @@ sub render {
     my $self = shift;
     my ($template, @vars) = @_;
 
-    my $env = $self->{env};
-
-    my $vars = {%{$env->{'tu.displayer.vars'} || {}}, @vars};
+    my $vars = {%{$self->scope->displayer->vars}, @vars};
 
     return $self->service('displayer')
       ->render($template, layout => undef, vars => $vars);

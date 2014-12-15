@@ -36,14 +36,6 @@ subtest 'does nothing when unknown action' => sub {
     is_deeply($res, [200, [], ['OK']]);
 };
 
-subtest 'does nothing when no dispatched request' => sub {
-    my $mw = _build_middleware();
-
-    my $res = $mw->call(_build_env('tu.dispatched_request' => undef));
-
-    is_deeply($res, [200, [], ['OK']]);
-};
-
 subtest 'skips when no response' => sub {
     my $mw = _build_middleware();
 

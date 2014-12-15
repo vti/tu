@@ -7,6 +7,7 @@ use base 'Tu::Middleware';
 
 use Carp qw(croak);
 use Scalar::Util qw(blessed);
+use Tu::Scope;
 
 sub new {
     my $self = shift->SUPER::new(@_);
@@ -38,6 +39,7 @@ sub _user {
     my $self = shift;
     my ($env) = @_;
 
+    my $scope = Tu::Scope->new($env);
     my $session = $env->{'psgix.session'};
 
     my $user;
@@ -49,12 +51,12 @@ sub _user {
           ? $loader->load_from_session($session)
           : $loader->($session);
 
-        $env->{'tu.displayer.vars'}->{user} = $user->to_hash if $user;
+          $scope->displayer->vars->{user} = $user->to_hash if $user;
     }
 
     $user ||= Tu::Anonymous->new;
 
-    $env->{'tu.user'} = $user;
+    $scope->register(user => $user);
 }
 
 package Tu::Anonymous;

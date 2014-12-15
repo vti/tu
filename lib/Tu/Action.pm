@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Tu::X::HTTP;
+use Tu::Scope;
 use Tu::Request;
 
 sub new {
@@ -22,7 +23,7 @@ sub service {
     my $self = shift;
     my ($name) = @_;
 
-    return $self->{env}->{'tu.services'}->service($name);
+    return $self->scope->services->service($name);
 }
 
 sub env {
@@ -30,6 +31,8 @@ sub env {
 
     return $self->{env};
 }
+
+sub scope { Tu::Scope->new($_[0]->{env}) }
 
 sub req {
     my $self = shift;
@@ -61,7 +64,7 @@ sub url_for {
         $url = $_[0];
     }
     else {
-        my $dispatched_request = $self->env->{'tu.dispatched_request'};
+        my $dispatched_request = $self->scope->dispatched_request;
 
         my $path = $dispatched_request->build_path(@_);
 
@@ -74,16 +77,17 @@ sub url_for {
     return $url;
 }
 
-sub captures { $_[0]->env->{'tu.dispatched_request'}->captures }
+sub captures { $_[0]->scope->dispatched_request->captures }
 
 sub set_var {
     my $self = shift;
 
+    my $vars_scope = $self->scope->displayer->vars;
     for (my $i = 0; $i < @_; $i += 2) {
         my $key   = $_[$i];
         my $value = $_[$i + 1];
 
-        $self->env->{'tu.displayer.vars'}->{$key} = $value;
+        $vars_scope->{$key} = $value;
     }
 
     return $self;
@@ -131,15 +135,14 @@ sub render {
     my $self = shift;
     my ($template, %args) = @_;
 
-    $args{vars} = {
-        %{$self->{env}->{'tu.displayer.vars'} || {}},
-        %{$args{vars} || {}}
-    };
+    my $displayer_scope = $self->scope->displayer;
 
-    if (exists $self->{env}->{'tu.displayer.layout'}
+    $args{vars} = {%{$displayer_scope->vars}, %{$args{vars} || {}}};
+
+    if ($displayer_scope->exists('layout')
         && !exists $args{layout})
     {
-        $args{layout} = $self->{env}->{'tu.displayer.layout'};
+        $args{layout} = $displayer_scope->layout;
     }
 
     return $self->service('displayer')->render($template, %args);

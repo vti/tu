@@ -93,8 +93,6 @@ sub to_app {
         sub {
             my $env = shift;
 
-            $env->{'tu.services'} = $self->{services};
-
             $self->{plugins}->run_plugins($env);
 
             $app->($env);

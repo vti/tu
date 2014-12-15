@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Scalar::Util qw(weaken);
+use Tu::Scope;
 
 sub new {
     my $class = shift;
@@ -20,6 +21,12 @@ sub new {
     return $self;
 }
 
+sub scope {
+    my $self = shift;
+
+    return Tu::Scope->new($self->{env});
+}
+
 sub service {
     my $self = shift;
     my ($name) = @_;
@@ -31,7 +38,7 @@ sub params {
     my $self = shift;
     my ($key) = @_;
 
-    return $self->{env}->{'tu.displayer.vars'}->{params} || {};
+    return $self->scope->displayer->vars->{params} || {};
 }
 
 sub param {
@@ -47,7 +54,7 @@ sub param_multi {
     my $self = shift;
     my ($key) = @_;
 
-    my $params = $self->{env}->{'tu.displayer.vars'}->{params} || {};
+    my $params = $self->params;
     return [] unless exists $params->{$key};
     return $params->{$key} if ref $params->{$key} eq 'ARRAY';
     return [$params->{$key}];

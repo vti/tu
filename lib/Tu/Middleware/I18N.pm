@@ -6,6 +6,7 @@ use warnings;
 use base 'Tu::Middleware::LanguageDetection';
 
 use Carp qw(croak);
+use Tu::Scope;
 
 sub new {
     my $class = shift;
@@ -29,14 +30,17 @@ sub _detect_language {
 
     $self->SUPER::_detect_language($env);
 
-    my $language = $env->{'tu.i18n.language'};
-    $env->{'tu.i18n.maketext'} = $self->{i18n}->handle($language);
+    my $scope = Tu::Scope->new($env);
 
-    $env->{'tu.displayer.vars'}->{'loc'} =
+    my $language = $scope->i18n->language;
+
+    my $maketext_cb = $self->{i18n}->handle($language);
+    $scope->register('i18n.maketext' => $maketext_cb);
+
+    $scope->displayer->vars->{loc} =
       sub { $env->{'tu.i18n.maketext'}->loc(@_) };
 
-    $env->{'tu.displayer.vars'}->{'lang'} =
-      $env->{'tu.i18n.language'};
+    $scope->displayer->vars->{lang} = $language;
 }
 
 1;

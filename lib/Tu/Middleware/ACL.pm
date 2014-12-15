@@ -8,6 +8,7 @@ use base 'Tu::Middleware';
 use Carp qw(croak);
 use Scalar::Util qw(blessed);
 
+use Tu::Scope;
 use Tu::X::HTTP;
 
 sub new {
@@ -34,7 +35,7 @@ sub _acl {
     my $self = shift;
     my ($env) = @_;
 
-    return $self->_deny($env) unless my $user = $env->{'tu.user'};
+    return $self->_deny($env) unless my $user = Tu::Scope->new($env)->user;
 
     my $action = $self->_get_action($env);
 
@@ -49,9 +50,7 @@ sub _get_action {
     my $self = shift;
     my ($env) = @_;
 
-    my $dispatched_request = $env->{'tu.dispatched_request'};
-
-    croak 'No DispatchedRequest found' unless $dispatched_request;
+    my $dispatched_request = Tu::Scope->new($env)->dispatched_request;
 
     return $dispatched_request->action;
 }

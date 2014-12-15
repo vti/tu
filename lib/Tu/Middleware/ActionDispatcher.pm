@@ -6,6 +6,7 @@ use warnings;
 use base 'Tu::Middleware';
 
 use Carp qw(croak);
+use Tu::Scope;
 use Tu::ActionResponseResolver;
 
 sub new {
@@ -37,8 +38,7 @@ sub _action {
     my $self = shift;
     my ($env) = @_;
 
-    my $dispatched_request = $env->{'tu.dispatched_request'};
-    return unless $dispatched_request;
+    my $dispatched_request = Tu::Scope->new($env)->dispatched_request;
 
     my $action = $dispatched_request->action;
     return unless defined $action;

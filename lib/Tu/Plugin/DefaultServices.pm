@@ -5,6 +5,7 @@ use warnings;
 
 use base 'Tu::Plugin';
 
+use Tu::Scope;
 use Tu::HelperFactory::Persistent;
 use Tu::Request;
 use Tu::Config;
@@ -92,10 +93,13 @@ sub run {
     my $self = shift;
     my ($env) = @_;
 
-    $env->{'tu.displayer.vars'}->{'mode'} =
-      $ENV{PLACK_ENV} || 'production';
+    my $scope = Tu::Scope->new($env);
 
-    $env->{'tu.displayer.vars'}->{'helpers'} =
+    my $vars = $scope->register('displayer.vars' => {});
+
+    $vars->{mode} = $ENV{PLACK_ENV} || 'production';
+
+    $vars->{helpers} =
       Tu::HelperFactory::Persistent->new(
         namespaces => $self->{app_class} . '::Helper::',
         services   => $self->{services},

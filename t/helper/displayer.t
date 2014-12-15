@@ -37,6 +37,7 @@ sub _mock_displayer {
     return $displayer;
 }
 
+my $env;
 sub _build_helper {
     my (%params) = @_;
     my $displayer = $params{displayer} || _mock_displayer();
@@ -44,8 +45,9 @@ sub _build_helper {
     my $services = Test::MonkeyMock->new;
     $services->mock(service => sub { $displayer });
 
+    $env = $params{env} || {'tu.displayer.vars' => {}};
     Tu::Helper::Displayer->new(
-        env => $params{env} || {},
+        env => $env,
         services => $services
     );
 }

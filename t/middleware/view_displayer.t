@@ -161,23 +161,12 @@ subtest 'does nothing when dispatched_request has no action' => sub {
     is_deeply $res, [200, [], ['OK']];
 };
 
-subtest 'does nothing when no dispatched_request' => sub {
-    my $mw = _build_middleware();
-
-    my $env = _build_env(
-        vars     => {hello => 'there'},
-        layout   => 'layout.caml'
-    );
-
-    my $res = $mw->call($env);
-
-    is_deeply $res, [200, [], ['OK']];
-};
-
 sub _build_env {
     my (%params) = @_;
 
-    my $env = {};
+    my $env = {
+        'tu.displayer.vars' => {}
+    };
 
     foreach my $param (keys %params) {
         if ($param =~ m/^tu/) {

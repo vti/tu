@@ -9,6 +9,7 @@ use Carp qw(croak);
 use Encode ();
 use Plack::MIME;
 use String::CamelCase ();
+use Tu::Scope;
 
 sub new {
     my $self = shift->SUPER::new(@_);
@@ -42,10 +43,11 @@ sub _display {
     my $template = $self->_get_template($env);
     return unless defined $template;
 
+    my $scope = Tu::Scope->new($env)->displayer;
+
     my %args;
-    $args{vars}   = $env->{'tu.displayer.vars'};
-    $args{layout} = $env->{'tu.displayer.layout'}
-      if exists $env->{'tu.displayer.layout'};
+    $args{vars}   = $scope->vars;
+    $args{layout} = $scope->layout if $scope->exists('layout');
 
     my $displayer = $self->{displayer};
     my $body = $displayer->render($template, %args);
@@ -71,11 +73,13 @@ sub _get_template {
     my $self = shift;
     my ($env) = @_;
 
-    my $template = $env->{'tu.displayer.template'};
+    my $scope = Tu::Scope->new($env);
+
+    my $template =
+      $scope->displayer->exists('template') ? $scope->displayer->template : '';
     return $template if $template;
 
-    my $dispatched_request = $env->{'tu.dispatched_request'};
-    return unless $dispatched_request;
+    my $dispatched_request = $scope->dispatched_request;
 
     if (my $action = $dispatched_request->action) {
         my $template_from_action = String::CamelCase::decamelize($action);

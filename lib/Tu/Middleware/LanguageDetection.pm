@@ -9,14 +9,13 @@ use Carp qw(croak);
 use List::Util qw(first);
 use I18N::AcceptLanguage;
 use I18N::LangTags::List ();
+use Tu::Scope;
 
 sub new {
     my $self = shift->SUPER::new(@_);
 
     croak 'default_language required' unless $self->{default_language};
     croak 'languages required'        unless $self->{languages};
-
-    $self->{name_prefix} = 'tu.i18n.';
 
     $self->{use_path}    = 1 unless defined $self->{use_path};
     $self->{use_session} = 1 unless defined $self->{use_session};
@@ -46,12 +45,12 @@ sub _detect_language {
 
     $lang ||= $self->{default_language};
 
-    $env->{$self->{name_prefix} . 'language'} = $lang;
-    $env->{$self->{name_prefix} . 'language_name'} =
-      I18N::LangTags::List::name($lang);
+    my $scope = Tu::Scope->new($env);
+    $scope->register('i18n.language'      => $lang);
+    $scope->register('i18n.language_name' => I18N::LangTags::List::name($lang));
 
     if ($self->{use_session}) {
-        $env->{'psgix.session'}->{$self->{name_prefix} . 'language'} = $lang;
+        $env->{'psgix.session'}->{'tu.i18n.language'} = $lang;
     }
 }
 
@@ -61,7 +60,7 @@ sub _detect_from_session {
 
     return unless my $session = $env->{'psgix.session'};
 
-    return unless my $lang = $session->{$self->{name_prefix} . 'language'};
+    return unless my $lang = $session->{'tu.i18n.language'};
 
     return unless $self->_is_allowed($lang);
 

@@ -7,7 +7,7 @@ use Test::MonkeyMock;
 use Tu::Helper;
 
 subtest 'returns empty hash ref' => sub {
-    my $env = {};
+    my $env = {'tu.displayer.vars' => {}};
     my $helper = _build_helper(env => $env);
 
     is_deeply $helper->params, {};
@@ -49,7 +49,7 @@ subtest 'returns all params when array ref' => sub {
 };
 
 subtest 'returns empty arrray ref on multi' => sub {
-    my $env = {};
+    my $env = {'tu.displayer.vars' => {}};
     my $helper = _build_helper(env => $env);
 
     is_deeply $helper->param_multi('unknown'), [];

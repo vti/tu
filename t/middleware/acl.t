@@ -12,13 +12,6 @@ subtest 'throw when no acl' => sub {
     like exception { _build_middleware(acl => undef) }, qr/acl required/;
 };
 
-subtest 'throw when no dispatched request' => sub {
-    my $mw = _build_middleware();
-
-    my $env = {'tu.user' => {role => 'anon'}};
-    like exception { $mw->call($env) }, qr/No DispatchedRequest found/;
-};
-
 subtest 'allow_when_role_is_correct' => sub {
     my $mw = _build_middleware();
 
@@ -58,7 +51,7 @@ subtest 'deny_when_no_user' => sub {
 subtest 'redirect_instead_of_throw' => sub {
     my $mw = _build_middleware(redirect_to => '/login');
 
-    my $res = $mw->call({PATH_INFO => '/'});
+    my $res = $mw->call({PATH_INFO => '/', 'tu.user' => undef});
 
     is_deeply($res, [302, ['Location' => '/login'], ['']]);
 };
@@ -66,7 +59,7 @@ subtest 'redirect_instead_of_throw' => sub {
 subtest 'prevent_redirect_recursion' => sub {
     my $mw = _build_middleware(redirect_to => '/login');
 
-    ok(exception { $mw->call({PATH_INFO => '/login'}) });
+    ok(exception { $mw->call({PATH_INFO => '/login', 'tu.user' => undef}) });
 };
 
 subtest 'accept blessed user object' => sub {
@@ -99,6 +92,7 @@ sub _build_env {
 
     my $env = {};
 
+    $env->{'tu.user'} = undef;
     $env->{'tu.dispatched_request'} =
       Tu::DispatchedRequest->new(action => $action);
 
