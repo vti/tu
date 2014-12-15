@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.012;
 
-our $VERSION = '0.1';
+our $VERSION = '0.01';
 
 use Tu::Builder;
 use Tu::Home;
