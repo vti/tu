@@ -151,9 +151,7 @@ subtest 'caches req' => sub {
 };
 
 subtest 'throws when no env' => sub {
-    my $action = Tu::Action->new;
-
-    ok exception { $action->req };
+    ok exception { Tu::Action->new };
 };
 
 subtest 'returns service from service container' => sub {

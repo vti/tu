@@ -3,6 +3,7 @@ package Tu::Action;
 use strict;
 use warnings;
 
+use Carp qw(croak);
 use Tu::X::HTTP;
 use Tu::Scope;
 use Tu::Request;
@@ -14,7 +15,7 @@ sub new {
     my $self = {};
     bless $self, $class;
 
-    $self->{env} = $params{env};
+    $self->{env} = $params{env} || croak '$env required';
     $self->{services} = $params{services};
 
     return $self;

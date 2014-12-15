@@ -12,11 +12,8 @@ use Tu::ActionFactory;
 use Tu::Middleware::ActionDispatcher;
 
 subtest 'throws when no action_factory' => sub {
-    my $services = Test::MonkeyMock->new;
-    $services->mock(service => sub { });
-
     like exception {
-        _build_middleware(services => $services, action_factory => undef)
+        _build_middleware(action_factory => undef)
     }, qr/action_factory required/;
 };
 
@@ -62,16 +59,6 @@ subtest 'runs action with text response' => sub {
       [200, ['Content-Type' => 'text/html'], ['Text response!']];
 };
 
-sub _build_middleware {
-    my (%params) = @_;
-
-    return Tu::Middleware::ActionDispatcher->new(
-        action_factory => Tu::ActionFactory->new(),
-        app            => sub { [200, [], ['OK']] },
-        @_
-    );
-}
-
 sub _build_env {
     my (%params) = @_;
 
@@ -89,6 +76,23 @@ sub _build_env {
     }
 
     return $env;
+}
+
+sub _mock_services {
+    my $services = Test::MonkeyMock->new;
+    $services->mock(service => sub { });
+}
+
+sub _build_middleware {
+    my (%params) = @_;
+
+    $params{services} ||= _mock_services();
+
+    return Tu::Middleware::ActionDispatcher->new(
+        action_factory => Tu::ActionFactory->new(),
+        app            => sub { [200, [], ['OK']] },
+        %params
+    );
 }
 
 done_testing;

@@ -55,6 +55,9 @@ subtest 'returns empty arrray ref on multi' => sub {
     is_deeply $helper->param_multi('unknown'), [];
 };
 
-sub _build_helper { Tu::Helper->new(@_) }
+sub _build_helper {
+    my $services = Test::MonkeyMock->new;
+    Tu::Helper->new(services => $services, @_);
+}
 
 done_testing;

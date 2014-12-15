@@ -8,8 +8,9 @@ use Test::MonkeyMock;
 use Tu::Displayer;
 
 subtest 'throws when no renderer' => sub {
-    like exception { _build_displayer(renderer => undef) },
-      qr/renderer required/;
+    like exception {
+        Tu::Displayer->new
+    }, qr/renderer required/;
 };
 
 subtest 'correctly renders string' => sub {
