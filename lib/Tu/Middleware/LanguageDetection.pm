@@ -16,7 +16,7 @@ sub new {
     croak 'default_language required' unless $self->{default_language};
     croak 'languages required'        unless $self->{languages};
 
-    $self->{name_prefix} = 'turnaround.i18n.';
+    $self->{name_prefix} = 'tu.i18n.';
 
     $self->{use_path}    = 1 unless defined $self->{use_path};
     $self->{use_session} = 1 unless defined $self->{use_session};

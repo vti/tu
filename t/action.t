@@ -70,7 +70,7 @@ subtest 'merges default layout' => sub {
     my $displayer = _mock_displayer();
     my $action    = _build_action(
         displayer => $displayer,
-        env       => {'turnaround.displayer.layout' => 'default'}
+        env       => {'tu.displayer.layout' => 'default'}
     );
 
     my $res = $action->render('template');
@@ -83,7 +83,7 @@ subtest 'not merges default layout when layout present' => sub {
     my $displayer = _mock_displayer();
     my $action    = _build_action(
         displayer => $displayer,
-        env       => {'turnaround.displayer.layout' => 'default'}
+        env       => {'tu.displayer.layout' => 'default'}
     );
 
     my $res = $action->render('template', layout => 'new');
@@ -96,7 +96,7 @@ subtest 'not merges default layout even if new is undefined' => sub {
     my $displayer = _mock_displayer();
     my $action    = _build_action(
         displayer => $displayer,
-        env       => {'turnaround.displayer.layout' => 'default'}
+        env       => {'tu.displayer.layout' => 'default'}
     );
 
     my $res = $action->render('template', layout => undef);
@@ -109,7 +109,7 @@ subtest 'correctly merges displayer vars with existing' => sub {
     my $displayer = _mock_displayer();
     my $action    = _build_action(
         displayer => $displayer,
-        env       => {'turnaround.displayer.vars' => {old => 'vars'}}
+        env       => {'tu.displayer.vars' => {old => 'vars'}}
     );
 
     my $res = $action->render('template', vars => {foo => 'bar'});
@@ -169,7 +169,7 @@ subtest 'sets displayer vars' => sub {
 
     $action->set_var(foo => 'bar');
 
-    is_deeply $action->env->{'turnaround.displayer.vars'}, {foo => 'bar'};
+    is_deeply $action->env->{'tu.displayer.vars'}, {foo => 'bar'};
 };
 
 sub _mock_displayer {
@@ -200,8 +200,8 @@ sub _build_action {
 
     my $env = {
         %{delete $params{env} || {}},
-        'turnaround.services'           => $services,
-        'turnaround.dispatched_request' => $dispatched_request
+        'tu.services'           => $services,
+        'tu.dispatched_request' => $dispatched_request
     };
 
     return Tu::Action->new(env => $env, %params);

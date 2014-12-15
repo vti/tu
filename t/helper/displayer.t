@@ -18,7 +18,7 @@ subtest 'calls displayer' => sub {
 };
 
 subtest 'calls displayer with merged vars' => sub {
-    my $env = {'turnaround.displayer.vars' => {another => 'var'}};
+    my $env = {'tu.displayer.vars' => {another => 'var'}};
 
     my $displayer = _mock_displayer();
     my $helper = _build_helper(displayer => $displayer, env => $env);

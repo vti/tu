@@ -43,9 +43,9 @@ sub _display {
     return unless defined $template;
 
     my %args;
-    $args{vars}   = $env->{'turnaround.displayer.vars'};
-    $args{layout} = $env->{'turnaround.displayer.layout'}
-      if exists $env->{'turnaround.displayer.layout'};
+    $args{vars}   = $env->{'tu.displayer.vars'};
+    $args{layout} = $env->{'tu.displayer.layout'}
+      if exists $env->{'tu.displayer.layout'};
 
     my $displayer = $self->{displayer};
     my $body = $displayer->render($template, %args);
@@ -71,10 +71,10 @@ sub _get_template {
     my $self = shift;
     my ($env) = @_;
 
-    my $template = $env->{'turnaround.displayer.template'};
+    my $template = $env->{'tu.displayer.template'};
     return $template if $template;
 
-    my $dispatched_request = $env->{'turnaround.dispatched_request'};
+    my $dispatched_request = $env->{'tu.dispatched_request'};
     return unless $dispatched_request;
 
     if (my $action = $dispatched_request->action) {

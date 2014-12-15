@@ -59,7 +59,7 @@ qq{Content-Disposition: form-data; name="$name"; filename="$filename"},
         REQUEST_METHOD                  => $method,
         'psgix.session'                 => {},
         'psgix.session.options'         => {},
-        'turnaround.dispatched_request' => _build_dispatched_request(%params),
+        'tu.dispatched_request' => _build_dispatched_request(%params),
         %params
     };
 

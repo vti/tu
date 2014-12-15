@@ -93,7 +93,7 @@ sub to_app {
         sub {
             my $env = shift;
 
-            $env->{'turnaround.services'} = $self->{services};
+            $env->{'tu.services'} = $self->{services};
 
             $self->{plugins}->run_plugins($env);
 

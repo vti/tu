@@ -11,7 +11,7 @@ sub render {
 
     my $env = $self->{env};
 
-    my $vars = {%{$env->{'turnaround.displayer.vars'} || {}}, @vars};
+    my $vars = {%{$env->{'tu.displayer.vars'} || {}}, @vars};
 
     return $self->service('displayer')
       ->render($template, layout => undef, vars => $vars);

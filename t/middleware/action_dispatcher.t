@@ -39,7 +39,7 @@ subtest 'does nothing when unknown action' => sub {
 subtest 'does nothing when no dispatched request' => sub {
     my $mw = _build_middleware();
 
-    my $res = $mw->call(_build_env('turnaround.dispatched_request' => undef));
+    my $res = $mw->call(_build_env('tu.dispatched_request' => undef));
 
     is_deeply($res, [200, [], ['OK']]);
 };
@@ -84,15 +84,15 @@ sub _build_env {
     my (%params) = @_;
 
     my $env =
-      {'turnaround.dispatched_request' =>
+      {'tu.dispatched_request' =>
           Tu::DispatchedRequest->new(action => delete $params{action})};
 
     foreach my $key (keys %params) {
-        if ($key =~ m/^turnaround/) {
+        if ($key =~ m/^tu/) {
             $env->{$key} = $params{$key};
         }
         else {
-            $env->{"turnaround.$key"} = $params{$key};
+            $env->{"tu.$key"} = $params{$key};
         }
     }
 

@@ -29,14 +29,14 @@ sub _detect_language {
 
     $self->SUPER::_detect_language($env);
 
-    my $language = $env->{'turnaround.i18n.language'};
-    $env->{'turnaround.i18n.maketext'} = $self->{i18n}->handle($language);
+    my $language = $env->{'tu.i18n.language'};
+    $env->{'tu.i18n.maketext'} = $self->{i18n}->handle($language);
 
-    $env->{'turnaround.displayer.vars'}->{'loc'} =
-      sub { $env->{'turnaround.i18n.maketext'}->loc(@_) };
+    $env->{'tu.displayer.vars'}->{'loc'} =
+      sub { $env->{'tu.i18n.maketext'}->loc(@_) };
 
-    $env->{'turnaround.displayer.vars'}->{'lang'} =
-      $env->{'turnaround.i18n.language'};
+    $env->{'tu.displayer.vars'}->{'lang'} =
+      $env->{'tu.i18n.language'};
 }
 
 1;

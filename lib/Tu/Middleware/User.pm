@@ -49,12 +49,12 @@ sub _user {
           ? $loader->load_from_session($session)
           : $loader->($session);
 
-        $env->{'turnaround.displayer.vars'}->{user} = $user->to_hash if $user;
+        $env->{'tu.displayer.vars'}->{user} = $user->to_hash if $user;
     }
 
     $user ||= Tu::Anonymous->new;
 
-    $env->{'turnaround.user'} = $user;
+    $env->{'tu.user'} = $user;
 }
 
 package Tu::Anonymous;

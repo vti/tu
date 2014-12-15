@@ -126,7 +126,7 @@ subtest 'gets template name from dispatched request' => sub {
     my $mw = _build_middleware();
 
     my $env = _build_env(
-        'turnaround.dispatched_request' => $dr,
+        'tu.dispatched_request' => $dr,
         vars     => {hello => 'there'},
         layout   => 'layout.caml'
     );
@@ -151,7 +151,7 @@ subtest 'does nothing when dispatched_request has no action' => sub {
     my $mw = _build_middleware();
 
     my $env = _build_env(
-        'turnaround.dispatched_request' => $dr,
+        'tu.dispatched_request' => $dr,
         vars     => {hello => 'there'},
         layout   => 'layout.caml'
     );
@@ -180,10 +180,10 @@ sub _build_env {
     my $env = {};
 
     foreach my $param (keys %params) {
-        if ($param =~ m/^turnaround/) {
+        if ($param =~ m/^tu/) {
             $env->{$param} = $params{$param};
         } else {
-            $env->{"turnaround.displayer.$param"} = $params{$param};
+            $env->{"tu.displayer.$param"} = $params{$param};
         }
     }
 

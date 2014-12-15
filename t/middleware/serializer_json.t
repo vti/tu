@@ -27,7 +27,7 @@ subtest 'decode_JSON' => sub {
 
     my $req = Tu::Request->new($env);
 
-    is_deeply($env->{'turnaround.serializer.json'}, {foo => 'bar'});
+    is_deeply($env->{'tu.serializer.json'}, {foo => 'bar'});
 };
 
 subtest 'return_when_cannot_decode_JSON' => sub {

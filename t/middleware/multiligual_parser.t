@@ -22,7 +22,7 @@ subtest 'parses nothing when no content-type' => sub {
         body    => '<t><en>English</en><de>Deutsch</de></t>'
     );
 
-    my $env = {'turnaround.language' => 'en'};
+    my $env = {'tu.language' => 'en'};
 
     my $res = $mw->call($env);
 
@@ -35,7 +35,7 @@ subtest 'parses nothing when content-type not html' => sub {
         body    => '<t><en>English</en><de>Deutsch</de></t>'
     );
 
-    my $env = {'turnaround.language' => 'en'};
+    my $env = {'tu.language' => 'en'};
 
     my $res = $mw->call($env);
 
@@ -57,7 +57,7 @@ subtest 'parses tag' => sub {
     my $mw =
       _build_middleware(body => '<t><en>English</en><de>Deutsch</de></t>');
 
-    my $env = {'turnaround.language' => 'en'};
+    my $env = {'tu.language' => 'en'};
 
     my $res = $mw->call($env);
 
@@ -69,7 +69,7 @@ subtest 'parses second tag' => sub {
     my $mw =
       _build_middleware(body => '<t><en>English</en><de>Deutsch</de></t>');
 
-    my $env = {'turnaround.language' => 'de'};
+    my $env = {'tu.language' => 'de'};
 
     my $res = $mw->call($env);
 

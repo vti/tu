@@ -23,7 +23,7 @@ sub send_message {
 
     my $path = "| $self->{path} -t -oi -oem";
 
-    open my $fh, '>', $path or croak "Can't start sendmail: $!";
+    open my $fh, $path or croak "Can't start sendmail: $!";
     print $fh $message;
     close $fh;
 

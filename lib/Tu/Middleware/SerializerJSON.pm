@@ -25,7 +25,7 @@ sub call {
             return $self->_wrap_json_response(400, [], 'Invalid JSON');
         };
 
-        $env->{'turnaround.serializer.json'} = {foo => 'bar'};
+        $env->{'tu.serializer.json'} = {foo => 'bar'};
     }
 
     my $res = eval { $self->app->($env); } || do {

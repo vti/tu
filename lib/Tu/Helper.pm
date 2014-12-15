@@ -31,7 +31,7 @@ sub params {
     my $self = shift;
     my ($key) = @_;
 
-    return $self->{env}->{'turnaround.displayer.vars'}->{params} || {};
+    return $self->{env}->{'tu.displayer.vars'}->{params} || {};
 }
 
 sub param {
@@ -47,7 +47,7 @@ sub param_multi {
     my $self = shift;
     my ($key) = @_;
 
-    my $params = $self->{env}->{'turnaround.displayer.vars'}->{params} || {};
+    my $params = $self->{env}->{'tu.displayer.vars'}->{params} || {};
     return [] unless exists $params->{$key};
     return $params->{$key} if ref $params->{$key} eq 'ARRAY';
     return [$params->{$key}];

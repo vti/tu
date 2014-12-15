@@ -13,7 +13,7 @@ subtest 'set_anonymous_when_no_session' => sub {
 
     my $res = $mw->call($env);
 
-    is($env->{'turnaround.user'}->role, 'anonymous');
+    is($env->{'tu.user'}->role, 'anonymous');
 };
 
 subtest 'set_anonymous_when_session_but_no_user' => sub {
@@ -23,7 +23,7 @@ subtest 'set_anonymous_when_session_but_no_user' => sub {
 
     my $res = $mw->call($env);
 
-    is($env->{'turnaround.user'}->role, 'anonymous');
+    is($env->{'tu.user'}->role, 'anonymous');
 };
 
 subtest 'set_anonymous_when_user_not_found' => sub {
@@ -33,7 +33,7 @@ subtest 'set_anonymous_when_user_not_found' => sub {
 
     my $res = $mw->call($env);
 
-    is($env->{'turnaround.user'}->role, 'anonymous');
+    is($env->{'tu.user'}->role, 'anonymous');
 };
 
 subtest 'set_user' => sub {
@@ -43,7 +43,7 @@ subtest 'set_user' => sub {
 
     my $res = $mw->call($env);
 
-    is($env->{'turnaround.user'}->role, 'user');
+    is($env->{'tu.user'}->role, 'user');
 };
 
 subtest 'register displayer var when user found' => sub {
@@ -53,7 +53,7 @@ subtest 'register displayer var when user found' => sub {
 
     my $res = $mw->call($env);
 
-    is_deeply $env->{'turnaround.displayer.vars'}->{user}, {};
+    is_deeply $env->{'tu.displayer.vars'}->{user}, {};
 };
 
 subtest 'not register displayer var when user not found' => sub {
@@ -63,7 +63,7 @@ subtest 'not register displayer var when user not found' => sub {
 
     my $res = $mw->call($env);
 
-    ok !$env->{'turnaround.displayer.vars'}->{user};
+    ok !$env->{'tu.displayer.vars'}->{user};
 };
 
 sub _build_middleware {

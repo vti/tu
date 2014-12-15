@@ -30,7 +30,7 @@ subtest 'dispatches when path found' => sub {
 
     $mw->call($env);
 
-    ok $env->{'turnaround.dispatched_request'};
+    ok $env->{'tu.dispatched_request'};
 };
 
 subtest 'does nothing when method is wrong' => sub {
@@ -46,7 +46,7 @@ subtest 'dispatches when path and method are found' => sub {
 
     $mw->call($env);
 
-    ok $env->{'turnaround.dispatched_request'};
+    ok $env->{'tu.dispatched_request'};
 };
 
 subtest 'dispatches utf path' => sub {
@@ -58,7 +58,7 @@ subtest 'dispatches utf path' => sub {
 
     $mw->call($env);
 
-    my $dr = $env->{'turnaround.dispatched_request'};
+    my $dr = $env->{'tu.dispatched_request'};
     is $dr->captures->{name}, 'привет';
 };
 
@@ -71,7 +71,7 @@ subtest 'dispatches without encoding' => sub {
 
     $mw->call($env);
 
-    my $dr = $env->{'turnaround.dispatched_request'};
+    my $dr = $env->{'tu.dispatched_request'};
     is $dr->captures->{name}, Encode::encode('UTF-8', 'привет');
 };
 
@@ -89,7 +89,7 @@ subtest 'loads dispatcher from service container' => sub {
 
     $mw->call($env);
 
-    ok $env->{'turnaround.dispatched_request'};
+    ok $env->{'tu.dispatched_request'};
 };
 
 subtest 'throws when no dispatcher' => sub {

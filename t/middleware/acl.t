@@ -15,7 +15,7 @@ subtest 'throw when no acl' => sub {
 subtest 'throw when no dispatched request' => sub {
     my $mw = _build_middleware();
 
-    my $env = {'turnaround.user' => {role => 'anon'}};
+    my $env = {'tu.user' => {role => 'anon'}};
     like exception { $mw->call($env) }, qr/No DispatchedRequest found/;
 };
 
@@ -99,11 +99,11 @@ sub _build_env {
 
     my $env = {};
 
-    $env->{'turnaround.dispatched_request'} =
+    $env->{'tu.dispatched_request'} =
       Tu::DispatchedRequest->new(action => $action);
 
     foreach my $key (keys %params) {
-        $env->{"turnaround.$key"} = $params{$key};
+        $env->{"tu.$key"} = $params{$key};
     }
 
     return $env;

@@ -25,12 +25,12 @@ subtest 'detects from session' => sub {
 
     my $env = {
         PATH_INFO       => '',
-        'psgix.session' => {'turnaround.i18n.language' => 'ru'}
+        'psgix.session' => {'tu.i18n.language' => 'ru'}
     };
 
     $mw->call($env);
 
-    is($env->{'turnaround.i18n.language'}, 'ru');
+    is($env->{'tu.i18n.language'}, 'ru');
 };
 
 subtest 'does not detect from session when off' => sub {
@@ -38,12 +38,12 @@ subtest 'does not detect from session when off' => sub {
 
     my $env = {
         PATH_INFO       => '',
-        'psgix.session' => {'turnaround.i18n.language' => 'ru'}
+        'psgix.session' => {'tu.i18n.language' => 'ru'}
     };
 
     $mw->call($env);
 
-    is $env->{'turnaround.i18n.language'}, 'en';
+    is $env->{'tu.i18n.language'}, 'en';
 };
 
 subtest 'adds human readable name' => sub {
@@ -51,12 +51,12 @@ subtest 'adds human readable name' => sub {
 
     my $env = {
         PATH_INFO       => '',
-        'psgix.session' => {'turnaround.i18n.language' => 'ru'}
+        'psgix.session' => {'tu.i18n.language' => 'ru'}
     };
 
     $mw->call($env);
 
-    is $env->{'turnaround.i18n.language_name'}, 'Russian';
+    is $env->{'tu.i18n.language_name'}, 'Russian';
 };
 
 subtest 'detects from custom cb' => sub {
@@ -69,7 +69,7 @@ subtest 'detects from custom cb' => sub {
 
     $mw->call($env);
 
-    is $env->{'turnaround.i18n.language'}, 'en';
+    is $env->{'tu.i18n.language'}, 'en';
 };
 
 subtest 'defaults when cannot detect from custom_cb' => sub {
@@ -82,7 +82,7 @@ subtest 'defaults when cannot detect from custom_cb' => sub {
 
     $mw->call($env);
 
-    is $env->{'turnaround.i18n.language'}, 'en';
+    is $env->{'tu.i18n.language'}, 'en';
 };
 
 subtest 'detects from path' => sub {
@@ -92,7 +92,7 @@ subtest 'detects from path' => sub {
 
     $mw->call($env);
 
-    is $env->{'turnaround.i18n.language'}, 'ru';
+    is $env->{'tu.i18n.language'}, 'ru';
 };
 
 subtest 'does not detect from path when off' => sub {
@@ -102,7 +102,7 @@ subtest 'does not detect from path when off' => sub {
 
     $mw->call($env);
 
-    is $env->{'turnaround.i18n.language'}, 'en';
+    is $env->{'tu.i18n.language'}, 'en';
 };
 
 subtest 'modifies path' => sub {
@@ -122,7 +122,7 @@ subtest 'detects from headers' => sub {
 
     $mw->call($env);
 
-    is $env->{'turnaround.i18n.language'}, 'ru';
+    is $env->{'tu.i18n.language'}, 'ru';
 };
 
 subtest 'does not detect from headers when off' => sub {
@@ -132,7 +132,7 @@ subtest 'does not detect from headers when off' => sub {
 
     $mw->call($env);
 
-    is $env->{'turnaround.i18n.language'}, 'en';
+    is $env->{'tu.i18n.language'}, 'en';
 };
 
 subtest 'set_default_language_when_unknown_detected' => sub {
@@ -140,12 +140,12 @@ subtest 'set_default_language_when_unknown_detected' => sub {
 
     my $env = {
         PATH_INFO       => '',
-        'psgix.session' => {'turnaround.i18n.language' => 'es'}
+        'psgix.session' => {'tu.i18n.language' => 'es'}
     };
 
     $mw->call($env);
 
-    is($env->{'turnaround.i18n.language'}, 'en');
+    is($env->{'tu.i18n.language'}, 'en');
 };
 
 subtest 'set_default_language_when_not_detected' => sub {
@@ -155,7 +155,7 @@ subtest 'set_default_language_when_not_detected' => sub {
 
     $mw->call($env);
 
-    is($env->{'turnaround.i18n.language'}, 'en');
+    is($env->{'tu.i18n.language'}, 'en');
 };
 
 subtest 'save_to_session' => sub {
@@ -165,7 +165,7 @@ subtest 'save_to_session' => sub {
 
     $mw->call($env);
 
-    is($env->{'psgix.session'}->{'turnaround.i18n.language'}, 'ru');
+    is($env->{'psgix.session'}->{'tu.i18n.language'}, 'ru');
 };
 
 sub _build_middleware {

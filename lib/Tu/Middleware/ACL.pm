@@ -34,7 +34,7 @@ sub _acl {
     my $self = shift;
     my ($env) = @_;
 
-    return $self->_deny($env) unless my $user = $env->{'turnaround.user'};
+    return $self->_deny($env) unless my $user = $env->{'tu.user'};
 
     my $action = $self->_get_action($env);
 
@@ -49,7 +49,7 @@ sub _get_action {
     my $self = shift;
     my ($env) = @_;
 
-    my $dispatched_request = $env->{'turnaround.dispatched_request'};
+    my $dispatched_request = $env->{'tu.dispatched_request'};
 
     croak 'No DispatchedRequest found' unless $dispatched_request;
 

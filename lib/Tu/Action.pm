@@ -22,7 +22,7 @@ sub service {
     my $self = shift;
     my ($name) = @_;
 
-    return $self->{env}->{'turnaround.services'}->service($name);
+    return $self->{env}->{'tu.services'}->service($name);
 }
 
 sub env {
@@ -61,7 +61,7 @@ sub url_for {
         $url = $_[0];
     }
     else {
-        my $dispatched_request = $self->env->{'turnaround.dispatched_request'};
+        my $dispatched_request = $self->env->{'tu.dispatched_request'};
 
         my $path = $dispatched_request->build_path(@_);
 
@@ -74,7 +74,7 @@ sub url_for {
     return $url;
 }
 
-sub captures { $_[0]->env->{'turnaround.dispatched_request'}->captures }
+sub captures { $_[0]->env->{'tu.dispatched_request'}->captures }
 
 sub set_var {
     my $self = shift;
@@ -83,7 +83,7 @@ sub set_var {
         my $key   = $_[$i];
         my $value = $_[$i + 1];
 
-        $self->env->{'turnaround.displayer.vars'}->{$key} = $value;
+        $self->env->{'tu.displayer.vars'}->{$key} = $value;
     }
 
     return $self;
@@ -132,14 +132,14 @@ sub render {
     my ($template, %args) = @_;
 
     $args{vars} = {
-        %{$self->{env}->{'turnaround.displayer.vars'} || {}},
+        %{$self->{env}->{'tu.displayer.vars'} || {}},
         %{$args{vars} || {}}
     };
 
-    if (exists $self->{env}->{'turnaround.displayer.layout'}
+    if (exists $self->{env}->{'tu.displayer.layout'}
         && !exists $args{layout})
     {
-        $args{layout} = $self->{env}->{'turnaround.displayer.layout'};
+        $args{layout} = $self->{env}->{'tu.displayer.layout'};
     }
 
     return $self->service('displayer')->render($template, %args);

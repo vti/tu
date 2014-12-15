@@ -92,10 +92,10 @@ sub run {
     my $self = shift;
     my ($env) = @_;
 
-    $env->{'turnaround.displayer.vars'}->{'mode'} =
+    $env->{'tu.displayer.vars'}->{'mode'} =
       $ENV{PLACK_ENV} || 'production';
 
-    $env->{'turnaround.displayer.vars'}->{'helpers'} =
+    $env->{'tu.displayer.vars'}->{'helpers'} =
       Tu::HelperFactory::Persistent->new(
         namespaces => $self->{app_class} . '::Helper::',
         services   => $self->{services},
