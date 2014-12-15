@@ -40,7 +40,7 @@ sub _display {
     my $self = shift;
     my ($env) = @_;
 
-    my $template = $self->_get_template($env);
+    my $template = $self->_find_template($env);
     return unless defined $template;
 
     my $displayer_scope = Tu::Scope->new($env)->displayer;
@@ -69,7 +69,7 @@ sub _display {
     ];
 }
 
-sub _get_template {
+sub _find_template {
     my $self = shift;
     my ($env) = @_;
 

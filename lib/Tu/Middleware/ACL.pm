@@ -37,7 +37,7 @@ sub _acl {
 
     return $self->_deny($env) unless my $user = Tu::Scope->new($env)->user;
 
-    my $action = $self->_get_action($env);
+    my $action = $self->_find_action($env);
 
     my $role = blessed $user ? $user->role : $user->{role};
 
@@ -46,13 +46,11 @@ sub _acl {
     return;
 }
 
-sub _get_action {
+sub _find_action {
     my $self = shift;
     my ($env) = @_;
 
-    my $dispatched_request = Tu::Scope->new($env)->dispatched_request;
-
-    return $dispatched_request->action;
+    return Tu::Scope->new($env)->dispatched_request->action;
 }
 
 sub _deny {
