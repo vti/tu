@@ -51,7 +51,8 @@
          "requires" : {
             "Plack" : "0",
             "Routes::Tiny" : "0.14",
-            "String::CamelCase" : "0"
+            "String::CamelCase" : "0",
+            "perl" : "5.012"
          }
       },
       "test" : {
