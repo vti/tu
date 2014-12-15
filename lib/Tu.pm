@@ -103,3 +103,31 @@ sub to_app {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+Tu - tu
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 DEVELOPMENT
+
+=head2 Repository
+
+    http://github.com/vti/tu
+
+=head1 AUTHOR
+
+Viacheslav Tykhanovskyi, C<vti@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2014, Viacheslav Tykhanovskyi
+
+This program is free software, you can redistribute it and/or modify it under
+the terms of the Artistic License version 2.0.
+
+=cut

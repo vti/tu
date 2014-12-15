@@ -1,0 +1,84 @@
+{
+   "abstract" : "tu",
+   "author" : [
+      "Viacheslav Tykhanovskyi, C<vti@cpan.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Minilla/v2.1.1, CPAN::Meta::Converter version 2.142690",
+   "license" : [
+      "artistic_2"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Tu",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples",
+         "author",
+         "builder"
+      ]
+   },
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.38"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Test::CPAN::Meta" : "0",
+            "Test::MinimumVersion::Fast" : "0.04",
+            "Test::PAUSE::Permissions" : "0.04",
+            "Test::Pod" : "1.41",
+            "Test::Spellunker" : "v0.2.7"
+         }
+      },
+      "runtime" : {
+         "recommends" : {
+            "Email::MIME" : "0",
+            "I18N::AcceptLanguage" : "0",
+            "JSON" : "0",
+            "Text::APL" : "0",
+            "YAML::Tiny" : "0"
+         },
+         "requires" : {
+            "Plack" : "0",
+            "Routes::Tiny" : "0.14",
+            "String::CamelCase" : "0"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::Fatal" : "0",
+            "Test::MonkeyMock" : "0",
+            "Test::More" : "0",
+            "Test::Requires" : "0",
+            "Text::Caml" : "0"
+         }
+      }
+   },
+   "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com//vti/tu/issues"
+      },
+      "homepage" : "https://github.com//vti/tu",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com//vti/tu",
+         "web" : "https://github.com//vti/tu"
+      }
+   },
+   "version" : "0.1",
+   "x_contributors" : [
+      "forwardever <git.forwardever@googlemail.com>",
+      "vti <viacheslav.t@gmail.com>"
+   ]
+}
