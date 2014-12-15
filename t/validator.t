@@ -9,13 +9,15 @@ use Tu::Validator;
 subtest 'throws when validated not a hash ref' => sub {
     my $validator = _build_validator();
 
-    like exception { $validator->validate}, qr/must be a hash ref/;
+    like exception { $validator->validate }, qr/must be a hash ref/;
 };
 
 subtest 'validates empty' => sub {
     my $validator = _build_validator();
 
-    ok $validator->validate({});
+    my $result = $validator->validate({});
+
+    ok $result->is_success;
 };
 
 subtest 'throws when adding existing field' => sub {
@@ -39,7 +41,9 @@ subtest 'loads rule from custom namespace' => sub {
     $validator->add_field('foo');
     $validator->add_rule('foo', 'custom');
 
-    ok $validator->validate({foo => 'bar'});
+    my $result = $validator->validate({foo => 'bar'});
+
+    ok $result->is_success;
 };
 
 subtest 'throws when adding existing rule' => sub {
@@ -76,7 +80,9 @@ subtest 'require fields' => sub {
 
     $validator->add_field('foo');
 
-    ok !$validator->validate({});
+    my $result = $validator->validate({});
+
+    ok !$result->is_success;
 };
 
 subtest 'require multiple fields' => sub {
@@ -84,7 +90,9 @@ subtest 'require multiple fields' => sub {
 
     $validator->add_field('foo', multiple => 1);
 
-    ok(!$validator->validate({foo => []}));
+    my $result = $validator->validate({foo => []});
+
+    ok !$result->is_success;
 };
 
 subtest 'only one value is required when multiple' => sub {
@@ -92,7 +100,9 @@ subtest 'only one value is required when multiple' => sub {
 
     $validator->add_field('foo', multiple => 1);
 
-    ok($validator->validate({foo => ['', 2]}));
+    my $result = $validator->validate({foo => ['', 2]});
+
+    ok $result->is_success;
 };
 
 subtest 'empty values' => sub {
@@ -100,7 +110,9 @@ subtest 'empty values' => sub {
 
     $validator->add_field('foo');
 
-    ok(!$validator->validate({foo => ''}));
+    my $result = $validator->validate({foo => ''});
+
+    ok !$result->is_success;
 };
 
 subtest 'multiple empty values' => sub {
@@ -108,7 +120,9 @@ subtest 'multiple empty values' => sub {
 
     $validator->add_field('foo', multiple => 1);
 
-    ok(!$validator->validate({foo => ['', '']}));
+    my $result = $validator->validate({foo => ['', '']});
+
+    ok !$result->is_success;
 };
 
 subtest 'only spaces' => sub {
@@ -116,7 +130,9 @@ subtest 'only spaces' => sub {
 
     $validator->add_field('foo');
 
-    ok(!$validator->validate({foo => " 	\n"}));
+    my $result = $validator->validate({foo => " 	\n"});
+
+    ok !$result->is_success;
 };
 
 subtest 'multiple only spaces' => sub {
@@ -124,18 +140,20 @@ subtest 'multiple only spaces' => sub {
 
     $validator->add_field('foo', multiple => 1);
 
-    ok(!$validator->validate({foo => [" 	\n", '   ']}));
+    my $result = $validator->validate({foo => [" 	\n", '   ']});
+
+    ok !$result->is_success;
 };
 
-subtest 'set required error to first value from multiple' => sub {
-    my $validator = _build_validator();
-
-    $validator->add_field('foo', multiple => 1);
-
-    $validator->validate({foo => []});
-
-    is_deeply($validator->errors, {'foo[0]' => 'REQUIRED', foo => 'REQUIRED'});
-};
+#subtest 'set required error to first value from multiple' => sub {
+#    my $validator = _build_validator();
+#
+#    $validator->add_field('foo', multiple => 1);
+#
+#    my $result = $validator->validate({foo => []});
+#
+#    is_deeply($result->errors, {'foo[0]' => 'REQUIRED', foo => 'REQUIRED'});
+#};
 
 subtest 'not valid rule' => sub {
     my $validator = _build_validator();
@@ -143,7 +161,9 @@ subtest 'not valid rule' => sub {
     $validator->add_field('foo');
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    ok(!$validator->validate({foo => 'abc'}));
+    my $result = $validator->validate({foo => 'abc'});
+
+    ok !$result->is_success;
 };
 
 subtest 'valid rule' => sub {
@@ -152,7 +172,9 @@ subtest 'valid rule' => sub {
     $validator->add_field('foo');
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    ok($validator->validate({foo => 123}));
+    my $result = $validator->validate({foo => 123});
+
+    ok $result->is_success;
 };
 
 subtest 'not return not valid values' => sub {
@@ -161,9 +183,9 @@ subtest 'not return not valid values' => sub {
     $validator->add_field('foo');
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    $validator->validate({foo => 'abc'});
+    my $result = $validator->validate({foo => 'abc'});
 
-    is_deeply($validator->validated_params, {});
+    is_deeply $result->validated_params, {};
 };
 
 subtest 'return valid values trimmed' => sub {
@@ -172,9 +194,9 @@ subtest 'return valid values trimmed' => sub {
     $validator->add_field('foo');
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    $validator->validate({foo => ' 123 '});
+    my $result = $validator->validate({foo => ' 123 '});
 
-    is_deeply($validator->validated_params, {foo => 123});
+    is_deeply $result->validated_params, {foo => 123};
 };
 
 subtest 'return valid values not trimmed' => sub {
@@ -182,9 +204,9 @@ subtest 'return valid values not trimmed' => sub {
 
     $validator->add_field('foo', trim => 0);
 
-    $validator->validate({foo => ' 123 '});
+    my $result = $validator->validate({foo => ' 123 '});
 
-    is_deeply($validator->validated_params, {foo => ' 123 '});
+    is_deeply $result->validated_params, {foo => ' 123 '};
 };
 
 subtest 'return valid values not trimmed when references' => sub {
@@ -192,9 +214,9 @@ subtest 'return valid values not trimmed when references' => sub {
 
     $validator->add_field('foo');
 
-    $validator->validate({foo => {}});
+    my $result = $validator->validate({foo => {}});
 
-    is_deeply($validator->validated_params, {foo => {}});
+    is_deeply $result->validated_params, {foo => {}};
 };
 
 subtest 'return valid values even when not valid' => sub {
@@ -204,9 +226,9 @@ subtest 'return valid values even when not valid' => sub {
     $validator->add_field('bar');
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    $validator->validate({foo => 123});
+    my $result = $validator->validate({foo => 123});
 
-    is_deeply($validator->validated_params, {foo => 123});
+    is_deeply $result->validated_params, {foo => 123};
 };
 
 subtest 'take first value' => sub {
@@ -215,9 +237,9 @@ subtest 'take first value' => sub {
     $validator->add_field('foo');
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    $validator->validate({foo => [123, 'bar']});
+    my $result = $validator->validate({foo => [123, 'bar']});
 
-    is_deeply($validator->validated_params, {foo => 123});
+    is_deeply $result->validated_params, {foo => 123};
 };
 
 subtest 'check all values when multiple' => sub {
@@ -226,7 +248,9 @@ subtest 'check all values when multiple' => sub {
     $validator->add_field('foo', multiple => 1);
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    ok(!$validator->validate({foo => [123, 'bar']}));
+    my $result = $validator->validate({foo => [123, 'bar']});
+
+    ok !$result->is_success;
 };
 
 subtest 'glue multiple values' => sub {
@@ -235,10 +259,10 @@ subtest 'glue multiple values' => sub {
     $validator->add_field('foo', multiple => 1);
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    $validator->validate(
+    my $result = $validator->validate(
         {'foo[0]' => '123', 'foo[1]' => '456', 'foo[2]' => [789, 123]});
 
-    is_deeply($validator->validated_params, {foo => [123, 456, 789]});
+    is_deeply $result->validated_params, {foo => [123, 456, 789]};
 };
 
 subtest 'add only one error' => sub {
@@ -247,9 +271,9 @@ subtest 'add only one error' => sub {
     $validator->add_field('foo');
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    $validator->validate({});
+    my $result = $validator->validate({});
 
-    is_deeply($validator->errors, {foo => 'REQUIRED'});
+    is_deeply $result->errors, {foo => 'REQUIRED'};
 };
 
 subtest 'no errors when field is optional' => sub {
@@ -258,7 +282,9 @@ subtest 'no errors when field is optional' => sub {
     $validator->add_optional_field('foo');
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    ok($validator->validate({foo => ''}));
+    my $result = $validator->validate({foo => ''});
+
+    ok $result->is_success;
 };
 
 subtest 'leave optional empty values' => sub {
@@ -267,9 +293,9 @@ subtest 'leave optional empty values' => sub {
     $validator->add_optional_field('foo');
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    $validator->validate({foo => ''});
+    my $result = $validator->validate({foo => ''});
 
-    is_deeply($validator->validated_params, {foo => ''});
+    is_deeply $result->validated_params, {foo => ''};
 };
 
 subtest 'leave optional multiple empty values' => sub {
@@ -278,9 +304,9 @@ subtest 'leave optional multiple empty values' => sub {
     $validator->add_optional_field('foo', multiple => 1);
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    $validator->validate({foo => ['', '']});
+    my $result = $validator->validate({foo => ['', '']});
 
-    is_deeply($validator->validated_params, {foo => ['', '']});
+    is_deeply $result->validated_params, {foo => ['', '']};
 };
 
 subtest 'set default message' => sub {
@@ -288,9 +314,9 @@ subtest 'set default message' => sub {
 
     $validator->add_field('foo');
 
-    $validator->validate({});
+    my $result = $validator->validate({});
 
-    is_deeply($validator->errors, {foo => 'REQUIRED'});
+    is_deeply $result->errors, {foo => 'REQUIRED'};
 };
 
 subtest 'set global custom message' => sub {
@@ -298,9 +324,21 @@ subtest 'set global custom message' => sub {
 
     $validator->add_field('foo');
 
-    $validator->validate({});
+    my $result = $validator->validate({});
 
-    is_deeply($validator->errors, {foo => 'Required'});
+    is_deeply $result->errors, {foo => 'Required'};
+};
+
+subtest 'set prefixed custom message' => sub {
+    my $validator = _build_validator(messages =>
+          {'foo.REQUIRED' => 'Foo is required', REQUIRED => 'Required'});
+
+    $validator->add_field('foo');
+    $validator->add_field('bar');
+
+    my $result = $validator->validate({});
+
+    is_deeply $result->errors, {foo => 'Foo is required', bar => 'Required'};
 };
 
 subtest 'set rule default message' => sub {
@@ -309,21 +347,9 @@ subtest 'set rule default message' => sub {
     $validator->add_field('foo');
     $validator->add_rule('foo', 'regexp', qr/^\d+$/);
 
-    $validator->validate({foo => 'bar'});
+    my $result = $validator->validate({foo => 'bar'});
 
-    is_deeply($validator->errors, {foo => 'REGEXP'});
-};
-
-subtest 'set rule custom message' => sub {
-    my $validator = _build_validator();
-
-    $validator->add_field('foo');
-    $validator->add_rule('foo', 'regexp', qr/^\d+$/)
-      ->set_message('Wrong format');
-
-    $validator->validate({foo => 'bar'});
-
-    is_deeply($validator->errors, {foo => 'Wrong format'});
+    is_deeply $result->errors, {foo => 'REGEXP'};
 };
 
 subtest 'validate group rule' => sub {
@@ -333,7 +359,9 @@ subtest 'validate group rule' => sub {
     $validator->add_field('bar');
     $validator->add_group_rule('fields', [qw/foo bar/], 'compare');
 
-    ok($validator->validate({foo => 'baz', bar => 'baz'}));
+    my $result = $validator->validate({foo => 'baz', bar => 'baz'});
+
+    ok $result->is_success;
 };
 
 subtest 'validate invalid group rule' => sub {
@@ -343,7 +371,9 @@ subtest 'validate invalid group rule' => sub {
     $validator->add_field('bar');
     $validator->add_group_rule('fields', [qw/foo bar/], 'compare');
 
-    ok(!$validator->validate({foo => 'baz', bar => '123'}));
+    my $result = $validator->validate({foo => 'baz', bar => '123'});
+
+    ok !$result->is_success;
 };
 
 subtest 'set group error' => sub {
@@ -353,9 +383,9 @@ subtest 'set group error' => sub {
     $validator->add_field('bar');
     $validator->add_group_rule('fields', [qw/foo bar/], 'compare');
 
-    $validator->validate({foo => 'baz', bar => '123'});
+    my $result = $validator->validate({foo => 'baz', bar => '123'});
 
-    is_deeply($validator->errors, {fields => 'COMPARE'});
+    is_deeply $result->errors, {fields => 'COMPARE'};
 };
 
 subtest 'returns all params' => sub {
@@ -364,9 +394,9 @@ subtest 'returns all params' => sub {
     $validator->add_field('foo');
     $validator->add_field('bar');
 
-    $validator->validate({foo => 'baz', bar => '123'});
+    my $result = $validator->validate({foo => 'baz', bar => '123'});
 
-    is_deeply $validator->all_params, {foo => 'baz', bar => '123'};
+    is_deeply $result->all_params, {foo => 'baz', bar => '123'};
 };
 
 subtest 'returns all params preprocessed' => sub {
@@ -375,14 +405,24 @@ subtest 'returns all params preprocessed' => sub {
     $validator->add_field('foo');
     $validator->add_field('bar', multiple => 1);
 
-    $validator->validate({foo => ['baz'], bar => '123'});
+    my $result = $validator->validate({foo => ['baz'], bar => '123'});
 
-    is_deeply $validator->all_params, {foo => 'baz', bar => ['123']};
+    is_deeply $result->all_params, {foo => 'baz', bar => ['123']};
 };
 
-sub _build_validator {
-    return Tu::Validator->new(@_);
-}
+subtest 'not modify passed params' => sub {
+    my $validator = _build_validator();
+
+    $validator->add_field('foo');
+    $validator->add_field('bar', multiple => 1);
+
+    my $params = {foo => ['baz'], bar => '123'};
+    $validator->validate($params);
+
+    is_deeply $params, {foo => ['baz'], bar => '123'};
+};
+
+sub _build_validator { Tu::Validator->new(@_) }
 
 done_testing;
 

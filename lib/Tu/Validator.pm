@@ -5,6 +5,7 @@ use warnings;
 
 use Carp qw(croak);
 use Tu::Loader;
+use Tu::ValidatorResult;
 
 sub new {
     my $class = shift;
@@ -21,8 +22,6 @@ sub new {
 
     $self->{fields} = {};
     $self->{rules}  = {};
-    $self->{errors} = {};
-    $self->{values} = {};
 
     return $self;
 }
@@ -85,74 +84,45 @@ sub add_group_rule {
     return $self;
 }
 
-sub add_error {
-    my $self = shift;
-    my ($name, $error) = @_;
-
-    for ("$name.$error", $error) {
-        if (exists $self->{messages}->{$_}) {
-            $error = $self->{messages}->{$_};
-            last;
-        }
-    }
-
-    if ($self->{fields}->{$name}->{multiple}) {
-        $self->{errors}->{$name . '[0]'} = $error;
-    }
-
-    $self->{errors}->{$name} = $error;
-}
-
-sub errors {
-    my $self = shift;
-
-    return $self->{errors};
-}
-
-sub has_errors {
-    my $self = shift;
-
-    return !!%{$self->{errors}};
-}
-
 sub validate {
     my $self = shift;
     my ($params) = @_;
 
     croak 'must be a hash ref' unless ref $params eq 'HASH';
 
-    $self->_prepare_params_inplace($params);
-    $self->{params} = $params;
+    $params = $self->_prepare_params($params);
 
-    $self->_validate_required($params);
+    my $result = {params => $params};
 
-    $self->_validate_rules($params);
+    $self->_validate_required($result);
 
-    $self->{validated_params} = $self->_gather_validated_params($params);
+    $self->_validate_rules($result);
 
-    return 0 if $self->has_errors;
+    $result->{validated_params} = $self->_gather_validated_params($result);
 
-    return 1;
+    return Tu::ValidatorResult->new(%$result, messages => $self->{messages});
 }
 
 sub _validate_required {
     my $self = shift;
-    my ($params) = @_;
+    my ($result) = @_;
 
     foreach my $name (keys %{$self->{fields}}) {
-        my $value = $params->{$name};
+        my $value = $result->{params}->{$name};
 
         my $is_empty = $self->_is_field_empty($value);
 
         if ($self->{fields}->{$name}->{required} && $is_empty) {
-            $self->add_error($name => 'REQUIRED');
+            $result->{errors}->{$name} = 'REQUIRED';
         }
     }
 }
 
 sub _validate_rules {
     my $self = shift;
-    my ($params) = @_;
+    my ($result) = @_;
+
+    my $params = $result->{params};
 
     foreach my $rule_name (keys %{$self->{rules}}) {
         next if exists $self->{errors}->{$rule_name};
@@ -165,35 +135,23 @@ sub _validate_rules {
 
         next if $rule->validate($params);
 
-        $self->add_error($rule_name => $rule->get_message);
+        $result->{errors}->{$rule_name} = $rule->get_message;
     }
 }
 
 sub _gather_validated_params {
     my $self = shift;
-    my ($params) = @_;
+    my ($result) = @_;
 
     my $validated_params = {};
 
     foreach my $name (keys %{$self->{fields}}) {
-        next if exists $self->{errors}->{$name};
+        next if exists $result->{errors}->{$name};
 
-        $validated_params->{$name} = $params->{$name};
+        $validated_params->{$name} = $result->{params}->{$name};
     }
 
     return $validated_params;
-}
-
-sub validated_params {
-    my $self = shift;
-
-    return $self->{validated_params};
-}
-
-sub all_params {
-    my $self = shift;
-
-    return $self->{params};
 }
 
 sub _is_field_empty {
@@ -215,11 +173,11 @@ sub _is_field_empty {
     return $all_empty;
 }
 
-sub _prepare_params_inplace {
+sub _prepare_params {
     my $self = shift;
     my ($params) = @_;
 
-    $self->_prepare_array_like_inplace($params);
+    $params = $self->_prepare_array_like($params);
 
     foreach my $name (keys %{$self->{fields}}) {
         if ($self->{fields}->{$name}->{multiple}) {
@@ -235,23 +193,30 @@ sub _prepare_params_inplace {
           if $self->{fields}->{$name}->{trim};
     }
 
-    return $self;
+    return $params;
 }
 
-sub _prepare_array_like_inplace {
+sub _prepare_array_like {
     my $self = shift;
     my ($params) = @_;
 
+    my $prepared = {};
     foreach my $key (keys %$params) {
-        next unless $key =~ m/^(.*?)\[(\d+)\]$/;
+        my $value = $params->{$key};
+        $value = [@$value] if ref $value eq 'ARRAY';
 
-        my ($name, $index) = ($1, $2);
+        if ($key =~ m/^(.*?)\[(\d+)\]$/) {
+            my ($name, $index) = ($1, $2);
 
-        my $value = delete $params->{$key};
-
-        $params->{$name}->[$index] =
-          ref $value eq 'ARRAY' ? $value->[0] : $value;
+            $prepared->{$name}->[$index] =
+              ref $value eq 'ARRAY' ? $value->[0] : $value;
+        }
+        else {
+            $prepared->{$key} = $value;
+        }
     }
+
+    return $prepared;
 }
 
 sub _trim {
