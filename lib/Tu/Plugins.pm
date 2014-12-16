@@ -3,6 +3,8 @@ package Tu::Plugins;
 use strict;
 use warnings;
 
+use Carp qw(croak);
+use List::Util qw(first);
 use Tu::Loader;
 
 sub new {
@@ -15,10 +17,10 @@ sub new {
     $self->{namespaces} = $params{namespaces};
     $self->{loader}     = $params{loader};
 
-    $self->{services} = $params{services};
-    $self->{builder}  = $params{builder};
+    $self->{services} = $params{services} || croak 'services required';
+    $self->{builder}  = $params{builder}  || croak 'builder required';
 
-    $self->{plugins} = [];
+    $self->{plugins} = {};
     $self->{namespaces} ||= [];
 
     $self->{loader} ||=
@@ -31,6 +33,10 @@ sub register {
     my $self = shift;
     my ($plugin, @args) = @_;
 
+    croak "plugin '$plugin' already registered" if $self->{plugins}->{$plugin};
+
+    $self->{plugins}->{$plugin}++;
+
     $plugin = $self->{loader}->load_class($plugin);
 
     my $instance = $plugin->new(
@@ -40,8 +46,6 @@ sub register {
     );
 
     $instance->startup;
-
-    push @{$self->{plugins}}, $instance;
 
     return $self;
 }

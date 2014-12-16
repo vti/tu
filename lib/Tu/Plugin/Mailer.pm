@@ -29,8 +29,14 @@ sub startup {
 
     croak 'mailer not configured' unless %$config;
 
-    my $mailer = Tu::Mailer->new(%$config);
+    my $mailer = $self->_build_mailer(%$config);
     $self->{services}->register($self->{service_name} => $mailer);
+}
+
+sub _build_mailer {
+    my $self = shift;
+
+    Tu::Mailer->new(@_);
 }
 
 1;

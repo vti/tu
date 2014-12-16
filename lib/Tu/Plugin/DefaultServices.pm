@@ -5,7 +5,6 @@ use warnings;
 
 use parent 'Tu::Plugin';
 
-use Tu::Request;
 use Tu::Config;
 use Tu::Routes::FromConfig;
 use Tu::Dispatcher::Routes;
@@ -61,26 +60,22 @@ sub startup {
     );
     $services->register(displayer => $displayer);
 
-    $self->builder->add_middleware(
+    $self->add_middleware(
         'ErrorDocument',
         403        => '/forbidden',
         404        => '/not_found',
         subrequest => 1
     );
 
-    $self->builder->add_middleware('HTTPExceptions');
+    $self->add_middleware('HTTPExceptions');
 
-    $self->builder->add_middleware(
-        'Defaults',
-        app_class => $self->{app_class},
-        services  => $services
-    );
+    $self->add_middleware('Defaults');
 
-    $self->builder->add_middleware('Static', services => $services);
+    $self->add_middleware('Static');
 
-    $self->builder->add_middleware('RequestDispatcher', services => $services);
-    $self->builder->add_middleware('ActionDispatcher',  services => $services);
-    $self->builder->add_middleware('ViewDisplayer',     services => $services);
+    $self->add_middleware('RequestDispatcher');
+    $self->add_middleware('ActionDispatcher');
+    $self->add_middleware('ViewDisplayer');
 
     return $self;
 }
