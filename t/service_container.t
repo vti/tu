@@ -4,6 +4,7 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 
+use Scalar::Util qw(blessed);
 use Tu::ServiceContainer;
 
 subtest 'throws on getting unknown service' => sub {
@@ -19,6 +20,20 @@ subtest 'throws on registering already registered service' => sub {
 
     like exception { $c->register(foo => 'baz') },
       qr/service 'foo' already registered/;
+};
+
+subtest 'returns true when service registered' => sub {
+    my $c = _build_container();
+
+    $c->register(foo => 'bar');
+
+    ok $c->is_registered('foo');
+};
+
+subtest 'returns false when service not registered' => sub {
+    my $c = _build_container();
+
+    ok !$c->is_registered('foo');
 };
 
 subtest 'registers scalar service' => sub {
@@ -45,6 +60,48 @@ subtest 'registers service via sub' => sub {
     is($c->service('foo'), 'foo');
 };
 
+subtest 'registers service as a class' => sub {
+    my $c = _build_container();
+
+    $c->register(foo => 'FooInstance', new => 1);
+
+    ok blessed $c->service('foo');
+    isa_ok($c->service('foo'), 'FooInstance');
+};
+
+subtest 'registers service as a class with deps' => sub {
+    my $c = _build_container();
+
+    $c->register(bar => 'bar');
+    $c->register(foo => 'FooInstance', new => [qw/bar/]);
+
+    is $c->service('foo')->{bar}, 'bar';
+};
+
+subtest 'registers registered service when default' => sub {
+    my $c = _build_container();
+
+    $c->register(bar => 'bar', default => 1);
+
+    ok !exception { $c->register(bar => 'baz') };
+};
+
+subtest 'creates instance with custom construction' => sub {
+    my $c = _build_container();
+
+    $c->register(bar => 'bar');
+    $c->register(
+        foo => 'FooInstance',
+        new => sub {
+            my ($class, $services) = @_;
+
+            $class->new(custom => $services->service('bar'));
+        }
+    );
+
+    is $c->service('foo')->{custom}, 'bar';
+};
+
 sub _build_container { Tu::ServiceContainer->new(@_) }
 
 done_testing;
@@ -54,7 +111,7 @@ package FooInstance;
 sub new {
     my $class = shift;
 
-    my $self = {};
+    my $self = {@_};
     bless $self, $class;
 
     return $self;

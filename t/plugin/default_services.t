@@ -12,14 +12,10 @@ use Tu::Plugin::DefaultServices;
 subtest 'adds middleware in correct order' => sub {
     my $builder  = _build_builder();
     my $services = _build_services();
-    $services->register(app_class => 'MyApp');
-    $services->register(home => Tu::Home->new(path => 'foo/bar'));
 
     my $plugin = _build_plugin(
         services => $services,
         builder  => $builder,
-        config   => {},
-        routes   => _mock_routes()
     );
 
     $plugin->startup;
@@ -40,29 +36,22 @@ subtest 'adds middleware in correct order' => sub {
 subtest 'registers services' => sub {
     my $builder  = _build_builder();
     my $services = _build_services();
-    $services->register(app_class => 'MyApp');
-    $services->register(home => Tu::Home->new(path => 'foo/bar'));
 
     my $plugin = _build_plugin(
         services => $services,
         builder  => $builder,
-        config   => {},
-        routes   => _mock_routes()
     );
 
     $plugin->startup;
 
-    ok $services->service('config');
-    ok $services->service('routes');
-    ok $services->service('dispatcher');
-    ok $services->service('action_factory');
-    ok $services->service('displayer');
+    ok $services->is_registered('config');
+    ok $services->is_registered('routes');
+    ok $services->is_registered('dispatcher');
+    ok $services->is_registered('action_factory');
+    ok $services->is_registered('displayer');
 };
 
 done_testing;
-
-sub _mock_renderer { Test::MonkeyMock->new }
-sub _mock_routes   { Test::MonkeyMock->new }
 
 sub _build_builder  { Tu::Builder->new }
 sub _build_services { Tu::ServiceContainer->new }

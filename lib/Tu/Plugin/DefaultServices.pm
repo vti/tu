@@ -5,60 +5,75 @@ use warnings;
 
 use parent 'Tu::Plugin';
 
-use Tu::Config;
-use Tu::Routes::FromConfig;
-use Tu::Dispatcher::Routes;
-use Tu::Displayer;
-use Tu::ActionFactory;
+sub startup {
+    my $self = shift;
 
-sub new {
-    my $self = shift->SUPER::new(@_);
-    my (%params) = @_;
+    $self->_register_services;
 
-    $self->{layout}   = $params{layout}   || 'layout.apl';
-    $self->{renderer} = $params{renderer} || do {
-        require Tu::Renderer::APL;
-        Tu::Renderer::APL->new(home => $self->home);
-    };
-    $self->{config} = $params{config};
-    $self->{routes} = $params{routes};
+    $self->_add_middleware;
 
     return $self;
 }
 
-sub startup {
+sub _register_services {
     my $self = shift;
 
-    my $services  = $self->services;
-    my $home      = $services->service('home');
-    my $app_class = $services->service('app_class');
+    my $services = $self->services;
 
     $services->register(
-        config => $self->{config}
-          || do {
-            Tu::Config->new(mode => 1)
-              ->load($home->catfile('config/config.yml'));
-          }
-    );
+        config  => 'Tu::Config',
+        default => 1,
+        new     => sub {
+            my ($class, $services) = @_;
+            my $home = $services->service('home');
 
-    my $routes = $self->{routes}
-      || Tu::Routes::FromConfig->new->load($home->catfile('config/routes.yml'));
-    $services->register(routes => $routes);
+            $class->new(mode => 1)->load($home->catfile('config/config.yml'));
+        }
+    );
 
     $services->register(
-        dispatcher => Tu::Dispatcher::Routes->new(routes => $routes));
+        routes  => 'Tu::Routes::FromConfig',
+        default => 1,
+        new     => sub {
+            my ($class, $services) = @_;
+            my $home = $services->service('home');
+
+            $class->new->load($home->catfile('config/routes.yml'));
+        }
+    );
 
     $services->register(
-        action_factory => Tu::ActionFactory->new(
-            namespaces => $app_class . '::Action::'
-        )
+        dispatcher => 'Tu::Dispatcher::Routes',
+        default    => 1,
+        new        => [qw/routes/]
     );
 
-    my $displayer = Tu::Displayer->new(
-        renderer => $self->{renderer},
-        layout   => $self->{layout}
+    $services->register(
+        action_factory => 'Tu::ActionFactory',
+        default        => 1,
+        new            => sub {
+            my ($class, $services) = @_;
+            $class->new(
+                namespaces => $services->service('app_class') . '::Action');
+        }
     );
-    $services->register(displayer => $displayer);
+
+    $services->register(layout => 'layout.apl', default => 1);
+    $services->register(
+        renderer => 'Tu::Renderer::APL',
+        default  => 1,
+        new      => [qw/home/]
+    );
+
+    $services->register(
+        displayer => 'Tu::Displayer',
+        default   => 1,
+        new       => [qw/renderer layout/]
+    );
+}
+
+sub _add_middleware {
+    my $self = shift;
 
     $self->add_middleware(
         'ErrorDocument',
@@ -76,8 +91,6 @@ sub startup {
     $self->add_middleware('RequestDispatcher');
     $self->add_middleware('ActionDispatcher');
     $self->add_middleware('ViewDisplayer');
-
-    return $self;
 }
 
 1;

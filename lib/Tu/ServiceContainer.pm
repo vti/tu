@@ -21,12 +21,21 @@ sub new {
     return $self;
 }
 
+sub is_registered {
+    my $self = shift;
+    my ($name) = @_;
+
+    return !!exists $self->{services}->{$name};
+}
+
 sub register {
     my $self = shift;
     my ($name, $value, %args) = @_;
 
-    croak qq{service '$name' already registered}
-      if exists $self->{services}->{$name};
+    if (exists $self->{services}->{$name}) {
+        croak qq{service '$name' already registered}
+          unless $self->{services}->{$name}->{default};
+    }
 
     $self->{services}->{$name} = {value => $value, %args};
 
@@ -45,6 +54,23 @@ sub service {
 
     if (ref $service->{value} eq 'CODE') {
         $instance = $service->{value}->();
+    }
+    elsif ($service->{new}) {
+        if (!$service->{instance}) {
+            my $service_class = $self->{loader}->load_class($service->{value});
+
+            my %deps;
+            if (ref $service->{new} eq 'ARRAY') {
+                $deps{$_} = $self->service($_) for @{$service->{new}};
+            }
+            elsif (ref $service->{new} eq 'CODE') {
+                $service->{instance} = $service->{new}->($service_class, $self);
+            }
+
+            $service->{instance} ||= $service_class->new(%deps);
+        }
+
+        $instance = $service->{instance};
     }
     else {
         $instance = $service->{value};
