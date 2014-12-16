@@ -3,13 +3,18 @@ package Tu::ActionResponseResolver;
 use strict;
 use warnings;
 
+use Carp qw(croak);
 use Encode ();
 
 sub new {
     my $class = shift;
+    my (%params) = @_;
 
     my $self = {};
     bless $self, $class;
+
+    $self->{encoding} = $params{encoding};
+    $self->{encoding} = 'UTF-8' unless exists $params{encoding};
 
     return $self;
 }
@@ -25,11 +30,16 @@ sub resolve {
 
         return $res->finalize if $res->isa('Tu::Response');
 
-        return;
+        croak 'unexpected return from action';
     }
 
-    $res = Encode::encode('UTF-8', $res) if Encode::is_utf8($res);
-    return [200, ['Content-Type' => 'text/html'], [$res]];
+    my $charset = '';
+    if ($self->{encoding}) {
+        $res = Encode::encode($self->{encoding}, $res);
+        $charset = '; charset=' . lc($self->{encoding});
+    }
+
+    return [200, ['Content-Type' => "text/html$charset"], [$res]];
 }
 
 1;
