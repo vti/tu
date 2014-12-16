@@ -106,6 +106,7 @@ sub _build_env {
 done_testing;
 
 package Test::User;
+
 sub new {
     my $class = shift;
 
@@ -114,4 +115,4 @@ sub new {
 
     return $self;
 }
-sub role {'user'}
+sub role { 'user' }

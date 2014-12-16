@@ -5,7 +5,7 @@ use Test::More;
 use Test::Requires;
 use Test::MonkeyMock;
 
-BEGIN { test_requires 'Plack::Middleware::Session::Cookie' };
+BEGIN { test_requires 'Plack::Middleware::Session::Cookie' }
 
 use Tu::Middleware::Session::Cookie;
 

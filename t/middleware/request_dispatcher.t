@@ -76,8 +76,7 @@ subtest 'dispatches without encoding' => sub {
 };
 
 subtest 'loads dispatcher from service container' => sub {
-    my $dispatcher =
-      Tu::Dispatcher::Routes->new(routes => _build_routes());
+    my $dispatcher = Tu::Dispatcher::Routes->new(routes => _build_routes());
     my $services = Test::MonkeyMock->new;
     $services->mock(service => sub { $dispatcher });
 
@@ -98,8 +97,7 @@ subtest 'throws when no dispatcher' => sub {
 
     like exception {
         _build_middleware(dispatcher => undef, services => $services)
-    },
-      qr/dispatcher required/;
+    }, qr/dispatcher required/;
 };
 
 sub _build_routes {

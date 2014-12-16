@@ -77,7 +77,7 @@ sub _mock_renderer {
     my (%params) = @_;
 
     my $renderer = Test::MonkeyMock->new;
-    $renderer->mock(render_file => sub { $params{content_file} });
+    $renderer->mock(render_file   => sub { $params{content_file} });
     $renderer->mock(render_string => sub { $params{content_string} });
 }
 

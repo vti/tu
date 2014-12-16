@@ -20,7 +20,8 @@ sub new {
 sub startup {
     my $self = shift;
 
-    my $db_class = $self->{db_class} || $self->{services}->service('app_class') . '::DB';
+    my $db_class =
+      $self->{db_class} || $self->{services}->service('app_class') . '::DB';
 
     Tu::Loader->new->load_class($db_class);
 

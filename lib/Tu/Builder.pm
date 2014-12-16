@@ -18,12 +18,8 @@ sub new {
     $self->{middleware} = [];
     $self->{namespaces} = $params{namespaces} || [];
 
-    $self->{loader} ||= Tu::Loader->new(
-        namespaces => [
-            @{$self->{namespaces}},
-            qw/Tu::Middleware:: Plack::Middleware::/
-        ]
-    );
+    $self->{loader} ||= Tu::Loader->new(namespaces =>
+          [@{$self->{namespaces}}, qw/Tu::Middleware:: Plack::Middleware::/]);
 
     return $self;
 }

@@ -15,7 +15,7 @@ sub new {
     my $self = shift->SUPER::new(@_);
     my (%params) = @_;
 
-    $self->{layout} = $params{layout} || 'layout.apl';
+    $self->{layout}   = $params{layout}   || 'layout.apl';
     $self->{renderer} = $params{renderer} || do {
         require Tu::Renderer::APL;
         Tu::Renderer::APL->new(home => $self->home);

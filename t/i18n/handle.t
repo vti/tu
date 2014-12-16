@@ -26,7 +26,7 @@ subtest 'returns localized message with maketext method' => sub {
 
 sub _build_handle {
     my $handle = Test::MonkeyMock->new;
-    $handle->mock(maketext => sub {'translated'});
+    $handle->mock(maketext => sub { 'translated' });
 
     return Tu::I18N::Handle->new(
         handle => $handle,

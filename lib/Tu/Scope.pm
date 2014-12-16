@@ -24,7 +24,7 @@ sub set {
     return $self->{env}->{"tu.$key"} = $value;
 }
 
-sub exists :method {
+sub exists : method {
     my $self = shift;
     my ($key) = @_;
 

@@ -31,8 +31,7 @@ sub startup {
         user_loader => $self->{user_loader}
     );
 
-    my $acl =
-      $self->{acl}
+    my $acl = $self->{acl}
       || Tu::ACL::FromConfig->new->load(
         $self->service('home')->catfile('config/acl.yml'));
     $self->insert_before_middleware(

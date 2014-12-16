@@ -7,68 +7,68 @@ use Test::Fatal;
 use Tu::Renderer;
 
 subtest 'throws on unimplemented methods' => sub {
-    like exception { Tu::Renderer->new->render_string },
-      qr/Unimplemented/;
-    like exception { Tu::Renderer->new->render_file },
-      qr/Unimplemented/;
+    like exception { Tu::Renderer->new->render_string }, qr/Unimplemented/;
+    like exception { Tu::Renderer->new->render_file },   qr/Unimplemented/;
 };
 
 subtest 'renders string' => sub {
-     my $renderer = _build_renderer();
+    my $renderer = _build_renderer();
 
-     my (undef, $string) = $renderer->render_string('my template string');
+    my (undef, $string) = $renderer->render_string('my template string');
 
-     is $string, 'my template string';
+    is $string, 'my template string';
 };
 
 subtest 'renders template' => sub {
-     my $renderer = _build_renderer();
+    my $renderer = _build_renderer();
 
-     my (undef, $path, $template) = $renderer->render_file('template.tpl');
+    my (undef, $path, $template) = $renderer->render_file('template.tpl');
 
-     is $path, 'templates';
-     is $template, 'template.tpl';
+    is $path,     'templates';
+    is $template, 'template.tpl';
 };
 
 subtest 'renderes templates from overwritten templates_path' => sub {
-     my $renderer = _build_renderer(templates_path => 'views');
+    my $renderer = _build_renderer(templates_path => 'views');
 
-     my (undef, $path, undef) = $renderer->render_file('template.tpl');
+    my (undef, $path, undef) = $renderer->render_file('template.tpl');
 
-     is $path, 'views';
+    is $path, 'views';
 };
 
 subtest 'prefixes templates path with home' => sub {
-     my $renderer = _build_renderer(home => '/root/');
+    my $renderer = _build_renderer(home => '/root/');
 
-     my (undef, $path, $template) = $renderer->render_file('template.tpl');
+    my (undef, $path, $template) = $renderer->render_file('template.tpl');
 
-     is $path, '/root/templates';
-     is $template, 'template.tpl';
+    is $path,     '/root/templates';
+    is $template, 'template.tpl';
 };
 
 subtest 'does not prefix templates path with home when absolute' => sub {
-     my $renderer = _build_renderer(home => '/root/');
+    my $renderer = _build_renderer(home => '/root/');
 
-     my (undef, undef, $template) = $renderer->render_file('/path/to/template.tpl');
+    my (undef, undef, $template) =
+      $renderer->render_file('/path/to/template.tpl');
 
-     is $template, '/path/to/template.tpl';
+    is $template, '/path/to/template.tpl';
 };
 
 subtest 'does not prefix templates path with anything when absolute' => sub {
-     my $renderer = _build_renderer();
+    my $renderer = _build_renderer();
 
-     my (undef, undef, $template) = $renderer->render_file('/path/to/template.tpl');
+    my (undef, undef, $template) =
+      $renderer->render_file('/path/to/template.tpl');
 
-     is $template, '/path/to/template.tpl';
+    is $template, '/path/to/template.tpl';
 };
 
 subtest 'passes engine arguments' => sub {
-     my $renderer = _build_renderer(engine_args => {foo => 'bar'});
+    my $renderer = _build_renderer(engine_args => {foo => 'bar'});
 
-     my ($engine) = $renderer->render_file('/path/to/template.tpl');
+    my ($engine) = $renderer->render_file('/path/to/template.tpl');
 
-     is $engine->{foo}, 'bar';
+    is $engine->{foo}, 'bar';
 };
 
 sub _build_renderer {
@@ -78,6 +78,7 @@ sub _build_renderer {
 done_testing;
 
 package TestEngine;
+
 sub new {
     my $class = shift;
 

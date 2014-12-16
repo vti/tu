@@ -22,8 +22,8 @@ subtest 'do nothing when empty' => sub {
 };
 
 subtest 'accept acl from outside' => sub {
-    my $acl = _build_acl(acl => Tu::ACL->new)
-      ->load('t/acl/from_config_t/acl.yml');
+    my $acl =
+      _build_acl(acl => Tu::ACL->new)->load('t/acl/from_config_t/acl.yml');
 
     ok $acl->is_allowed('anonymous', 'login');
 };

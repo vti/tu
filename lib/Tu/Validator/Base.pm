@@ -10,8 +10,8 @@ sub new {
     my $self = {};
     bless $self, $class;
 
-    $self->{fields}  = $params{fields};
-    $self->{args}    = $params{args};
+    $self->{fields} = $params{fields};
+    $self->{args}   = $params{args};
 
     return $self;
 }

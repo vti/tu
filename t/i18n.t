@@ -53,7 +53,8 @@ subtest 'detects languages from perl classes' => sub {
 };
 
 subtest 'detects languages from locale classes' => sub {
-    my $i18n = _build_i18n(lexicon => 'gettext', locale_dir => 't/i18n_t/locale');
+    my $i18n =
+      _build_i18n(lexicon => 'gettext', locale_dir => 't/i18n_t/locale');
 
     is_deeply([$i18n->languages], [qw/en ru/]);
 };
@@ -81,7 +82,7 @@ subtest 'returns handle' => sub {
 subtest 'caches handle' => sub {
     my $i18n = _build_i18n();
 
-    my $ref = $i18n->handle('ru');
+    my $ref     = $i18n->handle('ru');
     my $new_ref = $i18n->handle('ru');
 
     is $ref, $new_ref;

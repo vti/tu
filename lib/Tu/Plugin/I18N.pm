@@ -30,7 +30,7 @@ sub startup {
     my $self = shift;
 
     my $app_class = $self->service('app_class');
-    my $home = $self->home;
+    my $home      = $self->home;
 
     $app_class =~ s{::}{/}g;
 

@@ -10,3 +10,5 @@ cover_db
 _build/
 Build
 MYMETA.*
+local/
+.tidyall.d

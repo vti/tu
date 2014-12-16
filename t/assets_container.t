@@ -59,8 +59,7 @@ subtest 'throws when unknown type' => sub {
 
     $assets->require('/foo.foo');
 
-    like exception { $assets->include },
-      qr/unknown asset type 'foo'/;
+    like exception { $assets->include }, qr/unknown asset type 'foo'/;
 };
 
 sub _build_assets {

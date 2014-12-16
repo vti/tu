@@ -57,7 +57,11 @@ sub _build_action {
 
     my $action_factory = $self->{action_factory};
 
-    return $action_factory->build($action, env => $env, services => $self->{services});
+    return $action_factory->build(
+        $action,
+        env      => $env,
+        services => $self->{services}
+    );
 }
 
 1;

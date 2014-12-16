@@ -46,7 +46,7 @@ subtest 'sets multi values' => sub {
     $scope->set('displayer.template' => 'template');
 
     is_deeply $scope->displayer->vars, {foo => 'bar'};
-    is $scope->displayer->layout, 'layout.tpl';
+    is $scope->displayer->layout,   'layout.tpl';
     is $scope->displayer->template, 'template';
 };
 

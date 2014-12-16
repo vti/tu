@@ -50,6 +50,7 @@ sub _build_container { Tu::ServiceContainer->new(@_) }
 done_testing;
 
 package FooInstance;
+
 sub new {
     my $class = shift;
 

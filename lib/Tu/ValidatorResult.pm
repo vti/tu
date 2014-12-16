@@ -10,7 +10,7 @@ sub new {
     my $self = {};
     bless $self, $class;
 
-    $self->{messages}           = $params{messages};
+    $self->{messages}         = $params{messages};
     $self->{params}           = $params{params};
     $self->{errors}           = $params{errors} || {};
     $self->{validated_params} = $params{validated_params} || {};
