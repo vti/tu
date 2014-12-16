@@ -74,17 +74,7 @@ sub startup {
         services  => $services
     );
 
-    my $public_dir = $home->catfile('public');
-
-    my @dirs = grep { -d } glob "$public_dir/*";
-    s/^$public_dir\/?// for @dirs;
-
-    my $re = '^/(?:' . join('|', @dirs) . ')/';
-    $self->builder->add_middleware(
-        'Static',
-        path => qr/$re/,
-        root => $self->{home}->catfile('public')
-    );
+    $self->builder->add_middleware('Static', services => $services);
 
     $self->builder->add_middleware('RequestDispatcher', services => $services);
     $self->builder->add_middleware('ActionDispatcher',  services => $services);
