@@ -56,7 +56,7 @@ subtest 'runs action with text response' => sub {
     my $res = $mw->call(_build_env(action => 'text_response'));
 
     is_deeply $res =>
-      [200, ['Content-Type' => 'text/html'], ['Text response!']];
+      [200, ['Content-Type' => 'text/html; charset=utf-8'], ['Text response!']];
 };
 
 sub _build_env {
