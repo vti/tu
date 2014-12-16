@@ -54,7 +54,7 @@ sub _register_services {
         new            => sub {
             my ($class, $services) = @_;
             $class->new(
-                namespaces => $services->service('app_class') . '::Action');
+                namespaces => $services->service('app_class') . '::Action::');
         }
     );
 

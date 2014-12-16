@@ -19,7 +19,7 @@ subtest 'sadfasdf' => sub {
         my $req = HTTP::Request->new(GET => '/');
         my $res = $cb->($req);
 
-        like $res->content, qr/Hello world!/;
+        like $res->content, qr/Hello world, bar!/;
       };
 };
 
