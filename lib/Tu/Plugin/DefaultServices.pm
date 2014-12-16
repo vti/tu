@@ -16,10 +16,10 @@ sub new {
     my $self = shift->SUPER::new(@_);
     my (%params) = @_;
 
-    $self->{layout} = $params{layout} // 'layout.apl';
+    $self->{layout} = $params{layout} || 'layout.apl';
     $self->{renderer} = $params{renderer} || do {
         require Tu::Renderer::APL;
-        Tu::Renderer::APL->new(home => $self->{home});
+        Tu::Renderer::APL->new(home => $self->home);
     };
     $self->{config} = $params{config};
     $self->{routes} = $params{routes};
@@ -30,18 +30,20 @@ sub new {
 sub startup {
     my $self = shift;
 
-    my $home     = $self->home;
-    my $services = $self->services;
-
-    $services->register(home => $home);
+    my $services  = $self->services;
+    my $home      = $services->service('home');
+    my $app_class = $services->service('app_class');
 
     $services->register(
         config => $self->{config}
-          || do { Tu::Config->new(mode => 1)->load('config/config.yml') }
+          || do {
+            Tu::Config->new(mode => 1)
+              ->load($home->catfile('config/config.yml'));
+          }
     );
 
     my $routes = $self->{routes}
-      || Tu::Routes::FromConfig->new->load('config/routes.yml');
+      || Tu::Routes::FromConfig->new->load($home->catfile('config/routes.yml'));
     $services->register(routes => $routes);
 
     $services->register(
@@ -49,7 +51,7 @@ sub startup {
 
     $services->register(
         action_factory => Tu::ActionFactory->new(
-            namespaces => $self->{app_class} . '::Action::'
+            namespaces => $app_class . '::Action::'
         )
     );
 

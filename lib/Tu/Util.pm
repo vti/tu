@@ -14,7 +14,7 @@ sub slurp {
     my ($path, $encoding) = @_;
 
     local $/ = undef;
-    open my $fh, '<', $path or croak "Can't open $path: $!";
+    open my $fh, '<', $path or croak "Can't open '$path': $!";
     my $config = <$fh>;
     close $fh;
 

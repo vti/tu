@@ -35,14 +35,16 @@ sub startup {
     my $path = $INC{"$app_class.pm"};
     $path =~ s{\.pm$}{/I18N};
 
+    my $home = $self->home;
+
     my $locale_dir;
     my $lexicon;
     if (-d $path) {
         $locale_dir = $path;
         $lexicon    = 'perl';
     }
-    elsif (-d $self->{home}->catfile('locale')) {
-        $locale_dir = $self->{home}->catfile('locale');
+    elsif (-d $home->catfile('locale')) {
+        $locale_dir = $home->catfile('locale');
         $lexicon    = 'gettext';
     }
     else {

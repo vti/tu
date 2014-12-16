@@ -35,17 +35,21 @@ subtest 'adds middleware' => sub {
     is_deeply $app->to_app->(), [200, [], ['OK']];
 };
 
+subtest 'registers services' => sub {
+    my $app = TestApp->new(home => '/foo/bar');
+
+    my $home = $app->service('home');
+    is $home, '/foo/bar';
+
+    my $app_class = $app->service('app_class');
+    is $app_class, 'TestApp';
+};
+
 subtest 'registers plugin' => sub {
     my $app = TestApp->new;
     $app->register_plugin('Nifty');
 
     is_deeply $app->to_app->(), [200, [], ['from plugin']];
-};
-
-subtest 'transforms home to object' => sub {
-    my $app = TestApp->new(home => 'foo/bar');
-
-    is $app->home->catfile('there'), 'foo/bar/there';
 };
 
 done_testing;

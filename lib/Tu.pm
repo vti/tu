@@ -21,26 +21,24 @@ sub new {
     my $self = {};
     bless $self, $class;
 
-    $self->{home}     = $params{home};
     $self->{builder}  = $params{builder};
     $self->{services} = $params{services};
     $self->{plugins}  = $params{plugins};
 
     my $app_class = ref $self;
 
-    $self->{home} ||= Tu::Home->new(app_class => $app_class);
-    if (!ref $self->{home}) {
-        $self->{home} = Tu::Home->new(path => $self->{home});
-    }
+    my $home = $params{home} || Tu::Home->new(app_class => $app_class);
+    $home = Tu::Home->new(path => $home) unless ref $home;
 
     $self->{builder} ||=
       Tu::Builder->new(namespaces => [$app_class . '::Middleware::']);
     $self->{services} ||= Tu::ServiceContainer->new;
 
+    $self->{services}->register(app_class => $app_class);
+    $self->{services}->register(home => $home);
+
     $self->{plugins} ||= Tu::Plugins->new(
         namespaces => [$app_class . '::Plugin::'],
-        app_class  => $app_class,
-        home       => $self->{home},
         builder    => $self->{builder},
         services   => $self->{services},
     );
@@ -50,7 +48,6 @@ sub new {
     return $self;
 }
 
-sub home     { $_[0]->{home} }
 sub services { $_[0]->{services} }
 sub service  { shift->{services}->service(@_) }
 
