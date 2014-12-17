@@ -111,7 +111,7 @@ Tu - tu
 
 Viacheslav Tykhanovskyi, C<vti@cpan.org>
 
-=head1 LICENSE AND COPYRIGHT
+=head1 COPYRIGHT AND LICENSE
 
 Copyright (C) 2014, Viacheslav Tykhanovskyi
 
