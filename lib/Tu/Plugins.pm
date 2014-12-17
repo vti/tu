@@ -31,7 +31,7 @@ sub new {
 
 sub register {
     my $self = shift;
-    my ($plugin, @args) = @_;
+    my ($plugin, %params) = @_;
 
     croak "plugin '$plugin' already registered" if $self->{plugins}->{$plugin};
 
@@ -42,7 +42,7 @@ sub register {
     my $instance = $plugin->new(
         services => $self->{services},
         builder  => $self->{builder},
-        @args
+        %params
     );
 
     $instance->startup;

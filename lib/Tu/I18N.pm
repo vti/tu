@@ -32,7 +32,6 @@ sub new {
 
 sub default_language {
     my $self = shift;
-    my ($default_language) = @_;
 
     return $self->{default_language};
 }

@@ -52,11 +52,12 @@ sub new_response {
 
 sub url_for {
     my $self = shift;
+    my ($url_or_name, %params) = @_;
 
     my $url;
 
     if ($_[0] =~ m{^/}) {
-        my $path = $_[0];
+        my $path = $url_or_name;
         $path =~ s{^/}{};
 
         $url = $self->req->base;
@@ -68,7 +69,7 @@ sub url_for {
     else {
         my $dispatched_request = $self->scope->dispatched_request;
 
-        my $path = $dispatched_request->build_path(@_);
+        my $path = $dispatched_request->build_path($url_or_name, %params);
 
         $path =~ s{^/}{};
 

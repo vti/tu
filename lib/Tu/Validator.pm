@@ -28,12 +28,12 @@ sub new {
 
 sub add_field {
     my $self = shift;
-    my ($field, @args) = @_;
+    my ($field, %params) = @_;
 
     croak "field '$field' exists"
       if exists $self->{fields}->{$field};
 
-    $self->{fields}->{$field} = {required => 1, trim => 1, @args};
+    $self->{fields}->{$field} = {required => 1, trim => 1, %params};
 
     return $self;
 }

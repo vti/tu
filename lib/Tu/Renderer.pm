@@ -27,9 +27,19 @@ sub new {
     return $self;
 }
 
-sub render_file { ... }
+sub render_file {
+    my $self = shift;
+    my ($template_file, %params) = @_;
 
-sub render_string { ... }
+    ...;
+}
+
+sub render_string {
+    my $self = shift;
+    my ($template_string, %params) = @_;
+
+    ...;
+}
 
 sub _build_engine { ... }
 

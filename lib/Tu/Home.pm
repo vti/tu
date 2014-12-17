@@ -35,8 +35,9 @@ sub to_string {
 
 sub catfile {
     my $self = shift;
+    my (@paths) = @_;
 
-    return ref($self)->new(path => File::Spec->catfile($self->{path}, @_));
+    return ref($self)->new(path => File::Spec->catfile($self->{path}, @paths));
 }
 
 sub _detect {

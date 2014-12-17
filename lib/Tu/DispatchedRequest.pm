@@ -20,14 +20,12 @@ sub build_path { ... }
 
 sub action {
     my $self = shift;
-    my ($action) = @_;
 
     return $self->{action};
 }
 
 sub captures {
     my $self = shift;
-    my ($captures) = @_;
 
     return $self->{captures};
 }

@@ -12,6 +12,11 @@ sub new {
     return $self;
 }
 
-sub dispatch { ... }
+sub dispatch {
+    my $self = shift;
+    my ($path, %args) = @_;
+
+    ...;
+}
 
 1;

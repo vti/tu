@@ -30,21 +30,21 @@ sub is_registered {
 
 sub register {
     my $self = shift;
-    my ($name, $value, %args) = @_;
+    my ($name, $value, %params) = @_;
 
     if (exists $self->{services}->{$name}) {
         croak qq{service '$name' already registered}
           unless $self->{services}->{$name}->{default};
     }
 
-    $self->{services}->{$name} = {value => $value, %args};
+    $self->{services}->{$name} = {value => $value, %params};
 
     return $self;
 }
 
 sub service {
     my $self = shift;
-    my ($name, @args) = @_;
+    my ($name) = @_;
 
     croak qq{unknown service '$name'} unless exists $self->{services}->{$name};
 

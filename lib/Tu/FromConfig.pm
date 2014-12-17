@@ -21,6 +21,7 @@ sub new {
 
 sub load {
     my $self = shift;
+    my ($path) = @_;
 
     my $config = $self->{config}->load(@_);
 

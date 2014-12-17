@@ -32,13 +32,13 @@ sub register_helper {
 
 sub build {
     my $self = shift;
-    my ($name, @args) = @_;
+    my ($name, %params) = @_;
 
     return $self->SUPER::build(
         $name,
         services => $self->{services},
         env      => $self->{env},
-        @args
+        %params
     );
 }
 

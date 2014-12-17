@@ -49,33 +49,39 @@ sub new {
 }
 
 sub services { $_[0]->{services} }
-sub service  { shift->{services}->service(@_) }
+
+sub service {
+    my $self = shift;
+    my ($name) = @_;
+    $self->{services}->service($name);
+}
 
 sub startup { $_[0] }
 
 sub add_middleware {
     my $self = shift;
-    my ($name, @args) = @_;
+    my ($name, %params) = @_;
 
     return $self->{builder}
-      ->add_middleware($name, services => $self->{services}, @args);
+      ->add_middleware($name, services => $self->{services}, %params);
 }
 
 sub insert_before_middleware {
     my $self = shift;
-    my ($before, $name, @args) = @_;
+    my ($before, $name, %params) = @_;
 
     return $self->{builder}->insert_before_middleware(
         $before, $name,
         services => $self->{services},
-        @args
+        %params
     );
 }
 
 sub register_plugin {
     my $self = shift;
+    my ($name) = @_;
 
-    return $self->{plugins}->register(@_);
+    return $self->{plugins}->register($name);
 }
 
 sub default_app {
