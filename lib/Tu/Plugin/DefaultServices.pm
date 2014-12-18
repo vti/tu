@@ -31,9 +31,8 @@ sub _register_services {
 
     my $config_file = $self->{config_file};
     $services->register(
-        config  => 'Tu::Config',
-        default => 1,
-        new     => sub {
+        config => 'Tu::Config',
+        new    => sub {
             my ($class, $services) = @_;
 
             my $home = $services->service('home');
@@ -41,17 +40,15 @@ sub _register_services {
         }
     );
 
-    $services->register(routes => 'Tu::Routes', default => 1, new => 1);
+    $services->register(routes => 'Tu::Routes', new => 1);
 
     $services->register(
         dispatcher => 'Tu::Dispatcher::Routes',
-        default    => 1,
         new        => [qw/routes/]
     );
 
     $services->register(
         action_factory => 'Tu::ActionFactory',
-        default        => 1,
         new            => sub {
             my ($class, $services) = @_;
             $class->new(
@@ -66,14 +63,12 @@ sub _register_services {
     );
     $services->register(
         renderer => 'Tu::Renderer::APL',
-        default  => 1,
         new      => [qw/home templates_path/]
     );
 
-    $services->register(layout => 'layout.apl', default => 1);
+    $services->register(layout => 'layout.apl');
     $services->register(
         displayer => 'Tu::Displayer',
-        default   => 1,
         new       => [qw/renderer layout/]
     );
 }

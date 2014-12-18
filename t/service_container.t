@@ -78,12 +78,12 @@ subtest 'registers service as a class with deps' => sub {
     is $c->service('foo')->{bar}, 'bar';
 };
 
-subtest 'registers registered service when default' => sub {
+subtest 'overwrites registered service' => sub {
     my $c = _build_container();
 
-    $c->register(bar => 'bar', default => 1);
+    $c->register(bar => 'bar');
 
-    ok !exception { $c->register(bar => 'baz') };
+    ok !exception { $c->overwrite(bar => 'baz') };
 };
 
 subtest 'creates instance with custom construction' => sub {

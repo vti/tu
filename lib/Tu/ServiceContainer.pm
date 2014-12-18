@@ -33,9 +33,17 @@ sub register {
     my ($name, $value, %params) = @_;
 
     if (exists $self->{services}->{$name}) {
-        croak qq{service '$name' already registered}
-          unless $self->{services}->{$name}->{default};
+        croak qq{service '$name' already registered};
     }
+
+    $self->{services}->{$name} = {value => $value, %params};
+
+    return $self;
+}
+
+sub overwrite {
+    my $self = shift;
+    my ($name, $value, %params) = @_;
 
     $self->{services}->{$name} = {value => $value, %params};
 
