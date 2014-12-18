@@ -119,14 +119,14 @@ sub throw_error {
 
 sub redirect {
     my $self = shift;
-    my ($path) = shift;
+    my ($path, @args) = @_;
 
     my $status = 302;
-    if (@_ % 2 != 0) {
-        $status = pop @_;
+    if (@args % 2 != 0) {
+        $status = pop @args;
     }
 
-    my $url = $self->url_for($path, @_);
+    my $url = $self->url_for($path, @args);
 
     my $res = $self->new_response($status);
     $res->header(Location => $url);
