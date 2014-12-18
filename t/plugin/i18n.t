@@ -4,6 +4,10 @@ use warnings;
 use Test::More;
 use Test::Fatal;
 use Test::MonkeyMock;
+use Test::Requires {
+    'Locale::Maketext::Lexicon' => '0',
+    'I18N::AcceptLanguage'      => '0'
+};
 
 use lib 't/plugin/i18n_t/perl/lib';
 

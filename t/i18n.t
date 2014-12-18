@@ -5,10 +5,11 @@ use utf8;
 use lib 't/i18n_t';
 
 use Test::More;
-use Test::Requires;
 use Test::Fatal;
-
-BEGIN { test_requires 'I18N::AcceptLanguage' }
+use Test::Requires {
+    'Locale::Maketext::Lexicon' => '0',
+    'I18N::AcceptLanguage'      => '0'
+};
 
 use Tu::I18N;
 
