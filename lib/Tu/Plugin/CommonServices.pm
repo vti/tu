@@ -1,4 +1,4 @@
-package Tu::Plugin::DefaultServices;
+package Tu::Plugin::CommonServices;
 
 use strict;
 use warnings;
@@ -15,16 +15,6 @@ sub new {
 }
 
 sub startup {
-    my $self = shift;
-
-    $self->_register_services;
-
-    $self->_add_middleware;
-
-    return $self;
-}
-
-sub _register_services {
     my $self = shift;
 
     my $services = $self->services;
@@ -71,27 +61,6 @@ sub _register_services {
         displayer => 'Tu::Displayer',
         new       => [qw/renderer layout/]
     );
-}
-
-sub _add_middleware {
-    my $self = shift;
-
-    $self->add_middleware(
-        'ErrorDocument',
-        403        => '/forbidden',
-        404        => '/not_found',
-        subrequest => 1
-    );
-
-    $self->add_middleware('HTTPExceptions');
-
-    $self->add_middleware('Defaults');
-
-    $self->add_middleware('Static');
-
-    $self->add_middleware('RequestDispatcher');
-    $self->add_middleware('ActionDispatcher');
-    $self->add_middleware('ViewDisplayer');
 }
 
 1;
