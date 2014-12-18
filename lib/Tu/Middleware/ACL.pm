@@ -16,7 +16,6 @@ sub new {
     my (%params) = @_;
 
     $self->{acl} = $params{acl};
-    croak 'acl required' unless $self->{acl};
 
     return $self;
 }
@@ -41,7 +40,8 @@ sub _acl {
 
     my $role = blessed $user ? $user->role : $user->{role};
 
-    return $self->_deny($env) unless $self->{acl}->is_allowed($role, $action);
+    my $acl = $self->{acl} || $self->service('acl');
+    return $self->_deny($env) unless $acl->is_allowed($role, $action);
 
     return;
 }

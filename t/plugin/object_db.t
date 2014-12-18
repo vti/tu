@@ -35,7 +35,7 @@ subtest 'inits database from specified class' => sub {
 
     $plugin->startup;
 
-    is_deeply TestApp::Custom->args, [foo => 'bar'];
+    is_deeply TestApp::Custom->custom_args, [foo => 'bar'];
 };
 
 done_testing;
@@ -71,4 +71,4 @@ sub init_db {
     shift;
     $custom_args = [@_];
 }
-sub args { $custom_args }
+sub custom_args { $custom_args }

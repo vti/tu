@@ -17,7 +17,7 @@ sub new {
     croak 'user_loader required' unless $self->{user_loader};
 
     if (blessed $params{user_loader}) {
-        for (qw/load_from_session role to_hash/) {
+        for (qw/load_from_session/) {
             croak "user_loader must support $_()"
               unless $params{user_loader}->can($_);
         }

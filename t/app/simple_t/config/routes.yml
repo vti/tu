@@ -1,4 +1,0 @@
----
-- route: /
-  name:  index
-  method: GET

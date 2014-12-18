@@ -8,10 +8,6 @@ use Tu::ACL;
 use Tu::DispatchedRequest;
 use Tu::Middleware::ACL;
 
-subtest 'throw when no acl' => sub {
-    like exception { _build_middleware(acl => undef) }, qr/acl required/;
-};
-
 subtest 'allow_when_role_is_correct' => sub {
     my $mw = _build_middleware();
 

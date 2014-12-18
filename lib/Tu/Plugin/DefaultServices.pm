@@ -5,6 +5,15 @@ use warnings;
 
 use parent 'Tu::Plugin';
 
+sub new {
+    my $self = shift->SUPER::new(@_);
+    my (%params) = @_;
+
+    $self->{config_file} = $params{config_file} || 'config/config.yml';
+
+    return $self;
+}
+
 sub startup {
     my $self = shift;
 
@@ -20,27 +29,19 @@ sub _register_services {
 
     my $services = $self->services;
 
+    my $config_file = $self->{config_file};
     $services->register(
         config  => 'Tu::Config',
         default => 1,
         new     => sub {
             my ($class, $services) = @_;
-            my $home = $services->service('home');
 
-            $class->new(mode => 1)->load($home->catfile('config/config.yml'));
+            my $home = $services->service('home');
+            $class->new(mode => 1)->load($home->catfile($config_file));
         }
     );
 
-    $services->register(
-        routes  => 'Tu::Routes::FromConfig',
-        default => 1,
-        new     => sub {
-            my ($class, $services) = @_;
-            my $home = $services->service('home');
-
-            $class->new->load($home->catfile('config/routes.yml'));
-        }
-    );
+    $services->register(routes => 'Tu::Routes', default => 1, new => 1);
 
     $services->register(
         dispatcher => 'Tu::Dispatcher::Routes',
@@ -58,13 +59,18 @@ sub _register_services {
         }
     );
 
-    $services->register(layout => 'layout.apl', default => 1);
+    $services->register(
+        templates_path => sub {
+            shift->service('config')->{templates_path} || 'templates';
+        }
+    );
     $services->register(
         renderer => 'Tu::Renderer::APL',
         default  => 1,
-        new      => [qw/home/]
+        new      => [qw/home templates_path/]
     );
 
+    $services->register(layout => 'layout.apl', default => 1);
     $services->register(
         displayer => 'Tu::Displayer',
         default   => 1,

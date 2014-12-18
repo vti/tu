@@ -53,7 +53,7 @@ sub service {
     my $instance;
 
     if (ref $service->{value} eq 'CODE') {
-        $instance = $service->{value}->();
+        $instance = $service->{value}->($self);
     }
     elsif ($service->{new}) {
         if (!$service->{instance}) {

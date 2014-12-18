@@ -79,9 +79,9 @@ sub insert_before_middleware {
 
 sub register_plugin {
     my $self = shift;
-    my ($name) = @_;
+    my ($name, %params) = @_;
 
-    return $self->{plugins}->register($name);
+    return $self->{plugins}->register($name, %params);
 }
 
 sub default_app {

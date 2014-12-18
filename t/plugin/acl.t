@@ -5,6 +5,7 @@ use Test::More;
 use Test::MonkeyMock;
 
 use Tu::Builder;
+use Tu::ServiceContainer;
 use Tu::Plugin::ACL;
 
 subtest 'adds middleware in correct order' => sub {
@@ -29,7 +30,8 @@ subtest 'adds middleware in correct order' => sub {
 
 done_testing;
 
-sub _build_builder { Tu::Builder->new }
+sub _build_builder  { Tu::Builder->new }
+sub _build_services { Tu::ServiceContainer->new }
 
 sub _mock_acl {
     my (%params) = @_;
@@ -37,18 +39,11 @@ sub _mock_acl {
     Test::MonkeyMock->new;
 }
 
-sub _mock_services {
-    my (%params) = @_;
-
-    my $services = Test::MonkeyMock->new;
-    $services->mock(service => sub { $params{$_[1]} });
-}
-
 sub _build_plugin {
     my (%params) = @_;
 
-    $params{services} ||= _mock_services(%{$params{services_args} || {}});
-    $params{builder} ||= _build_builder();
+    $params{services} ||= _build_services();
+    $params{builder}  ||= _build_builder();
 
     Tu::Plugin::ACL->new(user_loader => sub { }, acl => _mock_acl(), %params);
 }

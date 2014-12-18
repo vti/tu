@@ -16,4 +16,11 @@ sub new {
 
 sub services { $_[0]->{services} }
 
+sub service {
+    my $self = shift;
+    my ($name) = @_;
+
+    return $self->{services}->service($name);
+}
+
 1;
