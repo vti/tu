@@ -20,8 +20,11 @@ sub call {
 
     $vars->{helpers} = Tu::HelperFactory::Persistent->new(
         services   => $self->{services},
-        namespaces => $self->{services}->service('app_class') . '::Helper::',
-        env        => $env
+        namespaces => [
+            $self->{services}->service('app_class') . '::Helper::',
+            'Tu::Helper::'
+        ],
+        env => $env
     );
 
     return $self->app->($env);
