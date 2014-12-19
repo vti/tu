@@ -3,7 +3,9 @@ package Tu::Action::FormMixin;
 use strict;
 use warnings;
 
-use parent 'Tu::Mixin';
+use parent 'Exporter';
+
+our @EXPORT_OK = qw(validate_or_submit);
 
 sub validate_or_submit {
     my $self = shift;
