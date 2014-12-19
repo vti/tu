@@ -82,10 +82,13 @@ sub url_for {
 
 sub captures { $_[0]->scope->dispatched_request->captures }
 
+sub vars { $_[0]->scope->displayer->vars }
+
 sub set_var {
     my $self = shift;
 
-    my $vars_scope = $self->scope->displayer->vars;
+    my $vars_scope = $self->vars;
+
     for (my $i = 0; $i < @_; $i += 2) {
         my $key   = $_[$i];
         my $value = $_[$i + 1];

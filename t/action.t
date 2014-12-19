@@ -168,12 +168,12 @@ subtest 'returns captures from dispatched request' => sub {
     is_deeply $action->captures, {foo => 'bar'};
 };
 
-subtest 'sets displayer vars' => sub {
+subtest 'sets and gets displayer vars' => sub {
     my $action = _build_action();
 
     $action->set_var(foo => 'bar');
 
-    is_deeply $action->env->{'tu.displayer.vars'}, {foo => 'bar'};
+    is_deeply $action->vars, {foo => 'bar'};
 };
 
 sub _mock_displayer {
