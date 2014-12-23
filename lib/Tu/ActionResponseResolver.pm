@@ -55,7 +55,9 @@ sub resolve {
 
     @headers = @{$options{headers}} if $options{headers};
 
-    return [200, [@headers], [$res]];
+    my $status = $options{status} || $options{code} || 200;
+
+    return [$status, [@headers], [$res]];
 }
 
 1;

@@ -41,6 +41,12 @@ subtest 'returns array ref on string with type' => sub {
       [200, ['Content-Type' => 'application/json'], ['{"foo":"bar"}']];
 };
 
+subtest 'returns array ref on string with status' => sub {
+    my $resolver = _build_resolver();
+
+    is $resolver->resolve('foo', status => 400)->[0], 400;
+};
+
 subtest 'returns array ref on string with headers' => sub {
     my $resolver = _build_resolver();
 
