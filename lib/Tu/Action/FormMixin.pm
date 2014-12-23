@@ -33,7 +33,7 @@ sub validate_or_submit {
     $self->set_var(errors => $result->errors);
     $self->set_var(params => $result->all_params);
 
-    return $self->show if $self->can('show');
+    return $self->show_errors if $self->can('show_errors');
     return;
 }
 

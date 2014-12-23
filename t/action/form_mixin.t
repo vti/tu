@@ -46,7 +46,7 @@ subtest 'calls show when present' => sub {
 subtest 'calls show on errors when present' => sub {
     my $action = _build_form('TestFormWithShow', POST '/');
 
-    is $action->run, 'SHOW';
+    is $action->run, 'SHOW_ERRORS';
 };
 
 subtest 'calls custom validation' => sub {
@@ -125,7 +125,8 @@ sub build_validator {
     $validator->add_field('foo');
 }
 
-sub show { 'SHOW' }
+sub show        { 'SHOW' }
+sub show_errors { 'SHOW_ERRORS' }
 
 sub submit { }
 
