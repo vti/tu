@@ -1,3 +1,4 @@
+requires 'JSON';
 requires 'Plack';
 requires 'Routes::Tiny' => '0.14';
 requires 'String::CamelCase';

@@ -5,6 +5,7 @@ use warnings;
 
 use Carp qw(croak);
 use Encode ();
+use JSON   ();
 
 sub new {
     my $class = shift;
@@ -21,11 +22,11 @@ sub new {
 
 sub resolve {
     my $self = shift;
-    my ($res) = @_;
+    my ($res, %options) = @_;
 
     return unless defined $res;
 
-    if (my $ref = ref $res) {
+    if (!%options && (my $ref = ref $res)) {
         return $res if $ref eq 'ARRAY' || $ref eq 'CODE';
 
         return $res->finalize if $res->isa('Tu::Response');
@@ -33,13 +34,28 @@ sub resolve {
         croak 'unexpected return from action';
     }
 
-    my $charset = '';
-    if ($self->{encoding}) {
-        $res = Encode::encode($self->{encoding}, $res);
-        $charset = '; charset=' . lc($self->{encoding});
+    my $type = $options{type} || 'html';
+
+    my @headers;
+    if ($type eq 'json') {
+        @headers = ('Content-Type' => 'application/json');
+        $res = JSON::encode_json($res);
+    }
+    elsif ($type eq 'html') {
+        my $charset = '';
+        if ($self->{encoding}) {
+            $res = Encode::encode($self->{encoding}, $res);
+            $charset = '; charset=' . lc($self->{encoding});
+        }
+        @headers = ('Content-Type' => "text/html$charset");
+    }
+    else {
+        croak 'unexpected return option type';
     }
 
-    return [200, ['Content-Type' => "text/html$charset"], [$res]];
+    @headers = @{$options{headers}} if $options{headers};
+
+    return [200, [@headers], [$res]];
 }
 
 1;

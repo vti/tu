@@ -27,11 +27,26 @@ subtest 'returns array ref on string' => sub {
       ];
 };
 
-subtest 'returns array without encoding' => sub {
+subtest 'returns array ref on string without encoding' => sub {
     my $resolver = _build_resolver(encoding => undef);
 
     is_deeply $resolver->resolve('привет'),
       [200, ['Content-Type' => 'text/html'], ['привет']];
+};
+
+subtest 'returns array ref on string with type' => sub {
+    my $resolver = _build_resolver();
+
+    is_deeply $resolver->resolve({foo => 'bar'}, type => 'json'),
+      [200, ['Content-Type' => 'application/json'], ['{"foo":"bar"}']];
+};
+
+subtest 'returns array ref on string with headers' => sub {
+    my $resolver = _build_resolver();
+
+    is_deeply $resolver->resolve('foo',
+        headers => ['Content-Type' => 'text/plain']),
+      [200, ['Content-Type' => 'text/plain'], ['foo']];
 };
 
 subtest 'returns array ref as is' => sub {
