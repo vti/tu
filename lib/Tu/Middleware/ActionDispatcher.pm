@@ -46,9 +46,9 @@ sub _action {
     $action = $self->_build_action($action, $env);
     return unless defined $action;
 
-    my $res = $action->run;
+    my @res = $action->run;
 
-    return $self->{response_resolver}->resolve($res);
+    return $self->{response_resolver}->resolve(@res);
 }
 
 sub _build_action {
