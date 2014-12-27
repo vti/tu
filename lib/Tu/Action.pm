@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Carp qw(croak);
+use Scalar::Util qw(blessed);
 use Tu::X::HTTP;
 use Tu::Scope;
 use Tu::Request;
@@ -129,7 +130,8 @@ sub redirect {
         $status = pop @args;
     }
 
-    my $url = $self->url_for($path, @args);
+    my $url = blessed($path)
+      && $path->isa('URI') ? $path : $self->url_for($path, @args);
 
     my $res = $self->new_response($status);
     $res->header(Location => $url);
