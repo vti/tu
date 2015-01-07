@@ -12,7 +12,8 @@ sub new {
     my $self = shift->SUPER::new(@_);
     my (%params) = @_;
 
-    $self->{lexicon} = $params{lexicon} || 'perl';
+    $self->{lexicon}    = $params{lexicon}    || 'perl';
+    $self->{config_key} = $params{config_key} || 'i18n';
 
     $self->{service_name}             = $params{service_name};
     $self->{helper_name}              = $params{helper_name};
@@ -31,6 +32,8 @@ sub startup {
 
     my $app_class = $self->service('app_class');
     my $home      = $self->home;
+
+    my $config = $self->{services}->service('config')->{$self->{config_key}};
 
     $app_class =~ s{::}{/}g;
 
@@ -58,8 +61,13 @@ sub startup {
     );
     $self->{services}->register($self->{service_name} => $i18n);
 
-    $self->insert_before_middleware($self->{insert_before_middleware},
-        'I18N', i18n => $i18n);
+    $self->insert_before_middleware(
+        $self->{insert_before_middleware},
+        'I18N',
+        i18n             => $i18n,
+        default_language => $config->{default_language},
+        languages        => $config->{languages}
+    );
 }
 
 sub _build_i18n {

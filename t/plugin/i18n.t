@@ -136,5 +136,7 @@ sub _build_plugin {
     $params{services} ||= _build_services();
     $params{builder}  ||= _build_builder();
 
+    $params{services}->register(config => $params{config} || {});
+
     Tu::Plugin::I18N->new(%params);
 }
