@@ -33,8 +33,6 @@ sub startup {
     my $app_class = $self->service('app_class');
     my $home      = $self->home;
 
-    my $config = $self->{services}->service('config')->{$self->{config_key}};
-
     $app_class =~ s{::}{/}g;
 
     my $path = $INC{"$app_class.pm"};
@@ -61,19 +59,20 @@ sub startup {
     );
     $self->{services}->register($self->{service_name} => $i18n);
 
-    $self->insert_before_middleware(
-        $self->{insert_before_middleware},
-        'I18N',
-        i18n             => $i18n,
-        default_language => $config->{default_language},
-        languages        => $config->{languages}
-    );
+    $self->insert_before_middleware($self->{insert_before_middleware},
+        'I18N', i18n => $i18n,);
 }
 
 sub _build_i18n {
     my $self = shift;
 
-    return Tu::I18N->new(@_);
+    my $config = $self->{services}->service('config')->{$self->{config_key}};
+
+    return Tu::I18N->new(
+        default_language => $config->{default_language},
+        languages        => $config->{languages},
+        @_
+    );
 }
 
 1;
