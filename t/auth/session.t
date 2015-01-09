@@ -15,25 +15,19 @@ subtest 'loads undef when no session' => sub {
 subtest 'loads undef when no user' => sub {
     my $auth = _build_auth();
 
-    ok !$auth->load({'psgix.session' => {auth_id => 5}});
+    ok !$auth->load({'psgix.session' => {id => 5}});
 };
 
 subtest 'loads when user found' => sub {
     my $auth = _build_auth();
 
-    ok $auth->load({'psgix.session' => {auth_id => 1}});
+    ok $auth->load({'psgix.session' => {id => 1}});
 };
 
 subtest 'loads with additional options' => sub {
     my $auth = _build_auth();
 
-    ok !$auth->load({'psgix.session' => {auth_id => 1, fake => 1}});
-};
-
-subtest 'returns id' => sub {
-    my $auth = _build_auth();
-
-    is $auth->auth_id({'psgix.session' => {auth_id => 5}}), 5;
+    ok !$auth->load({'psgix.session' => {id => 1, fake => 1}});
 };
 
 subtest 'creates session on login' => sub {
@@ -42,9 +36,9 @@ subtest 'creates session on login' => sub {
     my $user = TestUserLoader->new;
 
     my $env = {'psgix.session' => {}, 'psgix.session.options' => {}};
-    $auth->login($env, $user->id);
+    $auth->login($env, {id => $user->id});
 
-    is $env->{'psgix.session'}->{auth_id}, 1;
+    is $env->{'psgix.session'}->{id}, 1;
 };
 
 subtest 'saves additional options' => sub {
@@ -53,7 +47,7 @@ subtest 'saves additional options' => sub {
     my $user = TestUserLoader->new;
 
     my $env = {'psgix.session' => {}, 'psgix.session.options' => {}};
-    $auth->login($env, $user->id, {foo => 'bar'});
+    $auth->login($env, {id => $user->id, foo => 'bar'});
 
     is $env->{'psgix.session'}->{foo}, 'bar';
 };
@@ -62,7 +56,7 @@ subtest 'expires session on logout' => sub {
     my $auth = _build_auth();
 
     my $env =
-      {'psgix.session' => {auth_id => 1}, 'psgix.session.options' => {}};
+      {'psgix.session' => {id => 1}, 'psgix.session.options' => {}};
     $auth->logout($env);
 
     is_deeply $env,
@@ -88,12 +82,12 @@ sub new {
 
 sub id { 1 }
 
-sub load_by_auth_id {
+sub load_auth {
     my $self = shift;
-    my ($id, $options) = @_;
+    my ($options) = @_;
 
     return if $options->{fake};
-    return $self if $id == $self->id;
+    return $self if $options->{id} && $options->{id} == $self->id;
     return;
 }
 
