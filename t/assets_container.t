@@ -20,8 +20,7 @@ subtest 'requires js as is' => sub {
 
     $assets->require(\'1 + 1', 'js');
 
-    is($assets->include,
-        '<script type="text/javascript">1 + 1</script>');
+    is($assets->include, '<script type="text/javascript">1 + 1</script>');
 };
 
 subtest 'requires with specified type' => sub {
