@@ -50,6 +50,7 @@
             "YAML::Tiny" : "0"
          },
          "requires" : {
+            "JSON" : "0",
             "Plack" : "0",
             "Routes::Tiny" : "0.14",
             "String::CamelCase" : "0",

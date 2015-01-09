@@ -6,21 +6,20 @@ use warnings;
 use parent 'Tu::Middleware';
 
 use Carp qw(croak);
-use Scalar::Util qw(blessed);
 use Tu::Scope;
+use Tu::Auth::Session;
 
 sub new {
     my $self = shift->SUPER::new(@_);
     my (%params) = @_;
 
-    $self->{user_loader} = $params{user_loader};
-    croak 'user_loader required' unless $self->{user_loader};
+    $self->{auth} = $params{auth};
 
-    if (blessed $params{user_loader}) {
-        for (qw/load_from_session/) {
-            croak "user_loader must support $_()"
-              unless $params{user_loader}->can($_);
-        }
+    if (!$self->{auth}) {
+        croak 'user_loader required' unless $params{user_loader};
+
+        $self->{auth} =
+          Tu::Auth::Session->new(user_loader => $params{user_loader});
     }
 
     return $self;
@@ -39,23 +38,18 @@ sub _user {
     my $self = shift;
     my ($env) = @_;
 
-    my $scope   = Tu::Scope->new($env);
-    my $session = $env->{'psgix.session'};
+    my $scope = Tu::Scope->new($env);
 
-    my $user;
-    if ($session) {
-        my $loader = $self->{user_loader};
+    my $auth = $self->{auth};
+    my $user = $auth->load($env);
 
-        $user =
-          blessed $loader
-          ? $loader->load_from_session($session)
-          : $loader->($session);
-
-        $scope->displayer->vars->{user} = $user->to_hash if $user;
+    if ($user) {
+        $scope->displayer->vars->{user} = $user->to_hash;
     }
 
     $user ||= Tu::Anonymous->new;
 
+    $scope->set(auth => $auth);
     $scope->set(user => $user);
 }
 

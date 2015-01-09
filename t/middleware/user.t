@@ -9,7 +9,7 @@ use Tu::Middleware::User;
 subtest 'set_anonymous_when_no_session' => sub {
     my $mw = _build_middleware();
 
-    my $env = {};
+    my $env = {'psgix.session' => {}};
 
     my $res = $mw->call($env);
 
@@ -29,7 +29,7 @@ subtest 'set_anonymous_when_session_but_no_user' => sub {
 subtest 'set_anonymous_when_user_not_found' => sub {
     my $mw = _build_middleware();
 
-    my $env = {'psgix.session' => {user => 'unknown'}};
+    my $env = {'psgix.session' => {user_id => 5}};
 
     my $res = $mw->call($env);
 
@@ -39,7 +39,7 @@ subtest 'set_anonymous_when_user_not_found' => sub {
 subtest 'set_user' => sub {
     my $mw = _build_middleware();
 
-    my $env = {'psgix.session' => {user => 'user'}, 'tu.displayer.vars' => {}};
+    my $env = {'psgix.session' => {user_id => 1}, 'tu.displayer.vars' => {}};
 
     my $res = $mw->call($env);
 
@@ -49,7 +49,7 @@ subtest 'set_user' => sub {
 subtest 'register displayer var when user found' => sub {
     my $mw = _build_middleware();
 
-    my $env = {'psgix.session' => {user => 'user'}, 'tu.displayer.vars' => {}};
+    my $env = {'psgix.session' => {user_id => 1}, 'tu.displayer.vars' => {}};
 
     my $res = $mw->call($env);
 
@@ -69,15 +69,7 @@ subtest 'not register displayer var when user not found' => sub {
 sub _build_middleware {
     return Tu::Middleware::User->new(
         app => sub { [200, [], ['OK']] },
-        user_loader => sub {
-            my $session = shift;
-
-            if ($session->{user} && $session->{user} eq 'user') {
-                return TestUser->new(role => 'user');
-            }
-
-            return;
-        }
+        user_loader => TestUser->new
     );
 }
 
@@ -87,16 +79,23 @@ package TestUser;
 
 sub new {
     my $class = shift;
-    my (%params) = @_;
 
     my $self = {};
     bless $self, $class;
 
-    $self->{role} = $params{role};
-
     return $self;
 }
 
-sub role { shift->{role} }
+sub role { 'user' }
+
+sub auth_id { 1 }
+
+sub load_by_auth_id {
+    my $self = shift;
+    my ($id) = @_;
+
+    return $self if $id == 1;
+    return;
+}
 
 sub to_hash { {} }
