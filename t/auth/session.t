@@ -15,19 +15,25 @@ subtest 'loads undef when no session' => sub {
 subtest 'loads undef when no user' => sub {
     my $auth = _build_auth();
 
-    ok !$auth->load({'psgix.session' => {user_id => 5}});
+    ok !$auth->load({'psgix.session' => {auth_id => 5}});
 };
 
 subtest 'loads when user found' => sub {
     my $auth = _build_auth();
 
-    ok $auth->load({'psgix.session' => {user_id => 1}});
+    ok $auth->load({'psgix.session' => {auth_id => 1}});
 };
 
 subtest 'loads with additional options' => sub {
     my $auth = _build_auth();
 
-    ok !$auth->load({'psgix.session' => {user_id => 1, fake => 1}});
+    ok !$auth->load({'psgix.session' => {auth_id => 1, fake => 1}});
+};
+
+subtest 'returns id' => sub {
+    my $auth = _build_auth();
+
+    is $auth->auth_id({'psgix.session' => {auth_id => 5}}), 5;
 };
 
 subtest 'creates session on login' => sub {
@@ -38,7 +44,7 @@ subtest 'creates session on login' => sub {
     my $env = {'psgix.session' => {}, 'psgix.session.options' => {}};
     $auth->login($env, $user->id);
 
-    is $env->{'psgix.session'}->{user_id}, 1;
+    is $env->{'psgix.session'}->{auth_id}, 1;
 };
 
 subtest 'saves additional options' => sub {
@@ -56,7 +62,7 @@ subtest 'expires session on logout' => sub {
     my $auth = _build_auth();
 
     my $env =
-      {'psgix.session' => {user_id => 1}, 'psgix.session.options' => {}};
+      {'psgix.session' => {auth_id => 1}, 'psgix.session.options' => {}};
     $auth->logout($env);
 
     is_deeply $env,

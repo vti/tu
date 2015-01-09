@@ -20,12 +20,21 @@ sub new {
     return $self;
 }
 
+sub auth_id {
+    my $self = shift;
+    my ($env) = @_;
+
+    my $session = $self->_build_session($env);
+
+    return $session->get('auth_id');
+}
+
 sub load {
     my $self = shift;
     my ($env) = @_;
 
     my $session = $self->_build_session($env);
-    return unless my $id = $session->get('user_id');
+    return unless my $id = $session->get('auth_id');
 
     return $self->{user_loader}->load_by_auth_id($id, $session->dump);
 }
@@ -35,7 +44,7 @@ sub login {
     my ($env, $id, $options) = @_;
 
     my $session = $self->_build_session($env);
-    $session->set(user_id => $id);
+    $session->set(auth_id => $id);
 
     if ($options && ref $options eq 'HASH') {
         $session->set($_ => $options->{$_}) for keys %$options;

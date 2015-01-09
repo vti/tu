@@ -29,7 +29,7 @@ subtest 'set_anonymous_when_session_but_no_user' => sub {
 subtest 'set_anonymous_when_user_not_found' => sub {
     my $mw = _build_middleware();
 
-    my $env = {'psgix.session' => {user_id => 5}};
+    my $env = {'psgix.session' => {auth_id => 5}};
 
     my $res = $mw->call($env);
 
@@ -39,7 +39,7 @@ subtest 'set_anonymous_when_user_not_found' => sub {
 subtest 'set_user' => sub {
     my $mw = _build_middleware();
 
-    my $env = {'psgix.session' => {user_id => 1}, 'tu.displayer.vars' => {}};
+    my $env = {'psgix.session' => {auth_id => 1}, 'tu.displayer.vars' => {}};
 
     my $res = $mw->call($env);
 
@@ -49,7 +49,7 @@ subtest 'set_user' => sub {
 subtest 'register displayer var when user found' => sub {
     my $mw = _build_middleware();
 
-    my $env = {'psgix.session' => {user_id => 1}, 'tu.displayer.vars' => {}};
+    my $env = {'psgix.session' => {auth_id => 1}, 'tu.displayer.vars' => {}};
 
     my $res = $mw->call($env);
 
