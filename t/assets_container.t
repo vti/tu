@@ -15,6 +15,15 @@ subtest 'requires js' => sub {
         '<script src="/foo.js" type="text/javascript"></script>');
 };
 
+subtest 'requires js as is' => sub {
+    my $assets = _build_assets();
+
+    $assets->require(\'1 + 1', 'js');
+
+    is($assets->include,
+        '<script type="text/javascript">1 + 1</script>');
+};
+
 subtest 'requires with specified type' => sub {
     my $assets = _build_assets();
 

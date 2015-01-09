@@ -50,6 +50,8 @@ sub _include_type {
     my ($type, $path) = @_;
 
     if ($type eq 'js') {
+        return qq|<script type="text/javascript">$$path</script>|
+          if ref $path eq 'SCALAR';
         return qq|<script src="$path" type="text/javascript"></script>|;
     }
     elsif ($type eq 'css') {
