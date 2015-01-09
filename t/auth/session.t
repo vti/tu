@@ -18,10 +18,16 @@ subtest 'loads undef when no user' => sub {
     ok !$auth->load({'psgix.session' => {user_id => 5}});
 };
 
-subtest 'loads undef when user found' => sub {
+subtest 'loads when user found' => sub {
     my $auth = _build_auth();
 
     ok $auth->load({'psgix.session' => {user_id => 1}});
+};
+
+subtest 'loads with additional options' => sub {
+    my $auth = _build_auth();
+
+    ok !$auth->load({'psgix.session' => {user_id => 1, fake => 1}});
 };
 
 subtest 'creates session on login' => sub {
@@ -33,6 +39,17 @@ subtest 'creates session on login' => sub {
     $auth->login($env, $user->id);
 
     is $env->{'psgix.session'}->{user_id}, 1;
+};
+
+subtest 'saves additional options' => sub {
+    my $auth = _build_auth();
+
+    my $user = TestUserLoader->new;
+
+    my $env = {'psgix.session' => {}, 'psgix.session.options' => {}};
+    $auth->login($env, $user->id, {foo => 'bar'});
+
+    is $env->{'psgix.session'}->{foo}, 'bar';
 };
 
 subtest 'expires session on logout' => sub {
@@ -67,8 +84,9 @@ sub id { 1 }
 
 sub load_by_auth_id {
     my $self = shift;
-    my ($id) = @_;
+    my ($id, $options) = @_;
 
+    return if $options->{fake};
     return $self if $id == $self->id;
     return;
 }
