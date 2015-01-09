@@ -20,6 +20,15 @@ sub new {
     return $self;
 }
 
+sub session {
+    my $self = shift;
+    my ($env) = @_;
+
+    my $session = $self->_build_session($env);
+
+    return $session->dump || {};
+}
+
 sub load {
     my $self = shift;
     my ($env) = @_;
