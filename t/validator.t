@@ -46,13 +46,16 @@ subtest 'loads rule from custom namespace' => sub {
     ok $result->is_success;
 };
 
-subtest 'throws when adding existing rule' => sub {
+subtest 'possible to use several rules' => sub {
     my $validator = _build_validator();
 
     $validator->add_field('foo');
-    $validator->add_rule('foo', 'regexp');
+    $validator->add_rule('foo', 'regexp', qr/^\d+$/);
+    $validator->add_rule('foo', 'regexp', qr/^[0-5]+$/);
 
-    like exception { $validator->add_rule('foo') }, qr/rule 'foo' exists/;
+    my $result = $validator->validate({foo => '3'});
+
+    ok $result->is_success;
 };
 
 subtest 'throws when adding unknown field to group rule' => sub {

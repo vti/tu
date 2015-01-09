@@ -47,16 +47,13 @@ sub add_rule {
     croak "field '$field_name' does not exist"
       unless exists $self->{fields}->{$field_name};
 
-    croak "rule '$field_name' exists"
-      if exists $self->{rules}->{$field_name};
-
     my $rule = $self->_build_rule(
         $rule_name,
         fields => [$field_name],
         args   => \@rule_args
     );
 
-    $self->{rules}->{$field_name} = $rule;
+    push @{$self->{rules}->{$field_name}}, $rule;
 
     return $rule;
 }
@@ -79,7 +76,7 @@ sub add_group_rule {
         args   => \@rule_args
     );
 
-    $self->{rules}->{$group_name} = $rule;
+    push @{$self->{rules}->{$group_name}}, $rule;
 
     return $self;
 }
@@ -131,11 +128,14 @@ sub _validate_rules {
             next if $self->_is_field_empty($params->{$rule_name});
         }
 
-        my $rule = $self->{rules}->{$rule_name};
+        my $rules = $self->{rules}->{$rule_name};
 
-        next if $rule->validate($params);
+        foreach my $rule (@$rules) {
+            next if $rule->validate($params);
 
-        $result->{errors}->{$rule_name} = $rule->name;
+            $result->{errors}->{$rule_name} = $rule->name;
+            last;
+        }
     }
 }
 
