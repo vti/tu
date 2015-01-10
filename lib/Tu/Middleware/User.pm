@@ -64,6 +64,7 @@ sub new {
     return $self;
 }
 
+sub id   { 0 }
 sub role { 'anonymous' }
 
 1;
