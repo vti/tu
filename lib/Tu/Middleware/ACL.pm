@@ -60,7 +60,7 @@ sub _deny {
         return [302, ['Location' => $redirect_to], ['']];
     }
 
-    Tu::X::HTTP->throw('Forbidden', code => 403);
+    Tu::X::HTTP->throw('Not Found', code => 404);
 }
 
 1;
