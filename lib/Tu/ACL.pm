@@ -73,7 +73,14 @@ sub is_allowed {
 
     return 0 unless exists $self->{roles}->{$role};
 
-    return 0 if first { $_ eq $action } @{$self->{roles}->{$role}->{deny}};
+    foreach my $denied_action (@{$self->{roles}->{$role}->{deny}}) {
+        if (ref $denied_action eq 'Regexp') {
+            return 0 if $action =~ $denied_action;
+        }
+        else {
+            return 0 if $action eq $denied_action;
+        }
+    }
 
     return 1
       if first { $_ eq $action || $_ eq '*' }

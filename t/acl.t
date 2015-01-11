@@ -123,6 +123,22 @@ subtest 'deny_everyone' => sub {
     ok !$acl->is_allowed('user2', 'foo');
 };
 
+subtest 'denies by regex' => sub {
+    my $acl = _build_acl();
+
+    $acl->add_role('user');
+    $acl->add_role('admin');
+    $acl->allow('user',  '*');
+    $acl->allow('admin', '*');
+
+    $acl->deny('user', qr/^admin/);
+
+    ok $acl->is_allowed('user',  'foo');
+    ok $acl->is_allowed('admin', 'foo');
+    ok !$acl->is_allowed('user', 'admin_foo');
+    ok $acl->is_allowed('admin', 'admin_foo');
+};
+
 sub _build_acl {
     return Tu::ACL->new(@_);
 }
