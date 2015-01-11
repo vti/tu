@@ -6,47 +6,48 @@ use Test::Fatal;
 
 use Tu::Middleware::User;
 
-subtest 'set_anonymous_when_no_session' => sub {
+subtest 'sets anonymous role when no user' => sub {
     my $mw = _build_middleware();
 
     my $env = {'psgix.session' => {}};
 
     my $res = $mw->call($env);
 
-    is($env->{'tu.user'}->role, 'anonymous');
+    is $env->{'tu.auth_role'}, 'anonymous';
 };
 
-subtest 'set_anonymous_when_session_but_no_user' => sub {
+subtest 'sets anonymous role when session but no user' => sub {
     my $mw = _build_middleware();
 
     my $env = {'psgix.session' => {foo => 'bar'}};
 
     my $res = $mw->call($env);
 
-    is($env->{'tu.user'}->role, 'anonymous');
+    is $env->{'tu.auth_role'}, 'anonymous';
 };
 
-subtest 'set_anonymous_when_user_not_found' => sub {
+subtest 'set anonymous when user not found' => sub {
     my $mw = _build_middleware();
 
     my $env = {'psgix.session' => {id => 5}};
 
     my $res = $mw->call($env);
 
-    is($env->{'tu.user'}->role, 'anonymous');
+    is $env->{'tu.auth_role'}, 'anonymous';
 };
 
-subtest 'set_user' => sub {
+subtest 'sets user and role' => sub {
     my $mw = _build_middleware();
 
     my $env = {'psgix.session' => {id => 1}, 'tu.displayer.vars' => {}};
 
     my $res = $mw->call($env);
 
-    is($env->{'tu.user'}->role, 'user');
+    is $env->{'tu.auth_role'}, 'user';
+    is $env->{'tu.user'}->role, 'user';
 };
 
-subtest 'register displayer var when user found' => sub {
+subtest 'registers displayer var when user found' => sub {
     my $mw = _build_middleware();
 
     my $env = {'psgix.session' => {id => 1}, 'tu.displayer.vars' => {}};
@@ -56,7 +57,7 @@ subtest 'register displayer var when user found' => sub {
     is_deeply $env->{'tu.displayer.vars'}->{user}, {};
 };
 
-subtest 'not register displayer var when user not found' => sub {
+subtest 'not registers displayer var when user not found' => sub {
     my $mw = _build_middleware();
 
     my $env = {'psgix.session' => {}};

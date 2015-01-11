@@ -34,14 +34,12 @@ sub _acl {
     my $self = shift;
     my ($env) = @_;
 
-    return $self->_deny($env) unless my $user = Tu::Scope->new($env)->user;
+    return $self->_deny($env) unless my $auth_role = $env->{'tu.auth_role'};
 
     my $action = $self->_find_action($env);
 
-    my $role = blessed $user ? $user->role : $user->{role};
-
     my $acl = $self->{acl} || $self->service('acl');
-    return $self->_deny($env) unless $acl->is_allowed($role, $action);
+    return $self->_deny($env) unless $acl->is_allowed($auth_role, $action);
 
     return;
 }

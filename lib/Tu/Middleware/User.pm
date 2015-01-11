@@ -43,28 +43,13 @@ sub _user {
     my $auth = $self->{auth};
     my $user = $auth->load($env);
 
-    if ($user) {
+    if ($user && $user->can('to_hash')) {
         $scope->displayer->vars->{user} = $user->to_hash;
     }
 
-    $user ||= Tu::Anonymous->new;
-
-    $scope->set(auth => $auth);
-    $scope->set(user => $user);
+    $scope->set(auth      => $auth);
+    $scope->set(auth_role => $user ? $user->role : 'anonymous');
+    $scope->set(user      => $user);
 }
-
-package Tu::Anonymous;
-
-sub new {
-    my $class = shift;
-
-    my $self = {};
-    bless $self, $class;
-
-    return $self;
-}
-
-sub id   { 0 }
-sub role { 'anonymous' }
 
 1;

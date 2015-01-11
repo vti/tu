@@ -8,64 +8,52 @@ use Tu::ACL;
 use Tu::DispatchedRequest;
 use Tu::Middleware::ACL;
 
-subtest 'allow_when_role_is_correct' => sub {
+subtest 'allows when role is correct' => sub {
     my $mw = _build_middleware();
 
-    my $env = _build_env(user => {role => 'user'}, action => 'foo');
+    my $env = _build_env(auth_role => 'user', action => 'foo');
 
     my $res = $mw->call($env);
 
-    ok($res);
+    ok $res;
 };
 
-subtest 'deny_when_unknown_role' => sub {
+subtest 'denies when unknown role' => sub {
     my $mw = _build_middleware();
 
-    ok(
-        exception {
-            $mw->call(_build_env(user => {role => 'anon'}, action => 'bar'));
-        }
-    );
+    ok exception {
+        $mw->call(_build_env(auth_role => 'admin', action => 'bar'));
+    };
 };
 
-subtest 'deny_when_denied_action' => sub {
+subtest 'denies when denied action' => sub {
     my $mw = _build_middleware();
 
-    ok(
-        exception {
-            $mw->call(_build_env(user => {role => 'user'}, action => 'bar'));
-        }
-    );
+    ok exception {
+        $mw->call(_build_env(auth_role => 'user', action => 'bar'));
+    };
 };
 
-subtest 'deny_when_no_user' => sub {
+subtest 'denies when no role' => sub {
     my $mw = _build_middleware();
 
-    ok(exception { $mw->call({}) });
+    ok exception { $mw->call({}) };
 };
 
-subtest 'redirect_instead_of_throw' => sub {
+subtest 'redirects instead of throw' => sub {
     my $mw = _build_middleware(redirect_to => '/login');
 
-    my $res = $mw->call({PATH_INFO => '/', 'tu.user' => undef});
+    my $res = $mw->call({PATH_INFO => '/'});
 
-    is_deeply($res, [302, ['Location' => '/login'], ['']]);
+    is_deeply $res, [302, ['Location' => '/login'], ['']];
 };
 
-subtest 'prevent_redirect_recursion' => sub {
+subtest 'prevents redirect recursion' => sub {
     my $mw = _build_middleware(redirect_to => '/login');
 
-    ok(exception { $mw->call({PATH_INFO => '/login', 'tu.user' => undef}) });
-};
-
-subtest 'accept blessed user object' => sub {
-    my $mw = _build_middleware();
-
-    my $env = _build_env(user => Test::User->new, action => 'foo');
-
-    my $res = $mw->call($env);
-
-    ok($res);
+    ok exception {
+        $mw->call({PATH_INFO => '/login', 'tu.auth_role' => undef})
+    };
 };
 
 sub _build_middleware {
@@ -88,7 +76,7 @@ sub _build_env {
 
     my $env = {};
 
-    $env->{'tu.user'} = undef;
+    $env->{'tu.auth_role'} = undef;
     $env->{'tu.dispatched_request'} =
       Tu::DispatchedRequest->new(action => $action);
 
@@ -100,15 +88,3 @@ sub _build_env {
 }
 
 done_testing;
-
-package Test::User;
-
-sub new {
-    my $class = shift;
-
-    my $self = {};
-    bless $self, $class;
-
-    return $self;
-}
-sub role { 'user' }
