@@ -40,7 +40,7 @@ sub call {
 
             my $scope = Tu::Scope->new($env);
 
-            $self->{auth}->finalize;
+            $self->{auth}->finalize($env);
         }
     );
 }

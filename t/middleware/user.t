@@ -47,6 +47,16 @@ subtest 'sets user and role' => sub {
     is $env->{'tu.user'}->role, 'user';
 };
 
+subtest 'finalizes session' => sub {
+    my $mw = _build_middleware();
+
+    my $env = {'psgix.session' => {id => 1}, 'tu.displayer.vars' => {}};
+
+    my $res = $mw->call($env);
+
+    is_deeply $env->{'psgix.session'}, {foo => 'bar'};
+};
+
 subtest 'registers displayer var when user found' => sub {
     my $mw = _build_middleware();
 
@@ -97,6 +107,13 @@ sub load_auth {
 
     return $self if $options->{id} && $options->{id} == 1;
     return;
+}
+
+sub finalize_auth {
+    my $self = shift;
+    my ($options) = @_;
+
+    return {foo => 'bar'};
 }
 
 sub to_hash { {} }
