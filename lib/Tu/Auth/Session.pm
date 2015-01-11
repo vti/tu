@@ -47,12 +47,7 @@ sub finalize {
     if ($self->{user_loader}->can('finalize_auth')) {
         my $session = $self->_build_session($env);
 
-        my $new_options = $self->{user_loader}->finalize_auth($session->dump);
-
-        if ($new_options && ref $new_options eq 'HASH') {
-            $session->remove($_) for $session->keys;
-            $session->set($_ => $new_options->{$_}) for keys %$new_options;
-        }
+        $self->{user_loader}->finalize_auth($session->dump);
     }
 }
 

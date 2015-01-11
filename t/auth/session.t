@@ -72,7 +72,7 @@ subtest 'calls finalize' => sub {
 
     is_deeply $env,
       {
-        'psgix.session'         => {new => 'options'},
+        'psgix.session'         => {id => 1, new => 'options'},
         'psgix.session.options' => {}
       };
 };
@@ -109,7 +109,7 @@ sub finalize_auth {
     my $self = shift;
     my ($options) = @_;
 
-    return {new => 'options'};
+    $options->{new} = 'options';
 }
 
 1;

@@ -29,7 +29,7 @@ sub call {
     my $self = shift;
     my ($env) = @_;
 
-    $self->_user($env);
+    my $user = $self->_user($env);
 
     my $res = $self->app->($env);
 
@@ -38,9 +38,7 @@ sub call {
         sub {
             my $res = shift;
 
-            my $scope = Tu::Scope->new($env);
-
-            $self->{auth}->finalize($env);
+            $self->{auth}->finalize($env) if $user;
         }
     );
 }
@@ -61,6 +59,8 @@ sub _user {
     $scope->set(auth      => $auth);
     $scope->set(auth_role => $user ? $user->role : 'anonymous');
     $scope->set(user      => $user);
+
+    return $user;
 }
 
 1;

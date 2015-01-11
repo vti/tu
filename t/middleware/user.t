@@ -54,7 +54,7 @@ subtest 'finalizes session' => sub {
 
     my $res = $mw->call($env);
 
-    is_deeply $env->{'psgix.session'}, {foo => 'bar'};
+    is_deeply $env->{'psgix.session'}, {id => 1, foo => 'bar'};
 };
 
 subtest 'registers displayer var when user found' => sub {
@@ -113,7 +113,7 @@ sub finalize_auth {
     my $self = shift;
     my ($options) = @_;
 
-    return {foo => 'bar'};
+    $options->{foo} = 'bar';
 }
 
 sub to_hash { {} }
