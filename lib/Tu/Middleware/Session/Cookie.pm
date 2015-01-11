@@ -41,7 +41,7 @@ sub call {
         die $@;
     };
 
-    return $self->_finalize;
+    return $self->_finalize($res, $env);
 }
 
 sub _finalize {
