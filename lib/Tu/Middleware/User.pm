@@ -31,7 +31,18 @@ sub call {
 
     $self->_user($env);
 
-    return $self->app->($env);
+    my $res = $self->app->($env);
+
+    return $self->response_cb(
+        $res,
+        sub {
+            my $res = shift;
+
+            my $scope = Tu::Scope->new($env);
+
+            $self->{auth}->finalize;
+        }
+    );
 }
 
 sub _user {

@@ -37,13 +37,23 @@ sub load {
 
     my $options = $session->dump || {};
 
-    my $user = $self->{user_loader}->load_auth($options);
+    return $self->{user_loader}->load_auth($options);
+}
 
-    if ($options && ref $options eq 'HASH') {
-        $session->set($_ => $options->{$_}) for keys %$options;
+sub finalize {
+    my $self = shift;
+    my ($env) = @_;
+
+    if ($self->{user_loader}->can('finalize_auth')) {
+        my $session = $self->_build_session($env);
+
+        my $new_options = $self->{user_loader}->finalize_auth($session->dump);
+
+        if ($new_options && ref $new_options eq 'HASH') {
+            $session->remove($_) for $session->keys;
+            $session->set($_ => $new_options->{$_}) for keys %$new_options;
+        }
     }
-
-    return $user;
 }
 
 sub login {

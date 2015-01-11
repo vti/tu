@@ -63,6 +63,20 @@ subtest 'expires session on logout' => sub {
       {'psgix.session' => {}, 'psgix.session.options' => {expire => 1}};
 };
 
+subtest 'calls finalize' => sub {
+    my $auth = _build_auth();
+
+    my $env =
+      {'psgix.session' => {id => 1}, 'psgix.session.options' => {}};
+    $auth->finalize($env);
+
+    is_deeply $env,
+      {
+        'psgix.session'         => {new => 'options'},
+        'psgix.session.options' => {}
+      };
+};
+
 sub _build_auth {
     return Tu::Auth::Session->new(user_loader => TestUserLoader->new, @_);
 }
@@ -89,6 +103,13 @@ sub load_auth {
     return if $options->{fake};
     return $self if $options->{id} && $options->{id} == $self->id;
     return;
+}
+
+sub finalize_auth {
+    my $self = shift;
+    my ($options) = @_;
+
+    return {new => 'options'};
 }
 
 1;
