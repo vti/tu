@@ -38,7 +38,7 @@ subtest 'throws when no extension' => sub {
 };
 
 subtest 'loads config without mode' => sub {
-    my $config = _build_config(mode => 1);
+    my $config = _build_config(mode => 0);
 
     my $data = $config->load('t/config_t/config.yml');
 
