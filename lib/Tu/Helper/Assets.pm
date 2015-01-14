@@ -24,7 +24,9 @@ sub require {
 sub _container {
     my $self = shift;
 
-    $self->{container} ||= Tu::AssetsContainer->new;
+    my $home = $self->service('home');
+    $self->{container} ||=
+      Tu::AssetsContainer->new(public_dir => $home->catfile('public'));
 
     return $self->{container};
 }
