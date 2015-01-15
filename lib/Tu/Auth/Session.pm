@@ -47,7 +47,12 @@ sub finalize {
     if ($self->{user_loader}->can('finalize_auth')) {
         my $session = $self->_build_session($env);
 
-        $self->{user_loader}->finalize_auth($session->dump);
+        my $options = $session->dump;
+        $self->{user_loader}->finalize_auth($options);
+
+        foreach my $key (keys %$options) {
+            $session->set($key => $options->{$key});
+        }
     }
 }
 
