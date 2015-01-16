@@ -50,15 +50,6 @@ subtest 'runs action with custom response' => sub {
       [200, ['Content-Type' => 'text/html'], ['Custom response!']];
 };
 
-subtest 'runs action with text response' => sub {
-    my $mw = _build_middleware();
-
-    my $res = $mw->call(_build_env(action => 'text_response'));
-
-    is_deeply $res =>
-      [200, ['Content-Type' => 'text/html; charset=utf-8'], ['Text response!']];
-};
-
 sub _build_env {
     my (%params) = @_;
 
