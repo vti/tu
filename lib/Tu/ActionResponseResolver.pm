@@ -30,12 +30,15 @@ sub resolve {
 
         if (my $encoding = $self->{encoding}) {
             $res = Encode::encode($encoding, $res);
-            $charset = '; charset=' . lc($charset);
+            $charset = '; charset=' . lc($encoding);
         }
 
         return [
             200,
-            ['Content-Type' => "text/html$charset", 'Content-Length' => $res],
+            [
+                'Content-Type'   => "text/html$charset",
+                'Content-Length' => length($res)
+            ],
             [$res]
         ];
     }

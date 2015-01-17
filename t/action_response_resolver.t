@@ -35,6 +35,28 @@ subtest 'returns finalized object' => sub {
       [200, ['Content-Type' => 'text/html'], []];
 };
 
+subtest 'returns string' => sub {
+    my $resolver = _build_resolver();
+
+    is_deeply $resolver->resolve('hello world'),
+      [
+        200,
+        ['Content-Type' => 'text/html; charset=utf-8', 'Content-Length' => 11],
+        ['hello world']
+      ];
+};
+
+subtest 'returns encoded string' => sub {
+    my $resolver = _build_resolver();
+
+    is_deeply $resolver->resolve('привет'),
+      [
+        200,
+        ['Content-Type' => 'text/html; charset=utf-8', 'Content-Length' => 12],
+        [Encode::encode('UTF-8', 'привет')]
+      ];
+};
+
 subtest 'throws when unexpected return type' => sub {
     my $resolver = _build_resolver();
 
