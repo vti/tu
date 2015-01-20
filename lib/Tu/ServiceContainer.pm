@@ -45,7 +45,9 @@ sub overwrite {
     my $self = shift;
     my ($name, $value, %params) = @_;
 
-    $self->{services}->{$name} = {value => $value, %params};
+    my %old_params = %{$self->{services}->{$name} || {}};
+
+    $self->{services}->{$name} = {%old_params, value => $value, %params};
 
     return $self;
 }

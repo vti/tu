@@ -86,6 +86,16 @@ subtest 'overwrites registered service' => sub {
     ok !exception { $c->overwrite(bar => 'baz') };
 };
 
+subtest 'overwrites registered with previous params' => sub {
+    my $c = _build_container();
+
+    $c->register(foo => 'FooInstance', new => 1);
+
+    $c->overwrite(foo => 'FooInstance');
+
+    ok blessed $c->service('foo');
+};
+
 subtest 'creates instance with custom construction' => sub {
     my $c = _build_container();
 
