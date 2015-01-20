@@ -37,6 +37,22 @@ subtest 'returns captures' => sub {
     is_deeply $dispatched->captures, {action => 'foo'};
 };
 
+subtest 'returns empty params' => sub {
+    my $d = _build_dispatcher();
+
+    my $dispatched = $d->dispatch('/foo');
+
+    is_deeply $dispatched->params, {};
+};
+
+subtest 'returns params' => sub {
+    my $d = _build_dispatcher();
+
+    my $dispatched = $d->dispatch('/with_arguments');
+
+    is_deeply $dispatched->params, {foo => 'bar'};
+};
+
 subtest 'builds path' => sub {
     my $d = _build_dispatcher();
 
@@ -56,6 +72,11 @@ subtest 'returns undef when not matched' => sub {
 sub _build_dispatcher {
     my $routes = Tu::Routes->new;
     $routes->add_route('/', name => 'root');
+    $routes->add_route(
+        '/with_arguments',
+        arguments => {foo => 'bar'},
+        name      => 'with-arguments'
+    );
     $routes->add_route('/:action');
     $routes->add_route('/unknown/action');
 

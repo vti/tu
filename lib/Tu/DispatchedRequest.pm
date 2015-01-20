@@ -11,7 +11,8 @@ sub new {
     bless $self, $class;
 
     $self->{action}   = $params{action};
-    $self->{captures} = $params{captures};
+    $self->{captures} = $params{captures} || {};
+    $self->{params}   = $params{params} || {};
 
     return $self;
 }
@@ -28,6 +29,12 @@ sub captures {
     my $self = shift;
 
     return $self->{captures};
+}
+
+sub params {
+    my $self = shift;
+
+    return $self->{params};
 }
 
 1;

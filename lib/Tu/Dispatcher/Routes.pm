@@ -33,7 +33,8 @@ sub dispatch {
     return $self->_build_dispatched_request(
         action   => $action,
         routes   => $self->{routes},
-        captures => $m->params
+        captures => $m->params,
+        params   => $m->arguments
     );
 }
 
