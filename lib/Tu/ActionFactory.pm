@@ -3,14 +3,25 @@ package Tu::ActionFactory;
 use strict;
 use warnings;
 
-use parent 'Tu::Factory';
+use Tu::Factory;
 
 sub new {
-    my $self = shift->SUPER::new(@_);
+    my $class = shift;
+    my (%params) = @_;
 
-    $self->{try} = 1;
+    my $self = {};
+    bless $self, $class;
+
+    $self->{factory} = $params{factory} || Tu::Factory->new(try => 1, %params);
 
     return $self;
+}
+
+sub build {
+    my $self = shift;
+    my ($action, %args) = @_;
+
+    return $self->{factory}->build($action, %args);
 }
 
 1;
