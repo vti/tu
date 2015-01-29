@@ -3,13 +3,12 @@ package TestAppSimple;
 use strict;
 use warnings;
 
-use base 'Tu';
+use parent 'Tu';
 
 sub startup {
     my $self = shift;
 
-    $self->register_plugin('CommonServices');
-    $self->register_plugin('CommonMiddleware');
+    $self->services->register_group('Tu::ServiceContainer::Common');
 
     $self->service('routes')->add_route('/', name => 'index');
 }

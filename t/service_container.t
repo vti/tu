@@ -112,6 +112,7 @@ sub new {
 }
 
 package TestServiceContainer::Group;
+
 sub new {
     my $class = shift;
 

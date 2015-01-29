@@ -9,17 +9,16 @@ use Carp qw(croak);
 use Tu::Scope;
 use Tu::Auth::Session;
 
-sub new {
-    my $self = shift->SUPER::new(@_);
-    my (%params) = @_;
+use Plack::Util::Accessor qw(auth user_loader);
 
-    $self->{auth} = $params{auth};
+sub prepare_app {
+    my $self = shift;
 
     if (!$self->{auth}) {
-        croak 'user_loader required' unless $params{user_loader};
+        croak 'user_loader required' unless $self->{user_loader};
 
         $self->{auth} =
-          Tu::Auth::Session->new(user_loader => $params{user_loader});
+          Tu::Auth::Session->new(user_loader => $self->{user_loader});
     }
 
     return $self;

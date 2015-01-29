@@ -6,22 +6,20 @@ use warnings;
 use parent 'Tu::Middleware';
 
 use Carp qw(croak);
-use Encode ();
-use Plack::MIME;
+use Encode            ();
 use String::CamelCase ();
 use Tu::Scope;
 
-sub new {
-    my $self = shift->SUPER::new(@_);
-    my (%params) = @_;
+use Plack::Util::Accessor qw(encoding displayer);
 
-    $self->{encoding} = $params{encoding};
-    $self->{encoding} = 'UTF-8' unless exists $params{encoding};
+sub prepare_app {
+    my $self = shift;
 
-    $self->{displayer} =
-         $params{displayer}
-      || $self->{services}->service('displayer')
-      || croak 'displayer required';
+    $self->{encoding} ||= 'UTF-8';
+
+    $self->{displayer} ||= $self->service('displayer');
+
+    croak 'displayer required' unless $self->{displayer};
 
     return $self;
 }
@@ -52,9 +50,10 @@ sub _display {
 
     my $body = $self->{displayer}->render($template, %args);
 
-    my $content_type = Plack::MIME->mime_type('.html');
+    my $content_type = 'text/html';
 
-    if (my $encoding = $self->{encoding}) {
+    my $encoding = $self->encoding;
+    if ($encoding && $encoding ne 'raw') {
         $body = Encode::encode($encoding, $body);
         $content_type .= '; charset=' . lc($encoding);
     }

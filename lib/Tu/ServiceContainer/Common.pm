@@ -20,7 +20,7 @@ sub register {
 
     my $config_file = $self->{config_file};
 
-    $self->register(
+    $services->register(
         config => 'Tu::Config',
         new    => sub {
             my ($class, $services) = @_;
@@ -30,34 +30,34 @@ sub register {
         }
     );
 
-    $self->register(routes => 'Tu::Routes', new => 1);
+    $services->register(routes => 'Tu::Routes', new => 1);
 
-    $self->register(
+    $services->register(
         dispatcher => 'Tu::Dispatcher::Routes',
         new        => [qw/routes/]
     );
 
-    $self->register(
+    $services->register(
         action_factory => $params{action_factory} || 'Tu::ActionFactory',
-        new            => sub {
+        new => sub {
             my ($class, $services) = @_;
             $class->new(
                 namespaces => $services->service('app_class') . '::Action::');
         }
     );
 
-    $self->register(
+    $services->register(
         templates_path => sub {
             shift->service('config')->{templates_path} || 'templates';
         }
     );
-    $self->register(
+    $services->register(
         renderer => 'Tu::Renderer::APL',
         new      => [qw/home templates_path/]
     );
 
-    $self->register(layout => 'layout.apl');
-    $self->register(
+    $services->register(layout => 'layout.apl');
+    $services->register(
         displayer => 'Tu::Displayer',
         new       => [qw/renderer layout/]
     );

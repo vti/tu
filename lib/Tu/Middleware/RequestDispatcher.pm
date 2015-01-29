@@ -10,15 +10,14 @@ use Encode ();
 use Tu::Scope;
 use Tu::X::HTTP;
 
-sub new {
-    my $self = shift->SUPER::new(@_);
-    my (%params) = @_;
+use Plack::Util::Accessor qw(encoding dispatcher);
 
-    $self->{encoding} = $params{encoding};
-    $self->{encoding} = 'UTF-8' unless exists $params{encoding};
-    $self->{dispatcher} =
-         $params{dispatcher}
-      || $self->{services}->service('dispatcher')
+sub prepare_app {
+    my $self = shift;
+
+    $self->{encoding} ||= 'UTF-8';
+
+    $self->{dispatcher} ||= $self->service('dispatcher')
       || croak 'dispatcher required';
 
     return $self;
@@ -40,11 +39,11 @@ sub _dispatch {
     my $path = $env->{PATH_INFO} || '';
     my $method = $env->{REQUEST_METHOD};
 
-    if ($self->{encoding}) {
-        $path = Encode::decode($self->{encoding}, $path);
+    if ($self->encoding && $self->encoding ne 'raw') {
+        $path = Encode::decode($self->encoding, $path);
     }
 
-    my $dispatcher = $self->{dispatcher};
+    my $dispatcher = $self->dispatcher;
 
     my $dispatched_request = $dispatcher->dispatch($path, method => lc $method);
     Tu::X::HTTP->throw('Not found', code => 404)

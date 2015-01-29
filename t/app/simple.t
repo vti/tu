@@ -7,13 +7,13 @@ use Plack::Test;
 use lib 't/app/simple_t/lib';
 
 use HTTP::Request;
-use TestAppSimple;
 
-subtest 'sadfasdf' => sub {
-    my $app = TestAppSimple->new;
+my $app =
+  eval do { local $/; open my $fh, '<', 't/app/simple_t/app.psgi'; <$fh> };
 
+subtest 'simple app' => sub {
     test_psgi
-      app    => $app->to_app,
+      app    => $app,
       client => sub {
         my $cb  = shift;
         my $req = HTTP::Request->new(GET => '/');

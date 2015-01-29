@@ -14,21 +14,21 @@ subtest 'throws 404 when nothing dispatched' => sub {
     my $mw = _build_middleware();
     my $env = {PATH_INFO => '/', REQUEST_METHOD => 'GET'};
 
-    isa_ok(exception { $mw->call($env) }, 'Tu::X::HTTP');
+    isa_ok(exception { $mw->prepare_app->call($env) }, 'Tu::X::HTTP');
 };
 
 subtest 'throws 404 when path info is empty' => sub {
     my $mw = _build_middleware();
     my $env = {PATH_INFO => '', REQUEST_METHOD => 'GET'};
 
-    isa_ok(exception { $mw->call($env) }, 'Tu::X::HTTP');
+    isa_ok(exception { $mw->prepare_app->call($env) }, 'Tu::X::HTTP');
 };
 
 subtest 'dispatches when path found' => sub {
     my $mw = _build_middleware();
     my $env = {PATH_INFO => '/foo', REQUEST_METHOD => 'GET'};
 
-    $mw->call($env);
+    $mw->prepare_app->call($env);
 
     ok $env->{'tu.dispatched_request'};
 };
@@ -37,14 +37,14 @@ subtest 'does nothing when method is wrong' => sub {
     my $mw = _build_middleware();
     my $env = {REQUEST_METHOD => 'GET', PATH_INFO => '/only_post'};
 
-    isa_ok(exception { $mw->call($env) }, 'Tu::X::HTTP');
+    isa_ok(exception { $mw->prepare_app->call($env) }, 'Tu::X::HTTP');
 };
 
 subtest 'dispatches when path and method are found' => sub {
     my $mw = _build_middleware();
     my $env = {REQUEST_METHOD => 'POST', PATH_INFO => '/only_post'};
 
-    $mw->call($env);
+    $mw->prepare_app->call($env);
 
     ok $env->{'tu.dispatched_request'};
 };
@@ -56,20 +56,20 @@ subtest 'dispatches utf path' => sub {
         PATH_INFO      => '/unicode/' . Encode::encode('UTF-8', 'привет')
     };
 
-    $mw->call($env);
+    $mw->prepare_app->call($env);
 
     my $dr = $env->{'tu.dispatched_request'};
     is $dr->captures->{name}, 'привет';
 };
 
 subtest 'dispatches without encoding' => sub {
-    my $mw = _build_middleware(encoding => undef);
+    my $mw = _build_middleware(encoding => 'raw');
     my $env = {
         REQUEST_METHOD => 'GET',
         PATH_INFO      => '/unicode/' . Encode::encode('UTF-8', 'привет')
     };
 
-    $mw->call($env);
+    $mw->prepare_app->call($env);
 
     my $dr = $env->{'tu.dispatched_request'};
     is $dr->captures->{name}, Encode::encode('UTF-8', 'привет');
@@ -86,7 +86,7 @@ subtest 'loads dispatcher from service container' => sub {
         PATH_INFO      => '/foo'
     };
 
-    $mw->call($env);
+    $mw->prepare_app->call($env);
 
     ok $env->{'tu.dispatched_request'};
 };
@@ -97,6 +97,7 @@ subtest 'throws when no dispatcher' => sub {
 
     like exception {
         _build_middleware(dispatcher => undef, services => $services)
+          ->prepare_app
     }, qr/dispatcher required/;
 };
 

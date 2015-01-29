@@ -13,14 +13,14 @@ use Tu::Middleware::ActionDispatcher;
 
 subtest 'throws when no action_factory' => sub {
     like exception {
-        _build_middleware(action_factory => undef)
+        _build_middleware(action_factory => undef)->prepare_app
     }, qr/action_factory required/;
 };
 
 subtest 'does nothing when no action' => sub {
     my $mw = _build_middleware();
 
-    my $res = $mw->call(_build_env());
+    my $res = $mw->prepare_app->call(_build_env());
 
     is_deeply($res, [200, [], ['OK']]);
 };
@@ -28,7 +28,7 @@ subtest 'does nothing when no action' => sub {
 subtest 'does nothing when unknown action' => sub {
     my $mw = _build_middleware();
 
-    my $res = $mw->call(_build_env(action => 'unknown'));
+    my $res = $mw->prepare_app->call(_build_env(action => 'unknown'));
 
     is_deeply($res, [200, [], ['OK']]);
 };
@@ -36,7 +36,7 @@ subtest 'does nothing when unknown action' => sub {
 subtest 'skips when no response' => sub {
     my $mw = _build_middleware();
 
-    my $res = $mw->call(_build_env(action => 'no_response'));
+    my $res = $mw->prepare_app->call(_build_env(action => 'no_response'));
 
     is_deeply($res, [200, [], ['OK']]);
 };
@@ -44,7 +44,7 @@ subtest 'skips when no response' => sub {
 subtest 'runs action with custom response' => sub {
     my $mw = _build_middleware();
 
-    my $res = $mw->call(_build_env(action => 'custom_response'));
+    my $res = $mw->prepare_app->call(_build_env(action => 'custom_response'));
 
     is_deeply $res =>
       [200, ['Content-Type' => 'text/html'], ['Custom response!']];

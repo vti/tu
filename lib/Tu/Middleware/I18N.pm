@@ -8,20 +8,19 @@ use parent 'Tu::Middleware::LanguageDetection';
 use Carp qw(croak);
 use Tu::Scope;
 
-sub new {
-    my $class = shift;
-    my (%params) = @_;
+use Plack::Util::Accessor qw(i18n);
 
-    croak 'i18n is required' unless my $i18n = delete $params{i18n};
+sub prepare_app {
+    my $self = shift;
 
-    $params{default_language} ||= $i18n->default_language;
-    $params{languages} ||= [$i18n->languages];
+    $self->{i18n} ||= $self->service('i18n');
 
-    my $self = $class->SUPER::new(%params);
+    croak 'i18n is required' unless my $i18n = $self->{i18n};
 
-    $self->{i18n} = $i18n;
+    $self->{default_language} ||= $i18n->default_language;
+    $self->{languages} ||= [$i18n->languages];
 
-    return $self;
+    return $self->SUPER::prepare_app;
 }
 
 sub _detect_language {

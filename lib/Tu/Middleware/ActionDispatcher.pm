@@ -9,15 +9,13 @@ use Carp qw(croak);
 use Tu::Scope;
 use Tu::ActionResponseResolver;
 
-sub new {
-    my $self = shift->SUPER::new(@_);
-    my (%params) = @_;
+use Plack::Util::Accessor qw(action_factory response_resolver);
 
-    $self->{action_factory} =
-         $params{action_factory}
-      || $self->{services}->service('action_factory')
+sub prepare_app {
+    my $self = shift;
+
+    $self->{action_factory} ||= $self->service('action_factory')
       || croak 'action_factory required';
-    $self->{response_resolver} = $params{response_resolver};
 
     $self->{response_resolver} ||= Tu::ActionResponseResolver->new;
 
@@ -48,16 +46,14 @@ sub _action {
 
     my @res = $action->run;
 
-    return $self->{response_resolver}->resolve(@res);
+    return $self->response_resolver->resolve(@res);
 }
 
 sub _build_action {
     my $self = shift;
     my ($action, $env) = @_;
 
-    my $action_factory = $self->{action_factory};
-
-    return $action_factory->build(
+    return $self->action_factory->build(
         $action,
         env      => $env,
         services => $self->{services}

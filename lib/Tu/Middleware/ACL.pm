@@ -7,15 +7,15 @@ use parent 'Tu::Middleware';
 
 use Carp qw(croak);
 use Scalar::Util qw(blessed);
-
 use Tu::Scope;
 use Tu::X::HTTP;
 
-sub new {
-    my $self = shift->SUPER::new(@_);
-    my (%params) = @_;
+use Plack::Util::Accessor qw(acl);
 
-    $self->{acl} = $params{acl};
+sub prepare_app {
+    my $self = shift;
+
+    $self->{acl} ||= $self->service('acl') || croak 'acl required';
 
     return $self;
 }

@@ -10,8 +10,17 @@ use List::Util qw(first);
 use I18N::AcceptLanguage;
 use Tu::Scope;
 
-sub new {
-    my $self = shift->SUPER::new(@_);
+use Plack::Util::Accessor
+  qw(default_language languages use_path use_session use_header custom_cb);
+
+sub prepare_app {
+    my $self = shift;
+
+    my $config = $self->service('config')->{i18n} || {};
+
+    for (qw/default_language languages use_path use_session use_header/) {
+        $self->{$_} = $config->{$_} if defined $config->{$_};
+    }
 
     croak 'default_language required' unless $self->{default_language};
     croak 'languages required'        unless $self->{languages};
@@ -37,12 +46,12 @@ sub _detect_language {
     my ($env) = @_;
 
     my $lang;
-    $lang = $self->_detect_from_path($env) if $self->{use_path};
-    $lang ||= $self->_detect_from_session($env) if $self->{use_session};
-    $lang ||= $self->_detect_from_header($env)  if $self->{use_header};
-    $lang = $self->_detect_from_custom_cb($env, $lang) if $self->{custom_cb};
+    $lang = $self->_detect_from_path($env) if $self->use_path;
+    $lang ||= $self->_detect_from_session($env) if $self->use_session;
+    $lang ||= $self->_detect_from_header($env)  if $self->use_header;
+    $lang = $self->_detect_from_custom_cb($env, $lang) if $self->custom_cb;
 
-    $lang ||= $self->{default_language};
+    $lang ||= $self->default_language;
 
     my $scope = Tu::Scope->new($env);
     $scope->set('i18n.language' => $lang);
@@ -99,7 +108,7 @@ sub _detect_from_custom_cb {
     my $self = shift;
     my ($env, $detected_lang) = @_;
 
-    my $lang = $self->{custom_cb}->($env, $detected_lang);
+    my $lang = $self->custom_cb->($env, $detected_lang);
 
     return unless $lang;
 
@@ -118,8 +127,7 @@ sub _is_allowed {
     my $self = shift;
     my ($lang) = @_;
 
-    return !!first { $lang eq $_ } $self->{default_language},
-      @{$self->{languages}};
+    return !!first { $lang eq $_ } $self->default_language, @{$self->languages};
 }
 
 1;

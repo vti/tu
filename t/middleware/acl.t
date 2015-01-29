@@ -13,7 +13,7 @@ subtest 'allows when role is correct' => sub {
 
     my $env = _build_env(auth_role => 'user', action => 'foo');
 
-    my $res = $mw->call($env);
+    my $res = $mw->prepare_app->call($env);
 
     ok $res;
 };
@@ -22,7 +22,8 @@ subtest 'denies when unknown role' => sub {
     my $mw = _build_middleware();
 
     ok exception {
-        $mw->call(_build_env(auth_role => 'admin', action => 'bar'));
+        $mw->prepare_app->call(
+            _build_env(auth_role => 'admin', action => 'bar'));
     };
 };
 
@@ -30,20 +31,21 @@ subtest 'denies when denied action' => sub {
     my $mw = _build_middleware();
 
     ok exception {
-        $mw->call(_build_env(auth_role => 'user', action => 'bar'));
+        $mw->prepare_app->call(
+            _build_env(auth_role => 'user', action => 'bar'));
     };
 };
 
 subtest 'denies when no role' => sub {
     my $mw = _build_middleware();
 
-    ok exception { $mw->call({}) };
+    ok exception { $mw->prepare_app->call({}) };
 };
 
 subtest 'redirects instead of throw' => sub {
     my $mw = _build_middleware(redirect_to => '/login');
 
-    my $res = $mw->call({PATH_INFO => '/'});
+    my $res = $mw->prepare_app->call({PATH_INFO => '/'});
 
     is_deeply $res, [302, ['Location' => '/login'], ['']];
 };
@@ -52,7 +54,7 @@ subtest 'prevents redirect recursion' => sub {
     my $mw = _build_middleware(redirect_to => '/login');
 
     ok exception {
-        $mw->call({PATH_INFO => '/login', 'tu.auth_role' => undef})
+        $mw->prepare_app->call({PATH_INFO => '/login', 'tu.auth_role' => undef})
     };
 };
 

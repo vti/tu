@@ -13,9 +13,10 @@ subtest 'throws when no displayer' => sub {
     my $services = Test::MonkeyMock->new;
     $services->mock(service => sub { });
 
-    like
-      exception { _build_middleware(displayer => undef, services => $services) }
-    , qr/displayer required/;
+    like exception {
+        _build_middleware(displayer => undef, services => $services)
+          ->prepare_app
+    }, qr/displayer required/;
 };
 
 subtest 'gets displayer from services' => sub {
@@ -35,7 +36,7 @@ subtest 'renders template' => sub {
         'tu.displayer.vars'     => {hello => 'there'}
     );
 
-    my $res = $mw->call($env);
+    my $res = $mw->prepare_app->call($env);
 
     is_deeply $res,
       [
@@ -50,7 +51,7 @@ subtest 'render template with utf8' => sub {
 
     my $env = _build_env('tu.displayer.template' => 'template-utf8.caml',);
 
-    my $res = $mw->call($env);
+    my $res = $mw->prepare_app->call($env);
 
     is_deeply $res,
       [
@@ -64,11 +65,11 @@ subtest 'render template with utf8' => sub {
 };
 
 subtest 'does no encode when encoding undefined' => sub {
-    my $mw = _build_middleware(encoding => undef, content => 'привет');
+    my $mw = _build_middleware(encoding => 'raw', content => 'привет');
 
     my $env = _build_env('tu.displayer.template' => 'template-utf8.caml',);
 
-    my $res = $mw->call($env);
+    my $res = $mw->prepare_app->call($env);
 
     is_deeply $res,
       [
@@ -91,7 +92,7 @@ subtest 'calls displayer with correct params' => sub {
         'tu.displayer.vars'     => {foo => 'bar'}
     );
 
-    $mw->call($env);
+    $mw->prepare_app->call($env);
 
     my ($template, %args) = $displayer->mocked_call_args('render');
 
@@ -112,7 +113,7 @@ subtest 'gets template name from dispatched request' => sub {
 
     my $env = _build_env('tu.dispatched_request' => $dr,);
 
-    $mw->call($env);
+    $mw->prepare_app->call($env);
 
     my ($template) = $displayer->mocked_call_args('render');
 
@@ -127,7 +128,7 @@ subtest 'does nothing when dispatched_request has no action' => sub {
 
     my $env = _build_env('tu.dispatched_request' => $dr,);
 
-    my $res = $mw->call($env);
+    my $res = $mw->prepare_app->call($env);
 
     is_deeply $res, [200, [], ['OK']];
 };
