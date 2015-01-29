@@ -46,19 +46,6 @@ subtest 'does not detect from session when off' => sub {
     is $env->{'tu.i18n.language'}, 'en';
 };
 
-subtest 'adds human readable name' => sub {
-    my $mw = _build_middleware();
-
-    my $env = {
-        PATH_INFO       => '',
-        'psgix.session' => {'tu.i18n.language' => 'ru'}
-    };
-
-    $mw->call($env);
-
-    is $env->{'tu.i18n.language_name'}, 'Russian';
-};
-
 subtest 'detects from custom cb' => sub {
     my $mw = _build_middleware(
         languages => [qw/ru en/],
