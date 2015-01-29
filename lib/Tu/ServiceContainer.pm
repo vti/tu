@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Carp qw(croak);
+use Scalar::Util qw(blessed);
 use Tu::Loader;
 
 sub new {
@@ -21,13 +22,6 @@ sub new {
     return $self;
 }
 
-sub is_registered {
-    my $self = shift;
-    my ($name) = @_;
-
-    return !!exists $self->{services}->{$name};
-}
-
 sub register {
     my $self = shift;
     my ($name, $value, %params) = @_;
@@ -41,13 +35,17 @@ sub register {
     return $self;
 }
 
-sub overwrite {
+sub register_group {
     my $self = shift;
-    my ($name, $value, %params) = @_;
+    my ($group, %params) = @_;
 
-    my %old_params = %{$self->{services}->{$name} || {}};
+    if (!blessed $group) {
+        my $group_class = $self->{loader}->load_class($group);
 
-    $self->{services}->{$name} = {%old_params, value => $value, %params};
+        $group = $group_class->new;
+    }
+
+    $group->register($self, %params);
 
     return $self;
 }

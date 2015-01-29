@@ -22,20 +22,6 @@ subtest 'throws on registering already registered service' => sub {
       qr/service 'foo' already registered/;
 };
 
-subtest 'returns true when service registered' => sub {
-    my $c = _build_container();
-
-    $c->register(foo => 'bar');
-
-    ok $c->is_registered('foo');
-};
-
-subtest 'returns false when service not registered' => sub {
-    my $c = _build_container();
-
-    ok !$c->is_registered('foo');
-};
-
 subtest 'registers scalar service' => sub {
     my $c = _build_container();
 
@@ -78,24 +64,6 @@ subtest 'registers service as a class with deps' => sub {
     is $c->service('foo')->{bar}, 'bar';
 };
 
-subtest 'overwrites registered service' => sub {
-    my $c = _build_container();
-
-    $c->register(bar => 'bar');
-
-    ok !exception { $c->overwrite(bar => 'baz') };
-};
-
-subtest 'overwrites registered with previous params' => sub {
-    my $c = _build_container();
-
-    $c->register(foo => 'FooInstance', new => 1);
-
-    $c->overwrite(foo => 'FooInstance');
-
-    ok blessed $c->service('foo');
-};
-
 subtest 'creates instance with custom construction' => sub {
     my $c = _build_container();
 
@@ -112,6 +80,22 @@ subtest 'creates instance with custom construction' => sub {
     is $c->service('foo')->{custom}, 'bar';
 };
 
+subtest 'registers group of services from class name' => sub {
+    my $c = _build_container();
+
+    $c->register_group('+TestServiceContainer::Group');
+
+    is $c->service('foo'), 'bar';
+};
+
+subtest 'registers group of services from instance' => sub {
+    my $c = _build_container();
+
+    $c->register_group(TestServiceContainer::Group->new);
+
+    is $c->service('foo'), 'bar';
+};
+
 sub _build_container { Tu::ServiceContainer->new(@_) }
 
 done_testing;
@@ -125,6 +109,23 @@ sub new {
     bless $self, $class;
 
     return $self;
+}
+
+package TestServiceContainer::Group;
+sub new {
+    my $class = shift;
+
+    my $self = {};
+    bless $self, $class;
+
+    return $self;
+}
+
+sub register {
+    my $self = shift;
+    my ($services, %params) = @_;
+
+    $services->register(foo => 'bar');
 }
 
 1;
