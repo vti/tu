@@ -32,8 +32,8 @@ sub new {
 
     $self->{builder} ||=
       Tu::Builder->new(namespaces => [$app_class . '::Middleware::']);
-    $self->{services} ||= Tu::ServiceContainer->new;
 
+    $self->{services} ||= Tu::ServiceContainer->new;
     $self->{services}->register(app_class => $app_class);
     $self->{services}->register(home      => $home);
 
