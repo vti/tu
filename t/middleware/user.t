@@ -80,13 +80,13 @@ subtest 'not registers displayer var when user not found' => sub {
 sub _build_middleware {
     return Tu::Middleware::User->new(
         app => sub { [200, [], ['OK']] },
-        user_loader => TestUser->new
+        user_loader => TestUserLoader->new
     );
 }
 
 done_testing;
 
-package TestUser;
+package TestUserLoader;
 
 sub new {
     my $class = shift;
@@ -101,7 +101,7 @@ sub role { 'user' }
 
 sub id { 1 }
 
-sub load_auth {
+sub load {
     my $self = shift;
     my ($options) = @_;
 
@@ -109,7 +109,7 @@ sub load_auth {
     return;
 }
 
-sub finalize_auth {
+sub finalize {
     my $self = shift;
     my ($options) = @_;
 

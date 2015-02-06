@@ -96,7 +96,7 @@ sub new {
 
 sub id { 1 }
 
-sub load_auth {
+sub load {
     my $self = shift;
     my ($options) = @_;
 
@@ -105,7 +105,7 @@ sub load_auth {
     return;
 }
 
-sub finalize_auth {
+sub finalize {
     my $self = shift;
     my ($options) = @_;
 

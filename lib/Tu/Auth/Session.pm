@@ -37,18 +37,18 @@ sub load {
 
     my $options = $session->dump || {};
 
-    return $self->{user_loader}->load_auth($options);
+    return $self->{user_loader}->load($options);
 }
 
 sub finalize {
     my $self = shift;
     my ($env) = @_;
 
-    if ($self->{user_loader}->can('finalize_auth')) {
+    if ($self->{user_loader}->can('finalize')) {
         my $session = $self->_build_session($env);
 
         my $options = $session->dump;
-        $self->{user_loader}->finalize_auth($options);
+        $self->{user_loader}->finalize($options);
 
         foreach my $key (keys %$options) {
             $session->set($key => $options->{$key});
