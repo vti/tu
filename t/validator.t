@@ -425,6 +425,70 @@ subtest 'not modify passed params' => sub {
     is_deeply $params, {foo => ['baz'], bar => '123'};
 };
 
+subtest 'sets default value when empty' => sub {
+    my $validator = _build_validator();
+
+    $validator->add_optional_field('foo', default => '1');
+    $validator->add_optional_field('bar', default => '2');
+    $validator->add_optional_field('baz', default => '3');
+    $validator->add_field('required', default => '4');
+
+    my $result = $validator->validate({bar => undef, baz => ''});
+
+    ok $result->is_success;
+    is $result->validated_params->{foo}, '1';
+    is $result->validated_params->{bar}, '2';
+    is $result->validated_params->{baz}, '3';
+    is $result->validated_params->{required}, '4';
+};
+
+subtest 'does not set default when not empty' => sub {
+    my $validator = _build_validator();
+
+    $validator->add_field('foo', default => '1');
+
+    my $result = $validator->validate({foo => '2'});
+
+    ok $result->is_success;
+    is $result->validated_params->{foo}, '2';
+};
+
+subtest 'sets default value on error' => sub {
+    my $validator = _build_validator();
+
+    $validator->add_field('foo', default => '1', default_on_error => 1);
+    $validator->add_rule('foo', 'regexp', qr/^\d+$/);
+
+    my $result = $validator->validate({foo => 'bar'});
+
+    ok $result->is_success;
+    is $result->validated_params->{foo}, '1';
+};
+
+subtest 'does not set default when valid' => sub {
+    my $validator = _build_validator();
+
+    $validator->add_field('foo', default => '1', default_on_error => 1);
+    $validator->add_rule('foo', 'regexp', qr/^\d+$/);
+
+    my $result = $validator->validate({foo => '2'});
+
+    ok $result->is_success;
+    is $result->validated_params->{foo}, '2';
+};
+
+subtest 'does not set default when invalid' => sub {
+    my $validator = _build_validator();
+
+    $validator->add_field('foo', default => '1');
+    $validator->add_rule('foo', 'regexp', qr/^\d+$/);
+
+    my $result = $validator->validate({foo => 'foo'});
+
+    ok !$result->is_success;
+    ok !exists $result->validated_params->{foo};
+};
+
 sub _build_validator { Tu::Validator->new(@_) }
 
 done_testing;

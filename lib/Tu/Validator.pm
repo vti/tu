@@ -109,8 +109,13 @@ sub _validate_required {
 
         my $is_empty = $self->_is_field_empty($value);
 
-        if ($self->{fields}->{$name}->{required} && $is_empty) {
-            $result->{errors}->{$name} = 'REQUIRED';
+        if ($is_empty) {
+            if (exists $self->{fields}->{$name}->{default}) {
+                $result->{params}->{$name} = $self->{fields}->{$name}->{default};
+            }
+            elsif ($self->{fields}->{$name}->{required}) {
+                $result->{errors}->{$name} = 'REQUIRED';
+            }
         }
     }
 }
@@ -132,6 +137,14 @@ sub _validate_rules {
 
         foreach my $rule (@$rules) {
             next if $rule->validate($params);
+
+            if (exists $self->{fields}->{$rule_name}
+                && $self->{fields}->{$rule_name}->{default_on_error})
+            {
+                $params->{$rule_name} =
+                  $self->{fields}->{$rule_name}->{default};
+                last;
+            }
 
             $result->{errors}->{$rule_name} = $rule->name;
             last;
