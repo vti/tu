@@ -11,9 +11,9 @@ subtest 'sets anonymous role when no user' => sub {
 
     my $env = {'psgix.session' => {}};
 
-    my $res = $mw->prepare_app->call($env);
+    my $res = $mw->call($env);
 
-    is $env->{'tu.auth_role'}, 'anonymous';
+    is $env->{'tu.user_role'}, 'anonymous';
 };
 
 subtest 'sets anonymous role when session but no user' => sub {
@@ -21,9 +21,9 @@ subtest 'sets anonymous role when session but no user' => sub {
 
     my $env = {'psgix.session' => {foo => 'bar'}};
 
-    my $res = $mw->prepare_app->call($env);
+    my $res = $mw->call($env);
 
-    is $env->{'tu.auth_role'}, 'anonymous';
+    is $env->{'tu.user_role'}, 'anonymous';
 };
 
 subtest 'set anonymous when user not found' => sub {
@@ -31,9 +31,9 @@ subtest 'set anonymous when user not found' => sub {
 
     my $env = {'psgix.session' => {id => 5}};
 
-    my $res = $mw->prepare_app->call($env);
+    my $res = $mw->call($env);
 
-    is $env->{'tu.auth_role'}, 'anonymous';
+    is $env->{'tu.user_role'}, 'anonymous';
 };
 
 subtest 'sets user and role' => sub {
@@ -41,9 +41,9 @@ subtest 'sets user and role' => sub {
 
     my $env = {'psgix.session' => {id => 1}, 'tu.displayer.vars' => {}};
 
-    my $res = $mw->prepare_app->call($env);
+    my $res = $mw->call($env);
 
-    is $env->{'tu.auth_role'}, 'user';
+    is $env->{'tu.user_role'}, 'user';
     is $env->{'tu.user'}->role, 'user';
 };
 
@@ -52,19 +52,9 @@ subtest 'finalizes session' => sub {
 
     my $env = {'psgix.session' => {id => 1}, 'tu.displayer.vars' => {}};
 
-    my $res = $mw->prepare_app->call($env);
+    my $res = $mw->call($env);
 
     is_deeply $env->{'psgix.session'}, {id => 1, foo => 'bar'};
-};
-
-subtest 'registers displayer var when user found' => sub {
-    my $mw = _build_middleware();
-
-    my $env = {'psgix.session' => {id => 1}, 'tu.displayer.vars' => {}};
-
-    my $res = $mw->prepare_app->call($env);
-
-    is_deeply $env->{'tu.displayer.vars'}->{user}, {};
 };
 
 subtest 'not registers displayer var when user not found' => sub {
@@ -72,7 +62,7 @@ subtest 'not registers displayer var when user not found' => sub {
 
     my $env = {'psgix.session' => {}};
 
-    my $res = $mw->prepare_app->call($env);
+    my $res = $mw->call($env);
 
     ok !$env->{'tu.displayer.vars'}->{user};
 };
@@ -80,7 +70,7 @@ subtest 'not registers displayer var when user not found' => sub {
 sub _build_middleware {
     return Tu::Middleware::User->new(
         app => sub { [200, [], ['OK']] },
-        user_loader => TestUserLoader->new
+        user_session_class => 'TestUserLoader'
     );
 }
 
@@ -90,20 +80,31 @@ package TestUserLoader;
 
 sub new {
     my $class = shift;
+    my (%params) = @_;
 
     my $self = {};
     bless $self, $class;
 
+    $self->{env} = $params{env};
+
     return $self;
+}
+
+sub env { shift->{env} }
+
+sub scope {
+    my $self = shift;
+
+    return Tu::Scope->new($self->env);
 }
 
 sub role { 'user' }
 
-sub id { 1 }
-
 sub load {
     my $self = shift;
-    my ($options) = @_;
+
+    my $env = $self->env;
+    my $options = $env->{'psgix.session'};
 
     return $self if $options->{id} && $options->{id} == 1;
     return;
@@ -111,9 +112,9 @@ sub load {
 
 sub finalize {
     my $self = shift;
-    my ($options) = @_;
 
-    $options->{foo} = 'bar';
+    my $env = $self->env;
+    $env->{'psgix.session'}->{foo} = 'bar';
 }
 
 sub to_hash { {} }

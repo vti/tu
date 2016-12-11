@@ -6,23 +6,10 @@ use warnings;
 use parent 'Tu::Middleware';
 
 use Carp qw(croak);
+use Tu::Loader;
 use Tu::Scope;
-use Tu::Auth::Session;
 
-use Plack::Util::Accessor qw(auth user_loader);
-
-sub prepare_app {
-    my $self = shift;
-
-    if (!$self->{auth}) {
-        croak 'user_loader required' unless $self->{user_loader};
-
-        $self->{auth} =
-          Tu::Auth::Session->new(user_loader => $self->{user_loader});
-    }
-
-    return $self;
-}
+use Plack::Util::Accessor qw(user_session_class);
 
 sub call {
     my $self = shift;
@@ -37,7 +24,7 @@ sub call {
         sub {
             my $res = shift;
 
-            $self->{auth}->finalize($env) if $user;
+            $user->finalize if $user && $user->can('finalize');
         }
     );
 }
@@ -48,16 +35,20 @@ sub _user {
 
     my $scope = Tu::Scope->new($env);
 
-    my $auth = $self->{auth};
-    my $user = $auth->load($env);
+    Tu::Loader->new->load_class($self->user_session_class);
 
-    if ($user && $user->can('to_hash')) {
-        $scope->displayer->vars->{user} = $user->to_hash;
+    my $user_session = $self->user_session_class->new(env => $env);
+
+    my $user = $user_session->load;
+
+    if ($user) {
+        $scope->set(user      => $user);
+        $scope->set(user_role => $user->role);
     }
-
-    $scope->set(auth      => $auth);
-    $scope->set(auth_role => $user ? $user->role : 'anonymous');
-    $scope->set(user      => $user);
+    else {
+        $scope->set(user      => undef);
+        $scope->set(user_role => 'anonymous');
+    }
 
     return $user;
 }

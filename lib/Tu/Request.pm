@@ -40,8 +40,10 @@ sub _parse_request_body {
 
     my $retval = $self->SUPER::_parse_request_body(@_);
 
-    $self->env->{'plack.request.body'} =
-      $self->_decode_parameters($self->env->{'plack.request.body'});
+    if (defined $self->env->{'plack.request.body'}) {
+        $self->env->{'plack.request.body'} =
+          $self->_decode_parameters($self->env->{'plack.request.body'});
+    }
 
     return $retval;
 }

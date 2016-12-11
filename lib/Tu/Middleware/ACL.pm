@@ -34,7 +34,11 @@ sub _acl {
     my $self = shift;
     my ($env) = @_;
 
-    return $self->_deny($env) unless my $auth_role = $env->{'tu.auth_role'};
+    my $scope = Tu::Scope->new($env);
+
+    return $self->_deny($env)
+      unless $scope->exists('user_role')
+      && (my $auth_role = $scope->get('user_role'));
 
     my $action = $self->_find_action($env);
 
