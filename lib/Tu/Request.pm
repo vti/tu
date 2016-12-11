@@ -6,7 +6,6 @@ use warnings;
 use parent 'Plack::Request';
 
 use Encode ();
-use Hash::MultiValue;
 
 use Tu::Response;
 
@@ -27,41 +26,25 @@ sub new_response {
     return Tu::Response->new(@_);
 }
 
-sub query_parameters {
-    my $self = shift;
-
-    $self->env->{'plack.request.query'} ||= do {
-        $self->_decode_parameters($self->uri->query_form);
-    };
-}
-
-sub _parse_request_body {
-    my $self = shift;
-
-    my $retval = $self->SUPER::_parse_request_body(@_);
-
-    if (defined $self->env->{'plack.request.body'}) {
-        $self->env->{'plack.request.body'} =
-          $self->_decode_parameters($self->env->{'plack.request.body'});
-    }
-
-    return $retval;
-}
+sub _query_parameters { shift->_decode_parameters('query_parameters', @_) }
+sub _body_parameters  { shift->_decode_parameters('body_parameters',  @_) }
 
 sub _decode_parameters {
     my $self = shift;
+    my ($request_key, @args) = @_;
 
-    my @flatten = @_ == 1 ? $_[0]->flatten : @_;
+    my $method = "SUPER::_$request_key";
+
+    my $super = $self->$method(@args);
+
+    my $params = $self->env->{"plack.request.$request_key"};
 
     my $encoding = $self->{encoding};
-
-    my @decoded;
-    while (my ($key, $val) = splice @flatten, 0, 2) {
-        push @decoded, Encode::decode($encoding, $key),
-          Encode::decode($encoding, $val);
+    foreach my $key (@$params) {
+        $key = Encode::decode($encoding, $key);
     }
 
-    return Hash::MultiValue->new(@decoded);
+    return $self->env->{"plack.request.$request_key"} = $params;
 }
 
 1;
