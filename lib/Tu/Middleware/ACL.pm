@@ -43,7 +43,7 @@ sub _acl {
     my $action = $self->_find_action($env);
 
     my $acl = $self->{acl} || $self->service('acl');
-    return $self->_deny($env) unless $acl->is_allowed($auth_role, $action);
+    return $self->_deny($env) unless $acl->is_allowed($auth_role, $action, env => $env);
 
     return;
 }

@@ -139,6 +139,25 @@ subtest 'denies by regex' => sub {
     ok $acl->is_allowed('admin', 'admin_foo');
 };
 
+subtest 'allows by when' => sub {
+    my $acl = _build_acl();
+
+    $acl->add_role('user');
+    $acl->allow('user', 'foo');
+    $acl->deny('user', 'foo', when => sub { 0 });
+
+    ok $acl->is_allowed('user', 'foo');
+};
+
+subtest 'denies by when' => sub {
+    my $acl = _build_acl();
+
+    $acl->add_role('user');
+    $acl->allow('user', '*', when => sub { 0 });
+
+    ok !$acl->is_allowed('user', 'foo');
+};
+
 sub _build_acl {
     return Tu::ACL->new(@_);
 }
