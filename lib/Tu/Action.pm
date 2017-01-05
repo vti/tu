@@ -29,6 +29,12 @@ sub service {
     return $self->{services}->service($name);
 }
 
+sub services {
+    my $self = shift;
+
+    return $self->{services};
+}
+
 sub env {
     my $self = shift;
 

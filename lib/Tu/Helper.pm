@@ -34,6 +34,12 @@ sub service {
     return $self->{services}->service($name);
 }
 
+sub services {
+    my $self = shift;
+
+    return $self->{services};
+}
+
 sub params {
     my $self = shift;
     my ($key) = @_;
