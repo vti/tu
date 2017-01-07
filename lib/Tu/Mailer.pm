@@ -50,7 +50,6 @@ sub build_message {
     if (defined(my $signature = $self->{signature}) && $params{body}) {
         $params{body} .= "\n\n-- \n$signature";
     }
-
     my $parts =
       $params{body}
       ? [
@@ -65,7 +64,7 @@ sub build_message {
       ]
       : ($params{parts} || []);
 
-    my $message = Email::MIME->create(parts => $parts);
+    my $message = Email::MIME->create(attributes => $params{attributes}, parts => $parts);
 
     my @headers = (@{$self->{headers}}, @{$params{headers} || []});
     $self->_set_headers($message, \@headers);
