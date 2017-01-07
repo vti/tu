@@ -16,6 +16,14 @@ sub render_file {
         $template .= '.apl';
     }
 
+    my @paths = ref $self->{templates_path} eq 'ARRAY' ? @{ $self->{templates_path} } : ( $self->{templates_path} );
+
+    my $file;
+    foreach my $path (@paths) {
+        $file = File::Spec->catfile($path, $template);
+        last if -f $file;
+    }
+
     my %helpers =
       map { $_ => $rest[0]->{$_} }
       grep { ref $rest[0]->{$_} eq 'CODE' } keys %{$rest[0]};
@@ -26,7 +34,7 @@ sub render_file {
     my $output = '';
     $self->{engine}->render(
         name    => $template,
-        input   => File::Spec->catfile($self->{templates_path}, $template),
+        input   => $file,
         output  => \$output,
         vars    => \%vars,
         helpers => \%helpers

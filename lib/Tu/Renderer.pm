@@ -27,6 +27,15 @@ sub new {
     return $self;
 }
 
+sub unshift_templates_path {
+    my $self = shift;
+    my ($path) = @_;
+
+    $self->{templates_path} = [$self->{templates_path}] unless ref $self->{templates_path} eq 'ARRAY';
+
+    unshift @{ $self->{templates_path}}, $path;
+}
+
 sub render_file {
     my $self = shift;
     my ($template_file, %params) = @_;
