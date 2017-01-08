@@ -8,6 +8,9 @@ recommends 'JSON';
 recommends 'Text::Caml';
 recommends 'Text::APL';
 recommends 'YAML::Tiny';
+recommends 'Plack::Middleware::Session';
+recommends 'Plack::Middleware::Session::Cookie';
+recommends 'I18N::AcceptLanguage';
 
 on 'test' => sub {
     requires 'Test::Requires';

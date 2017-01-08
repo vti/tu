@@ -6,6 +6,6 @@ before_install:
     #      cpanm -n Devel::Cover::Report::Kritika
     - cpanm -n https://github.com/kritikaio/devel-cover-report-kritika-perl/archive/master.tar.gz
 install:
-    - cpanm -n -q --skip-satisfied --installdeps .
+    - cpanm -n -q --with-recommends --skip-satisfied --installdeps .
 script:
     - perl Build.PL && ./Build build && cover -test -report kritika
