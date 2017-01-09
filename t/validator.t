@@ -428,7 +428,7 @@ subtest 'not modify passed params' => sub {
 subtest 'sets default value when empty' => sub {
     my $validator = _build_validator();
 
-    $validator->add_optional_field('foo', default => '1');
+    $validator->add_optional_field('foo', default => '0');
     $validator->add_optional_field('bar', default => '2');
     $validator->add_optional_field('baz', default => '3');
     $validator->add_field('required', default => '4');
@@ -436,7 +436,7 @@ subtest 'sets default value when empty' => sub {
     my $result = $validator->validate({bar => undef, baz => ''});
 
     ok $result->is_success;
-    is $result->validated_params->{foo}, '1';
+    is $result->validated_params->{foo}, '0';
     is $result->validated_params->{bar}, '2';
     is $result->validated_params->{baz}, '3';
     is $result->validated_params->{required}, '4';
