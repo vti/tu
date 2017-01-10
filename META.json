@@ -4,7 +4,7 @@
       "Viacheslav Tykhanovskyi, C<vti@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v2.1.1, CPAN::Meta::Converter version 2.142690",
+   "generated_by" : "Minilla/v3.0.4, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "artistic_2"
    ],
@@ -28,7 +28,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.38"
+            "Module::Build::Tiny" : "0.035"
          }
       },
       "develop" : {
@@ -45,6 +45,8 @@
             "Email::MIME" : "0",
             "I18N::AcceptLanguage" : "0",
             "JSON" : "0",
+            "Plack::Middleware::Session" : "0",
+            "Plack::Middleware::Session::Cookie" : "0",
             "Text::APL" : "0",
             "Text::Caml" : "0",
             "YAML::Tiny" : "0"
@@ -62,25 +64,28 @@
             "Test::Fatal" : "0",
             "Test::MonkeyMock" : "0",
             "Test::More" : "0",
-            "Test::Requires" : "0"
+            "Test::Requires" : "0",
+            "Test::TempDir::Tiny" : "0"
          }
       }
    },
    "release_status" : "unstable",
    "resources" : {
       "bugtracker" : {
-         "web" : "https://github.com//vti/tu/issues"
+         "web" : "https://github.com///issues"
       },
-      "homepage" : "https://github.com//vti/tu",
+      "homepage" : "https://github.com//",
       "repository" : {
          "type" : "git",
-         "url" : "git://github.com//vti/tu",
-         "web" : "https://github.com//vti/tu"
+         "url" : "git://github.com//.git",
+         "web" : "https://github.com//"
       }
    },
    "version" : "0.01",
    "x_contributors" : [
       "forwardever <git.forwardever@googlemail.com>",
+      "vti <vti@clarive.com>",
       "vti <viacheslav.t@gmail.com>"
-   ]
+   ],
+   "x_serialization_backend" : "JSON::PP version 2.27300_01"
 }
