@@ -19,7 +19,7 @@ subtest 'rethrow yaml error' => sub {
     my $config = _build_config();
 
     like exception { $config->load('t/config_t/error.yml') },
-      qr/YAML::Tiny failed to/;
+      qr/error|fail/i;
 };
 
 subtest 'loads config based on extension' => sub {

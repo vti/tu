@@ -6,7 +6,7 @@ allow:
     anonymous:
         - login
     user:
-        - *
+        - '*'
 deny:
     user:
         - login

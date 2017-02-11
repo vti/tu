@@ -3,7 +3,9 @@ package Tu::Config::Yml;
 use strict;
 use warnings;
 
+use Encode ();
 use YAML::Tiny;
+use constant HAVE_YAML_XS => eval { require YAML::XS };
 
 sub new {
     my $class = shift;
@@ -18,9 +20,17 @@ sub parse {
     my $self = shift;
     my ($config) = @_;
 
-    $config = YAML::Tiny->read_string($config);
+    if (HAVE_YAML_XS) {
+        $config = Encode::encode('UTF-8', $config) if Encode::is_utf8($config);
 
-    return $config->[0] || {};
+        $config = YAML::XS::Load($config);
+    }
+    else {
+        $config = YAML::Tiny->read_string($config);
+        $config = $config->[0];
+    }
+
+    return $config || {};
 }
 
 1;

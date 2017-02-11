@@ -23,12 +23,16 @@ sub load {
     my $self = shift;
     my ($path) = @_;
 
-    my $config = $self->{config}->load(@_);
+    my $config = $self->{config}->load($path);
 
     return $self->_from_config($config);
 }
 
 sub _from_config {
+    my $self = shift;
+    my ($config) = @_;
+
+    return $config;
 }
 
 1;
