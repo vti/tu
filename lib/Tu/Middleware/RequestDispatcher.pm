@@ -36,8 +36,10 @@ sub _dispatch {
     my $self = shift;
     my ($env) = @_;
 
-    my $path = $env->{PATH_INFO} || '';
+    my $path = $env->{REQUEST_URI} || '';
     my $method = $env->{REQUEST_METHOD};
+
+    $path =~ s{\?.*$}{};
 
     if ($self->encoding && $self->encoding ne 'raw') {
         $path = Encode::decode($self->encoding, $path);

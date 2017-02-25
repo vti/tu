@@ -12,21 +12,30 @@ use Tu::Middleware::RequestDispatcher;
 
 subtest 'throws 404 when nothing dispatched' => sub {
     my $mw = _build_middleware();
-    my $env = {PATH_INFO => '/', REQUEST_METHOD => 'GET'};
+    my $env = {REQUEST_URI => '/', REQUEST_METHOD => 'GET'};
 
     isa_ok(exception { $mw->prepare_app->call($env) }, 'Tu::X::HTTP');
 };
 
 subtest 'throws 404 when path info is empty' => sub {
     my $mw = _build_middleware();
-    my $env = {PATH_INFO => '', REQUEST_METHOD => 'GET'};
+    my $env = {REQUEST_URI => '', REQUEST_METHOD => 'GET'};
 
     isa_ok(exception { $mw->prepare_app->call($env) }, 'Tu::X::HTTP');
 };
 
 subtest 'dispatches when path found' => sub {
     my $mw = _build_middleware();
-    my $env = {PATH_INFO => '/foo', REQUEST_METHOD => 'GET'};
+    my $env = {REQUEST_URI => '/foo', REQUEST_METHOD => 'GET'};
+
+    $mw->prepare_app->call($env);
+
+    ok $env->{'tu.dispatched_request'};
+};
+
+subtest 'dispatches when path found removing query string' => sub {
+    my $mw = _build_middleware();
+    my $env = {REQUEST_URI => '/foo?foo=bar', REQUEST_METHOD => 'GET'};
 
     $mw->prepare_app->call($env);
 
@@ -35,14 +44,14 @@ subtest 'dispatches when path found' => sub {
 
 subtest 'does nothing when method is wrong' => sub {
     my $mw = _build_middleware();
-    my $env = {REQUEST_METHOD => 'GET', PATH_INFO => '/only_post'};
+    my $env = {REQUEST_METHOD => 'GET', REQUEST_URI => '/only_post'};
 
     isa_ok(exception { $mw->prepare_app->call($env) }, 'Tu::X::HTTP');
 };
 
 subtest 'dispatches when path and method are found' => sub {
     my $mw = _build_middleware();
-    my $env = {REQUEST_METHOD => 'POST', PATH_INFO => '/only_post'};
+    my $env = {REQUEST_METHOD => 'POST', REQUEST_URI => '/only_post'};
 
     $mw->prepare_app->call($env);
 
@@ -53,7 +62,7 @@ subtest 'dispatches utf path' => sub {
     my $mw  = _build_middleware();
     my $env = {
         REQUEST_METHOD => 'GET',
-        PATH_INFO      => '/unicode/' . Encode::encode('UTF-8', 'привет')
+        REQUEST_URI   => '/unicode/' . Encode::encode('UTF-8', 'привет')
     };
 
     $mw->prepare_app->call($env);
@@ -66,7 +75,7 @@ subtest 'dispatches without encoding' => sub {
     my $mw = _build_middleware(encoding => 'raw');
     my $env = {
         REQUEST_METHOD => 'GET',
-        PATH_INFO      => '/unicode/' . Encode::encode('UTF-8', 'привет')
+        REQUEST_URI   => '/unicode/' . Encode::encode('UTF-8', 'привет')
     };
 
     $mw->prepare_app->call($env);
@@ -83,7 +92,7 @@ subtest 'loads dispatcher from service container' => sub {
     my $mw = _build_middleware(dispatcher => undef, services => $services);
     my $env = {
         REQUEST_METHOD => 'GET',
-        PATH_INFO      => '/foo'
+        REQUEST_URI   => '/foo'
     };
 
     $mw->prepare_app->call($env);

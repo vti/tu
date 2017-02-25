@@ -6,6 +6,7 @@ use warnings;
 use parent 'Tu::Dispatcher';
 
 use Carp qw(croak);
+use URI::Escape qw(uri_unescape);
 use Tu::DispatchedRequest::Routes;
 
 sub new {
@@ -30,10 +31,12 @@ sub dispatch {
     croak q{Action is unknown. Nor 'action' neither ->name was declared}
       unless $action;
 
+    my $captures = { map { $_ => uri_unescape( $m->params->{$_} ) } keys %{ $m->params } };
+
     return $self->_build_dispatched_request(
         action   => $action,
         routes   => $self->{routes},
-        captures => $m->params,
+        captures => $captures,
         params   => $m->arguments
     );
 }
