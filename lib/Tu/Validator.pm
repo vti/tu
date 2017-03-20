@@ -161,6 +161,10 @@ sub _gather_validated_params {
     foreach my $name (keys %{$self->{fields}}) {
         next if exists $result->{errors}->{$name};
 
+        next
+          if !$self->{fields}->{$name}->{required}
+          && $self->_is_field_empty($result->{params}->{$name});
+
         $validated_params->{$name} = $result->{params}->{$name};
     }
 
