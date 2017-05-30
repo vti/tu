@@ -19,7 +19,7 @@ subtest 'requires js' => sub {
 subtest 'requires js as is' => sub {
     my $assets = _build_assets();
 
-    $assets->require(\'1 + 1', 'js');
+    $assets->require(\'1 + 1', type => 'js');
 
     is($assets->include, '<script type="text/javascript">1 + 1</script>');
 };
@@ -27,7 +27,7 @@ subtest 'requires js as is' => sub {
 subtest 'requires with specified type' => sub {
     my $assets = _build_assets();
 
-    $assets->require('/foo.bar', 'js');
+    $assets->require('/foo.bar', type => 'js');
 
     is($assets->include,
         '<script src="/foo.bar" type="text/javascript"></script>');
@@ -61,6 +61,30 @@ subtest 'includes only specified type' => sub {
 
     is($assets->include(type => 'js'),
         '<script src="/foo.js" type="text/javascript"></script>');
+};
+
+subtest 'orders by index' => sub {
+    my $assets = _build_assets();
+
+    $assets->require('/foo.js', index => 10);
+    $assets->require('/last.js');
+    $assets->require('/bar.js', index => 5);
+
+    is(
+        $assets->include(type => 'js'),
+        '<script src="/bar.js" type="text/javascript"></script>' . "\n"
+          . '<script src="/foo.js" type="text/javascript"></script>' . "\n"
+          . '<script src="/last.js" type="text/javascript"></script>'
+    );
+};
+
+subtest 'adds custom attributes' => sub {
+    my $assets = _build_assets();
+
+    $assets->require('/foo.js', attrs => {foo => 'bar'});
+
+    is($assets->include(type => 'js'),
+        '<script src="/foo.js" type="text/javascript" foo="bar"></script>');
 };
 
 subtest 'throws when unknown type' => sub {
