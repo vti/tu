@@ -290,30 +290,6 @@ subtest 'no errors when field is optional' => sub {
     ok $result->is_success;
 };
 
-subtest 'removes empty optional field' => sub {
-    my $validator = _build_validator();
-
-    $validator->add_optional_field('foo');
-    $validator->add_rule('foo', 'regexp', qr/^\d+$/);
-
-    my $result = $validator->validate({foo => ''});
-
-    is_deeply $result->all_params, {foo => ''};
-    is_deeply $result->validated_params, {};
-};
-
-subtest 'removes optional multiple empty values' => sub {
-    my $validator = _build_validator();
-
-    $validator->add_optional_field('foo', multiple => 1);
-    $validator->add_rule('foo', 'regexp', qr/^\d+$/);
-
-    my $result = $validator->validate({foo => ['', '']});
-
-    is_deeply $result->all_params, {foo => ['', '']};
-    is_deeply $result->validated_params, {};
-};
-
 subtest 'set default message' => sub {
     my $validator = _build_validator();
 
