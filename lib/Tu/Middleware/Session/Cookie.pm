@@ -16,7 +16,7 @@ sub new {
     my $config = $services->service('config') || {};
     $config = $config->{session} || {};
 
-    return $class->SUPER::new(%$config, %$params);
+    return $class->SUPER::new(%$params, %$config);
 }
 
 sub service {
