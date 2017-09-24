@@ -467,6 +467,28 @@ subtest 'does not set default when invalid' => sub {
     ok !exists $result->validated_params->{foo};
 };
 
+subtest 'not existing values' => sub {
+    my $validator = _build_validator();
+
+    $validator->add_optional_field('bar');
+
+    my $result = $validator->validate({});
+
+    ok $result->is_success;
+    is_deeply $result->validated_params, {bar => undef};
+};
+
+subtest 'empty values' => sub {
+    my $validator = _build_validator();
+
+    $validator->add_optional_field('bar');
+
+    my $result = $validator->validate({bar => ''});
+
+    ok $result->is_success;
+    is_deeply $result->validated_params, {bar => undef};
+};
+
 sub _build_validator { Tu::Validator->new(@_) }
 
 done_testing;

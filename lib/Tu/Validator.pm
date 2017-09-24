@@ -161,7 +161,11 @@ sub _gather_validated_params {
     foreach my $name (keys %{$self->{fields}}) {
         next if exists $result->{errors}->{$name};
 
-        $validated_params->{$name} = $result->{params}->{$name};
+        if (exists $result->{params}->{$name}) {
+            my $value = $result->{params}->{$name};
+
+            $validated_params->{$name} = length $value ? $value : undef;
+        }
     }
 
     return $validated_params;
