@@ -153,7 +153,7 @@ subtest 'send mail' => sub {
     my $mailer =
       _build_mailer(transport => {name => 'test', path => $file->filename});
 
-    $mailer->send(headers => [From => 'me', To => 'you'], body => 'Hi!');
+    $mailer->send(headers => [From => 'me@bar.com', To => 'you@bar.com'], body => 'Hi!');
 
     my $message = do { local $/; open my $fh, '<', $file; <$fh> };
     like($message, qr{me});
