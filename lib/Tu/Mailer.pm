@@ -86,8 +86,11 @@ sub _build_transport {
     elsif ($name eq 'sendmail') {
         return Tu::Mailer::Sendmail->new(%$options);
     }
-    elsif ($name eq 'smtp+tls') {
+    elsif ($name eq 'smtp') {
         return Tu::Mailer::SMTP->new(%$options);
+    }
+    elsif ($name eq 'smtp+tls') {
+        return Tu::Mailer::SMTP->new(ssl => 'starttls', %$options);
     }
     else {
         croak 'Unknown transport';

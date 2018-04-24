@@ -10,6 +10,7 @@ sub new {
     my $self = {};
     bless $self, $class;
 
+    $self->{ssl}      = $params{ssl};
     $self->{host}     = $params{host};
     $self->{port}     = $params{port};
     $self->{username} = $params{username};
@@ -23,13 +24,18 @@ sub send_message {
     my ($message) = @_;
 
     require Email::Sender::Simple;
-    require Email::Sender::Transport::SMTP::TLS;
+    require Email::Sender::Transport::SMTP;
 
-    my $sender = Email::Sender::Transport::SMTP::TLS->new(
-        host     => $self->{host},
-        port     => $self->{port},
-        username => $self->{username},
-        password => $self->{password}
+    my $sender = Email::Sender::Transport::SMTP->new(
+        host => $self->{host},
+        port => $self->{port},
+        $self->{ssl} ? (ssl => $self->{ssl}) : (),
+        $self->{username} && $self->{password}
+        ? (
+            sasl_username => $self->{username},
+            sasl_password => $self->{password}
+          )
+        : ()
     );
 
     Email::Sender::Simple->send($message, {transport => $sender});
