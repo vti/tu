@@ -39,9 +39,11 @@ sub _decode_parameters {
 
     my $params = $self->env->{"plack.request.$request_key"};
 
-    my $encoding = $self->{encoding};
-    foreach my $key (@$params) {
-        $key = Encode::decode($encoding, $key);
+    if (!$self->env->{"plack.request.$request_key.decoded"}++) {
+        my $encoding = $self->{encoding};
+        foreach my $key (@$params) {
+            $key = Encode::decode($encoding, $key);
+        }
     }
 
     return $self->env->{"plack.request.$request_key"} = $params;
