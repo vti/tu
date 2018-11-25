@@ -31,7 +31,7 @@ sub new {
     $self->{services}->register(app_class => $app_class);
     $self->{services}->register(home      => $home);
 
-    $self->startup;
+    $self->startup(%params);
 
     return $self;
 }
